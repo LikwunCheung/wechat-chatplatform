@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class OrderConfig(AppConfig):
-    name = 'order'
+    name = 'wechat_chatplatform.order'

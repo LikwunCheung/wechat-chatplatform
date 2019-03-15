@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class EmployeeGroupConfig(AppConfig):
-    name = 'employee_group'
+    name = 'wechat_chatplatform.employee_group'

@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class PlatformInfoConfig(AppConfig):
-    name = 'platform_info'
+    name = 'wechat_chatplatform.platform_info'

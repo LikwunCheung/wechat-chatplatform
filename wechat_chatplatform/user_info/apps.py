@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class UserInfoConfig(AppConfig):
-    name = 'user_info'
+    name = 'wechat_chatplatform.user_info'
