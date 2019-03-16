@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import math
+
 from django.db import models
 from django.utils.timezone import now
 
@@ -36,8 +38,8 @@ class Employee(models.Model):
     wechat = models.CharField(verbose_name=u'微信', max_length=30)
     audio = models.CharField(verbose_name=u'音频', max_length=100)
     head = models.CharField(verbose_name=u'头像', max_length=100)
-    join_date = models.DateField(verbose_name=u'入职日期')
-    leave_date = models.DateField(verbose_name=u'离职日期', null=True)
+    join_date = models.DateField(verbose_name=u'入职日期', default=now().date())
+    leave_date = models.DateField(verbose_name=u'离职日期', blank=True, null=True)
     discription = models.CharField(verbose_name=u'备注', max_length=150, null=True)
 
     class Meta:
@@ -48,7 +50,14 @@ class Employee(models.Model):
     def __str__(self):
         return self.name
 
-    def _delete(self):
+    def age(self):
+        if not self.birthday:
+            return 'N/A'
+        return math.floor((now().date() - self.birthday).days / 365)
+
+    age.short_description = u'年龄'
+
+    def delete(self):
         self.status = self.STATUS_CHOICES[0]
         self.leave_date = now().date()
         self.save()
@@ -62,8 +71,8 @@ class EmployeeType(models.Model):
 
     type_id = models.AutoField(verbose_name=u'雇员类型编号', primary_key=True)
     name = models.CharField(verbose_name=u'雇员类型', max_length=15)
+    price = models.FloatField(verbose_name=u'每小时费用', default=0)
     status = models.IntegerField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
-    price = models.FloatField(verbose_name=u'单价', default=0)
 
     class Meta:
         db_table = 'employee_type'
@@ -73,7 +82,7 @@ class EmployeeType(models.Model):
     def __str__(self):
         return self.name
 
-    def _delete(self):
+    def delete(self):
         self.status = self.STATUS_CHOICES[0]
         self.save()
 
@@ -90,9 +99,10 @@ class EmployeeGroup(models.Model):
     )
 
     group_id = models.AutoField(verbose_name=u'雇员钉钉群编号', primary_key=True)
+    name = models.CharField(verbose_name=u'群名称', max_length=20)
+    dingding_id = models.CharField(verbose_name=u'钉钉id', max_length=30)
     gender = models.IntegerField(verbose_name=u'性别', choices=GENDER_CHOICES, default=2)
     status = models.IntegerField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
-    dingding_id = models.CharField(verbose_name=u'钉钉id', max_length=30)
 
     class Meta:
         db_table = 'employee_group'
@@ -102,6 +112,6 @@ class EmployeeGroup(models.Model):
     def __str__(self):
         return self.dingding_id
 
-    def _delete(self):
+    def delete(self):
         self.status = self.STATUS_CHOICES[0]
         self.save()
