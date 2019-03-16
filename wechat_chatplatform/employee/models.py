@@ -43,7 +43,7 @@ class Employee(models.Model):
     discription = models.CharField(verbose_name=u'备注', max_length=150, null=True)
 
     class Meta:
-        db_table = 'employee'
+        db_table = 'employee.py'
         verbose_name = u'雇员信息'
         verbose_name_plural = verbose_name
 
