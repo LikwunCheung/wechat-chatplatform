@@ -111,7 +111,7 @@ LANGUAGE_CODE = 'zh-hans'
 
 TIME_ZONE = 'Australia/Melbourne'
 
-USE_I18N = True
+USE_I18N = False
 
 USE_L10N = True
 
