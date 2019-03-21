@@ -128,7 +128,6 @@ class EmployeeType(models.Model):
 
     type_id = models.AutoField(verbose_name=u'雇员类型编号', primary_key=True)
     name = models.CharField(verbose_name=u'雇员类型', max_length=15)
-    price = models.FloatField(verbose_name=u'每小时费用', default=0)
     status = models.IntegerField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
 
     class Meta:

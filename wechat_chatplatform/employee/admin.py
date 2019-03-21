@@ -16,10 +16,10 @@ class EmployeeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'nickname',)
     exclude = ('age',)
     empty_value_display = 'N/A'
-    # readonly_fields = ('age',)
+
 
 class EmployeeTypeAdmin(admin.ModelAdmin):
-    list_display = ('type_id', 'name', 'price', 'status',)
+    list_display = ('type_id', 'name', 'status',)
     list_filter = ('status',)
 
 
