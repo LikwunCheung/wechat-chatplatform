@@ -17,7 +17,8 @@ class Employee(models.Model):
     STATUS_CHOICES = (
         (0, u'离职'),
         (1, u'在职'),
-        (2, u'待审')
+        (2, u'待审'),
+        (3, u'审核失败')
     )
 
     GENDER_CHOICES = (
@@ -30,7 +31,7 @@ class Employee(models.Model):
     nickname = models.CharField(verbose_name=u'昵称', max_length=30)
     type_id = models.ForeignKey('employee.EmployeeType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL, blank=True, null=True)
     status = models.IntegerField(verbose_name=u'状态', choices=STATUS_CHOICES, default=2)
-    city = models.ForeignKey('employee.EmployeeCity', verbose_name=u'城市', related_name='city', on_delete=models.SET_NULL, blank=True, null=True)
+    city_id = models.ForeignKey('employee.EmployeeCity', verbose_name=u'城市', related_name='city', on_delete=models.SET_NULL, blank=True, null=True)
     identity_type = models.IntegerField(verbose_name=u'证件类型', choices=IDENTITY_TYPE_CHOICES, default=0)
     identity = models.CharField(verbose_name=u'证件号码', max_length=20)
     birthday = models.DateField(verbose_name=u'生日')
@@ -38,14 +39,15 @@ class Employee(models.Model):
     mobile = models.CharField(verbose_name=u'联系电话', max_length=20)
     dingtalk_id = models.CharField(verbose_name=u'钉钉', max_length=30, null=True)
     wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
-    audio = models.CharField(verbose_name=u'音频', max_length=100)
+    audio = models.CharField(verbose_name=u'音频', max_length=100, blank=True, null=True)
     avatar = models.CharField(verbose_name=u'头像', max_length=100, blank=True, null=True)
     img1 = models.CharField(verbose_name=u'图片1', max_length=100, blank=True, null=True)
     img2 = models.CharField(verbose_name=u'图片2', max_length=100, blank=True, null=True)
     img3 = models.CharField(verbose_name=u'图片3', max_length=100, blank=True, null=True)
-    join_date = models.DateField(verbose_name=u'入职日期', default=now().date())
+    join_date = models.DateField(verbose_name=u'入职日期', blank=True, null=True)
     leave_date = models.DateField(verbose_name=u'离职日期', blank=True, null=True)
     slogan = models.CharField(verbose_name=u'标语', max_length=150, null=True)
+    tags = models.CharField(verbose_name=u'标签', max_length=50, blank=True, null=True)
 
     class Meta:
         db_table = 'employee'
@@ -67,6 +69,21 @@ class Employee(models.Model):
         self.leave_date = now().date()
         self.save()
 
+    def audit_pass(self):
+        if self.status == 2:
+            self.status = 1
+            self.join_date = now().date()
+            self.save()
+            return True
+        return False
+
+    def audit_reject(self):
+        if self.status == 2:
+            self.status = 3
+            self.save()
+            return True
+        return False
+
 
 class EmployeeTag(models.Model):
     STATUS_CHOICES = (
@@ -80,7 +97,7 @@ class EmployeeTag(models.Model):
 
     class Meta:
         db_table = 'employee_tag'
-        verbose_name = u'雇员标签'
+        verbose_name = u'雇员标签信息'
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -104,7 +121,7 @@ class EmployeeCity(models.Model):
 
     class Meta:
         db_table = 'employee_city'
-        verbose_name = u'雇员城市'
+        verbose_name = u'雇员城市信息'
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -113,11 +130,11 @@ class EmployeeCity(models.Model):
     def delete(self, using=None, keep_parents=False):
         self.status = self.STATUS_CHOICES[False]
         self.save()
-
-    @staticmethod
-    def get_all_city():
-        # return EmployeeCity.objects().all()
-        pass
+    #
+    # @staticmethod
+    # def get_all_city():
+    #     # return EmployeeCity.objects().all()
+    #     pass
 
 
 class EmployeeType(models.Model):
