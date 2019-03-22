@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'wechat_chatplatform.employee',
     'wechat_chatplatform.order',
+    'wechat_chatplatform.product',
 ]
 
 MIDDLEWARE = [
