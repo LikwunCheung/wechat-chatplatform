@@ -16,7 +16,7 @@ class Order(models.Model):
         (4, u'待发放工资'),
         (5, u'正常关闭'),
         (6, u'已换人'),
-        (7, u'付款超时失败')
+        (7, u'付款超时失败'),
     )
 
     order_id = models.AutoField(verbose_name=u'订单编号', primary_key=True)

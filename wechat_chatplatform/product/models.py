@@ -57,7 +57,7 @@ class Product(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.name
+        return self.type_id.__str__() + ' - ' + self.name
 
     def delete(self, using=None, keep_parents=False):
         self.status = self.STATUS_CHOICES[False]
@@ -83,7 +83,7 @@ class ProductEmployeeType(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.product_employee_type_id
+        return self.product_id.__str__() + ' - ' + self.employee_type_id.__str__()
 
     def delete(self, using=None, keep_parents=False):
         self.status = self.STATUS_CHOICES[False]
