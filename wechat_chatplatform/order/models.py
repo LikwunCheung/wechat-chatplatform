@@ -16,11 +16,11 @@ class Order(models.Model):
         (4, u'待发放工资'),
         (5, u'正常关闭'),
         (6, u'已换人'),
-        (7, u'付款超时失败')
+        (7, u'付款超时失败'),
     )
 
     order_id = models.AutoField(verbose_name=u'订单编号', primary_key=True)
-    # user_id = models.ForeignKey('user_info.UserInfo', verbose_name=u'用户id', related_name='user', on_delete=models.SET_NULL, blank=True, null=True)
+    user_id = models.ForeignKey('user_info.UserInfo', verbose_name=u'用户id', related_name='user', on_delete=models.SET_NULL, blank=True, null=True)
     product_id = models.ForeignKey('product.ProductEmployeeType', verbose_name=u'产品', related_name='product', on_delete=models.SET_NULL, blank=True, null=True)
     employee_id = models.ForeignKey('employee.Employee', verbose_name=u'雇员', related_name='employee', on_delete=models.SET_NULL, blank=True, null=True)
     status = models.IntegerField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
@@ -29,7 +29,7 @@ class Order(models.Model):
     deduction = models.FloatField(verbose_name=u'折扣金额', default=0)
     total_amount = models.FloatField(verbose_name=u'总金额')
     rmb_amount = models.FloatField(verbose_name=u'人民币金额')
-    order_time = models.DateTimeField(verbose_name=u'下单时间', default=now())
+    order_time = models.DateTimeField(verbose_name=u'下单时间')
     pay_time = models.DateTimeField(verbose_name=u'付款时间', blank=True, null=True)
     complete_time = models.DateTimeField(verbose_name=u'完成时间', blank=True, null=True)
     salary_time = models.DateTimeField(verbose_name=u'工资结算时间', blank=True, null=True)
