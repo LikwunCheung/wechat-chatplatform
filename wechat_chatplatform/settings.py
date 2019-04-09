@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'wechat_chatplatform.employee',
+    'wechat_chatplatform.user_info',
     'wechat_chatplatform.order',
     'wechat_chatplatform.product',
 ]
