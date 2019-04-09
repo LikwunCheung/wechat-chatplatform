@@ -6,24 +6,26 @@ import math
 from django.db import models
 from django.utils.timezone import now
 
+from wechat_chatplatform.common.choices import IdentityType, EmployeeStatus, Gender, Status
+
 
 class Employee(models.Model):
     IDENTITY_TYPE_CHOICES = (
-        (0, u'身份证'),
-        (1, u'护照'),
-        (2, u'驾驶证'),
+        (IdentityType.identity.value, u'身份证'),
+        (IdentityType.passport.value, u'护照'),
+        (IdentityType.driver.value, u'驾驶证'),
     )
 
     STATUS_CHOICES = (
-        (0, u'离职'),
-        (1, u'在职'),
-        (2, u'待审'),
-        (3, u'审核失败')
+        (EmployeeStatus.leave.value, u'离职'),
+        (EmployeeStatus.active.value, u'在职'),
+        (EmployeeStatus.unaudit.value, u'待审'),
+        (EmployeeStatus.audit_fail, u'审核失败')
     )
 
     GENDER_CHOICES = (
-        (0, u'男'),
-        (1, u'女'),
+        (Gender.male.value, u'男'),
+        (Gender.female.value, u'女'),
     )
 
     employee_id = models.AutoField(verbose_name=u'雇员编号', primary_key=True)
@@ -92,8 +94,8 @@ class Employee(models.Model):
 
 class EmployeeTag(models.Model):
     STATUS_CHOICES = (
-        (False, u'停用'),
-        (True, u'激活'),
+        (Status.inactive.value, u'停用'),
+        (Status.active.value, u'激活'),
     )
 
     tag_id = models.AutoField(verbose_name=u'标签编号', primary_key=True)
@@ -115,8 +117,8 @@ class EmployeeTag(models.Model):
 
 class EmployeeCity(models.Model):
     STATUS_CHOICES = (
-        (False, u'停用'),
-        (True, u'激活'),
+        (Status.inactive.value, u'停用'),
+        (Status.active.value, u'激活'),
     )
 
     city_id = models.AutoField(verbose_name=u'城市编号', primary_key=True)
@@ -144,13 +146,13 @@ class EmployeeCity(models.Model):
 
 class EmployeeType(models.Model):
     STATUS_CHOICES = (
-        (0, u'停用'),
-        (1, u'激活'),
+        (Status.inactive.value, u'停用'),
+        (Status.active.value, u'激活'),
     )
 
     type_id = models.AutoField(verbose_name=u'雇员类型编号', primary_key=True)
     name = models.CharField(verbose_name=u'雇员类型', max_length=15)
-    status = models.IntegerField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
+    status = models.BooleanField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
 
     class Meta:
         db_table = 'employee_type'
@@ -167,20 +169,20 @@ class EmployeeType(models.Model):
 
 class EmployeeGroup(models.Model):
     GENDER_CHOICES = (
-        (0, u'男'),
-        (1, u'女'),
-        (2, u'混合'),
+        (Gender.male.value, u'男'),
+        (Gender.female.value, u'女'),
+        (Gender.mix.value, u'混合'),
     )
     STATUS_CHOICES = (
-        (0, u'停用'),
-        (1, u'激活'),
+        (Status.inactive.value, u'停用'),
+        (Status.active.value, u'激活'),
     )
 
     group_id = models.AutoField(verbose_name=u'雇员钉钉群编号', primary_key=True)
     name = models.CharField(verbose_name=u'群名称', max_length=20)
     dingding_id = models.CharField(verbose_name=u'钉钉id', max_length=30)
     gender = models.IntegerField(verbose_name=u'性别', choices=GENDER_CHOICES, default=2)
-    status = models.IntegerField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
+    status = models.BooleanField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
 
     class Meta:
         db_table = 'employee_group'
