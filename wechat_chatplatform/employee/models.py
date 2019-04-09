@@ -64,6 +64,11 @@ class Employee(models.Model):
 
     age.short_description = u'年龄'
 
+    def constellation(self):
+        pass
+
+    constellation.short_description = u'星座'
+
     def delete(self, using=None, keep_parents=False):
         self.status = self.STATUS_CHOICES[0]
         self.leave_date = now().date()
