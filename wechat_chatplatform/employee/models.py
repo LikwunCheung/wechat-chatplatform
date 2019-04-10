@@ -32,12 +32,12 @@ class Employee(models.Model):
     name = models.CharField(verbose_name=u'姓名', max_length=20)
     nickname = models.CharField(verbose_name=u'昵称', max_length=30)
     type_id = models.ForeignKey('employee.EmployeeType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL, blank=True, null=True)
-    status = models.IntegerField(verbose_name=u'状态', choices=STATUS_CHOICES, default=2)
+    status = models.IntegerField(verbose_name=u'状态', choices=EmployeeStatus.EmployeeStatusChoice.value, default=2)
     city_id = models.ForeignKey('employee.EmployeeCity', verbose_name=u'城市', related_name='city', on_delete=models.SET_NULL, blank=True, null=True)
-    identity_type = models.IntegerField(verbose_name=u'证件类型', choices=IDENTITY_TYPE_CHOICES, default=0)
+    identity_type = models.IntegerField(verbose_name=u'证件类型', choices=IdentityType.IdentityTypeChoice.value, default=0)
     identity = models.CharField(verbose_name=u'证件号码', max_length=20)
     birthday = models.DateField(verbose_name=u'生日')
-    gender = models.IntegerField(verbose_name=u'性别', choices=GENDER_CHOICES)
+    gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value)
     mobile = models.CharField(verbose_name=u'联系电话', max_length=20)
     dingtalk_id = models.CharField(verbose_name=u'钉钉', max_length=30, null=True)
     wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
@@ -100,7 +100,7 @@ class EmployeeTag(models.Model):
 
     tag_id = models.AutoField(verbose_name=u'标签编号', primary_key=True)
     name = models.CharField(verbose_name=u'标签', max_length=15)
-    status = models.BooleanField(verbose_name=u'状态', choices=STATUS_CHOICES, default=True)
+    status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
         db_table = 'employee_tag'
@@ -124,7 +124,7 @@ class EmployeeCity(models.Model):
     city_id = models.AutoField(verbose_name=u'城市编号', primary_key=True)
     name = models.CharField(verbose_name=u'中文名', max_length=15)
     en_name = models.CharField(verbose_name=u'英文名', max_length=15, blank=True, null=True)
-    status = models.BooleanField(verbose_name=u'状态', choices=STATUS_CHOICES, default=True)
+    status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
         db_table = 'employee_city'
@@ -152,7 +152,7 @@ class EmployeeType(models.Model):
 
     type_id = models.AutoField(verbose_name=u'雇员类型编号', primary_key=True)
     name = models.CharField(verbose_name=u'雇员类型', max_length=15)
-    status = models.BooleanField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
+    status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
         db_table = 'employee_type'
@@ -181,8 +181,8 @@ class EmployeeGroup(models.Model):
     group_id = models.AutoField(verbose_name=u'雇员钉钉群编号', primary_key=True)
     name = models.CharField(verbose_name=u'群名称', max_length=20)
     dingding_id = models.CharField(verbose_name=u'钉钉id', max_length=30)
-    gender = models.IntegerField(verbose_name=u'性别', choices=GENDER_CHOICES, default=2)
-    status = models.BooleanField(verbose_name=u'状态', choices=STATUS_CHOICES, default=1)
+    gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value, default=Gender.mix.value)
+    status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
         db_table = 'employee_group'
