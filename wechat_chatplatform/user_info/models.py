@@ -1,11 +1,9 @@
 from django.db import models
 
+from wechat_chatplatform.common.choices import Status
+
 
 class UserInfo(models.Model):
-    STATUS_CHOICES = (
-        (False, u'停用'),
-        (True, u'激活'),
-    )
 
     user_id = models.AutoField(verbose_name=u'用户编号', primary_key=True)
     open_id = models.CharField(verbose_name=u'微信开放编号', max_length=60, blank=True, null=True)
