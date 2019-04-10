@@ -53,6 +53,7 @@ class Status(Enum):
         (active, u'激活')
     )
 
+
 @unique
 class OrderStatus(Enum):
     delete = 0
@@ -75,6 +76,16 @@ class OrderStatus(Enum):
         (overtime, u'付款超时失败'),
     )
 
+
+@unique
+class ExtendStatus(Enum):
+    first = False
+    extend = True
+
+    ExtendStatusChoice = (
+        (first, u'首单'),
+        (extend, u'续单'),
+    )
 
 
 if __name__ == '__main__':

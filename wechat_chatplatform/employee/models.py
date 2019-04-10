@@ -10,23 +10,6 @@ from wechat_chatplatform.common.choices import IdentityType, EmployeeStatus, Gen
 
 
 class Employee(models.Model):
-    IDENTITY_TYPE_CHOICES = (
-        (IdentityType.identity.value, u'身份证'),
-        (IdentityType.passport.value, u'护照'),
-        (IdentityType.driver.value, u'驾驶证'),
-    )
-
-    STATUS_CHOICES = (
-        (EmployeeStatus.leave.value, u'离职'),
-        (EmployeeStatus.active.value, u'在职'),
-        (EmployeeStatus.unaudit.value, u'待审'),
-        (EmployeeStatus.audit_fail, u'审核失败')
-    )
-
-    GENDER_CHOICES = (
-        (Gender.male.value, u'男'),
-        (Gender.female.value, u'女'),
-    )
 
     employee_id = models.AutoField(verbose_name=u'雇员编号', primary_key=True)
     name = models.CharField(verbose_name=u'姓名', max_length=20)
@@ -72,31 +55,27 @@ class Employee(models.Model):
     constellation.short_description = u'星座'
 
     def delete(self, using=None, keep_parents=False):
-        self.status = self.STATUS_CHOICES[0]
+        self.status = EmployeeStatus.leave.value
         self.leave_date = now().date()
         self.save()
 
     def audit_pass(self):
-        if self.status == 2:
-            self.status = 1
+        if self.status == EmployeeStatus.unaudit.value:
+            self.status = EmployeeStatus.active.value
             self.join_date = now().date()
             self.save()
             return True
         return False
 
     def audit_reject(self):
-        if self.status == 2:
-            self.status = 3
+        if self.status == EmployeeStatus.unaudit.value:
+            self.status = EmployeeStatus.audit_fail.value
             self.save()
             return True
         return False
 
 
 class EmployeeTag(models.Model):
-    STATUS_CHOICES = (
-        (Status.inactive.value, u'停用'),
-        (Status.active.value, u'激活'),
-    )
 
     tag_id = models.AutoField(verbose_name=u'标签编号', primary_key=True)
     name = models.CharField(verbose_name=u'标签', max_length=15)
@@ -111,7 +90,7 @@ class EmployeeTag(models.Model):
         return self.name
 
     def delete(self, using=None, keep_parents=False):
-        self.status = self.STATUS_CHOICES[False]
+        self.status = Status.inactive.value
         self.save()
 
 
@@ -135,7 +114,7 @@ class EmployeeCity(models.Model):
         return self.name
 
     def delete(self, using=None, keep_parents=False):
-        self.status = self.STATUS_CHOICES[False]
+        self.status = Status.inactive.value
         self.save()
     #
     # @staticmethod
@@ -163,7 +142,7 @@ class EmployeeType(models.Model):
         return self.name
 
     def delete(self, using=None, keep_parents=False):
-        self.status = self.STATUS_CHOICES[0]
+        self.status = Status.inactive.value
         self.save()
 
 
@@ -193,5 +172,5 @@ class EmployeeGroup(models.Model):
         return self.dingding_id
 
     def delete(self, using=None, keep_parents=False):
-        self.status = self.STATUS_CHOICES[0]
+        self.status = Status.inactive.value
         self.save()
