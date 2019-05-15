@@ -6,7 +6,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect, HttpRespons
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 
-from wechat_chatplatform.employee.models import Employee, EmployeeType, EmployeeGroup, EmployeeCity
+from wechat_chatplatform.employee.models import Employee, EmployeeType, EmployeeTag, EmployeeCity
 from wechat_chatplatform.common.utils import *
 from wechat_chatplatform.common.choices import *
 
@@ -62,6 +62,23 @@ def get_level(request, *args, **kwargs):
             id=level['type_id'],
             name=level['name']
         ))
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
+
+@require_http_methods(['GET'])
+@check_api_key
+@cache_page(15 * 60)
+def get_tag(request, *args, **kwargs):
+    tags = EmployeeTag.objects.values('tag_id', 'name').filter(status=Status.active.value)
+    results = []
+    for tag in tags:
+        results.append(dict(
+            id=tag['tag_id'],
+            name=tag['name']
+        ))
+
     resp = init_http_success()
     resp['data'] = results
     return make_json_response(HttpResponse, resp)
