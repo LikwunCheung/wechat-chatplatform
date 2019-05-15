@@ -12,7 +12,7 @@ class AdminUser(models.Model):
     username = models.CharField(verbose_name=u'姓名', max_length=20)
     password = models.CharField(verbose_name=u'密码', max_length=100)
     nickname = models.CharField(verbose_name=u'昵称', max_length=30)
-    type_id = models.ForeignKey('platform_admin.AdminUserType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL)
+    type_id = models.ForeignKey('platform_admin.AdminUserType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL, blank=True, null=True)
     status = models.IntegerField(verbose_name=u'状态', choices=AdminUserStatus.AdminUserStatusChoice.value, default=AdminUserStatus.active.value)
     mobile = models.CharField(verbose_name=u'联系电话', max_length=20)
     dingtalk_id = models.CharField(verbose_name=u'钉钉', max_length=30, null=True)
