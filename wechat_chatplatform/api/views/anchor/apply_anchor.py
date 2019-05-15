@@ -92,7 +92,7 @@ def anchor_apply_unaudit_get(request):
             nickname=anchor_apply_record.nickname,
             city=anchor_apply_record.city,
             birthday=anchor_apply_record.birthday.strftime('%Y-%m-%d'),
-            gender=Gender.GenderChoices.value[anchor_apply_record.gender][1],
+            gender=dict(Gender.GenderChoices.value)[anchor_apply_record.gender],
             wechat_id=anchor_apply_record.wechat_id,
             audio=anchor_apply_record.audio,
             image=anchor_apply_record.image.split(','),
@@ -139,8 +139,8 @@ def anchor_apply_action_post(request, action):
 
     results = dict(
         id=anchor_apply_record.record_id,
-        name=anchor_apply_record.name,
-        status=dict(AnchorStatus.AnchorStatusChoice.value)[anchor_apply_record.status]
+        name=anchor_apply_record.nickname,
+        status=dict(AnchorAuditStatus.AnchorAuditStatusChoice.value)[anchor_apply_record.status]
     )
     resp = init_http_success()
     resp['data'] = results
