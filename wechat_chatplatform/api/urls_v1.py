@@ -12,7 +12,7 @@ urlpatterns = [
     path('anchor/list/', anchor_list_router),
     path('anchor/detail/', anchor_detail_router),
     path('anchor/apply/', anchor_apply_router),
-    path('anchor/apply/gender/', get_gender),g
+    path('anchor/apply/gender/', get_gender),
     path('anchor/apply/city/', get_city),
     path('anchor/apply/level/', get_level),
     path('anchor/apply/unaudit/', anchor_apply_unaudit_router),
