@@ -46,19 +46,12 @@ def anchor_apply_action_router(requset, *args, **kwargs):
     return HttpResponseNotAllowed()
 
 
-@require_http_methods(['POST', 'OPTIONS'])
-@check_api_key
-def anchor_apply_reject_router(requset, *args, **kwargs):
-    if requset.method == 'POST':
-        return anchor_apply_reject_post(requset)
-    return HttpResponseNotAllowed()
-
-
 def anchor_apply_post(request):
     keys = ['name', 'nickname', 'city_id', 'identity_type', 'identity', 'birthday', 'gender', 'mobile', 'wechat_id',
             'audio', 'avatar', 'image', 'slogan', 'tags']
 
     param = ujson.loads(request.body)
+    print(param)
 
     try:
         for i in range(len(param['image'])):
