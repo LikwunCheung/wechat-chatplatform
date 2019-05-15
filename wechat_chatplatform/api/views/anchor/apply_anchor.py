@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
 
 from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorGroup, AnchorCity, AnchorTag
-from wechat_chatplatform.common.utils import *
+from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.config import *
 from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.handler.anchor_handler import AnchorHandler
@@ -45,6 +45,19 @@ def anchor_apply_action_router(requset, *args, **kwargs):
     return HttpResponseNotAllowed()
 
 
+@require_http_methods(['GET', 'OPTIONS'])
+@check_api_key
+def anchor_apply_dingtalk_action_router(requset, *args, **kwargs):
+    action = None
+    for arg in args:
+        if isinstance(arg, dict):
+            action = arg.get('action', None)
+
+    if requset.method == 'POST':
+        return anchor_apply_action_post(requset, action)
+    return HttpResponseNotAllowed()
+
+
 def anchor_apply_post(request):
     keys = ['name', 'nickname', 'city_id', 'identity_type', 'identity', 'birthday', 'gender', 'mobile', 'wechat_id',
             'audio', 'avatar', 'image', 'slogan', 'tags']
@@ -53,12 +66,11 @@ def anchor_apply_post(request):
     print(param)
 
     try:
-        for i in range(len(param['image'])):
-            param.update({'img{}'.format(i + 1): param['image'][i]})
-        param.pop('image')
         param['tags'] = ','.join([str(tag) for tag in param['tags']])
-        param['city_id'] = AnchorCity.objects.get(city_id=param['city_id'])
+        param['city_id'] = AnchorCity.objects.get(city_id=int(param['city_id']))
         param['identity_type'] = IdentityType.identity.value
+        param['image'] = param['image'][0:3] if len(param['image']) > 3 else param['image']
+        param['image'] = ','.join(param['image'])
     except Exception as e:
         print(e)
         resp = init_http_bad_request('AttributeError')

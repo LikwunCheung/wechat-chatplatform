@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 
 from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorTag, AnchorCity
-from wechat_chatplatform.common.utils import *
+from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.choices import *
 
 

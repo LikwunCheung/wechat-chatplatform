@@ -6,7 +6,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect, HttpRespons
 from django.views.decorators.http import require_http_methods
 
 from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorGroup, AnchorCity
-from wechat_chatplatform.common.utils import *
+from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.config import *
 from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.handler.anchor_handler import anchor_handler
