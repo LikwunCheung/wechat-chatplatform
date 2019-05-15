@@ -6,30 +6,27 @@ import math
 from django.db import models
 from django.utils.timezone import now
 
-from wechat_chatplatform.common.choices import IdentityType, AnchorStatus, Gender, Status
+from wechat_chatplatform.common.choices import AnchorStatus, AnchorAuditStatus, Gender, Status
 
 
 class Anchor(models.Model):
-
     anchor_id = models.AutoField(verbose_name=u'店员编号', primary_key=True)
-    name = models.CharField(verbose_name=u'姓名', max_length=20)
     nickname = models.CharField(verbose_name=u'昵称', max_length=30)
-    type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL, blank=True, null=True)
+    type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL,
+                                blank=True, null=True)
     status = models.IntegerField(verbose_name=u'状态', choices=AnchorStatus.AnchorStatusChoice.value, default=2)
-    city_id = models.ForeignKey('anchor.AnchorCity', verbose_name=u'城市', related_name='city', on_delete=models.SET_NULL, blank=True, null=True)
-    identity_type = models.IntegerField(verbose_name=u'证件类型', choices=IdentityType.IdentityTypeChoice.value, default=0)
-    identity = models.CharField(verbose_name=u'证件号码', max_length=20)
+    city = models.CharField(verbose_name=u'城市', max_length=20, blank=True, null=True)
     birthday = models.DateField(verbose_name=u'生日')
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value)
-    mobile = models.CharField(verbose_name=u'联系电话', max_length=20)
+    skill = models.CharField(verbose_name=u'特长', max_length=100, blank=True, null=True)
+    online = models.CharField(verbose_name=u'在线时间', max_length=100, blank=True, null=True)
+    occupation = models.CharField(verbose_name=u'职业', max_length=20, blank=True, null=True)
     dingtalk_id = models.CharField(verbose_name=u'钉钉', max_length=30, blank=True, null=True)
     dingtalk_robot = models.CharField(verbose_name=u'钉钉个人机器人', max_length=100, blank=True, null=True)
     wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
     audio = models.CharField(verbose_name=u'音频', max_length=100, blank=True, null=True)
     avatar = models.CharField(verbose_name=u'头像', max_length=100, blank=True, null=True)
     image = models.CharField(verbose_name=u'图片', max_length=300, blank=True, null=True)
-    audit_date = models.DateTimeField(verbose_name=u'审核时间', blank=True, null=True)
-    auditor = models.ForeignKey('platform_admin.AdminUser', verbose_name=u'审核人', related_name='auditor', on_delete=models.SET_NULL, blank=True, null=True)
     join_date = models.DateField(verbose_name=u'入职日期', blank=True, null=True)
     leave_date = models.DateField(verbose_name=u'离职日期', blank=True, null=True)
     slogan = models.CharField(verbose_name=u'标语', max_length=150, null=True)
@@ -41,7 +38,7 @@ class Anchor(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.name
+        return self.nickname
 
     def age(self):
         if not self.birthday:
@@ -103,7 +100,6 @@ class Anchor(models.Model):
 
 
 class AnchorTag(models.Model):
-
     tag_id = models.AutoField(verbose_name=u'标签编号', primary_key=True)
     name = models.CharField(verbose_name=u'标签', max_length=15)
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
@@ -121,33 +117,30 @@ class AnchorTag(models.Model):
         self.save()
 
 
-class AnchorCity(models.Model):
-    STATUS_CHOICES = (
-        (Status.inactive.value, u'停用'),
-        (Status.active.value, u'激活'),
-    )
-
-    city_id = models.AutoField(verbose_name=u'城市编号', primary_key=True)
-    name = models.CharField(verbose_name=u'中文名', max_length=15)
-    en_name = models.CharField(verbose_name=u'英文名', max_length=15, blank=True, null=True)
-    status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
-
-    class Meta:
-        db_table = 'anchor_city'
-        verbose_name = u'店员城市信息'
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.name
-
-    def delete(self, using=None, keep_parents=False):
-        self.status = Status.inactive.value
-        self.save()
-    #
-    # @staticmethod
-    # def get_all_city():
-    #     # return EmployeeCity.objects().all()
-    #     pass
+#
+#
+# class AnchorCity(models.Model):
+#     STATUS_CHOICES = (
+#         (Status.inactive.value, u'停用'),
+#         (Status.active.value, u'激活'),
+#     )
+#
+#     city_id = models.AutoField(verbose_name=u'城市编号', primary_key=True)
+#     name = models.CharField(verbose_name=u'中文名', max_length=15)
+#     en_name = models.CharField(verbose_name=u'英文名', max_length=15, blank=True, null=True)
+#     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
+#
+#     class Meta:
+#         db_table = 'anchor_city'
+#         verbose_name = u'店员城市信息'
+#         verbose_name_plural = verbose_name
+#
+#     def __str__(self):
+#         return self.name
+#
+#     def delete(self, using=None, keep_parents=False):
+#         self.status = Status.inactive.value
+#         self.save()
 
 
 class AnchorType(models.Model):
@@ -200,4 +193,53 @@ class AnchorGroup(models.Model):
 
     def delete(self, using=None, keep_parents=False):
         self.status = Status.inactive.value
+        self.save()
+
+
+class AnchorApplyRecord(models.Model):
+    record_id = models.AutoField(verbose_name=u'申请编号', primary_key=True)
+    nickname = models.CharField(verbose_name=u'昵称', max_length=30)
+    city = models.CharField(verbose_name=u'城市', max_length=20, blank=True, null=True)
+    birthday = models.DateField(verbose_name=u'生日')
+    gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value)
+    wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
+    audio = models.CharField(verbose_name=u'音频', max_length=100, blank=True, null=True)
+    avatar = models.CharField(verbose_name=u'头像', max_length=100, blank=True, null=True)
+    image = models.CharField(verbose_name=u'图片', max_length=300, blank=True, null=True)
+    slogan = models.CharField(verbose_name=u'标语', max_length=150, null=True)
+    tags = models.CharField(verbose_name=u'标签', max_length=50, blank=True, null=True)
+    skill = models.CharField(verbose_name=u'特长', max_length=100, blank=True, null=True)
+    experience = models.BooleanField(verbose_name=u'经验', default=False)
+    occupation = models.CharField(verbose_name=u'职业', max_length=20, blank=True, null=True)
+    online = models.CharField(verbose_name=u'在线时间', max_length=100, blank=True, null=True)
+    status = models.IntegerField(verbose_name=u'状态', choices=AnchorAuditStatus.AnchorAuditStatusChoice.value,
+                                 default=AnchorAuditStatus.unaudit.value)
+    apply_date = models.DateField(verbose_name=u'申请时间', blank=True, null=True)
+    audit_date = models.DateTimeField(verbose_name=u'审核时间', blank=True, null=True)
+    auditor = models.ForeignKey('platform_admin.AdminUser', verbose_name=u'审核人', related_name='auditor',
+                                on_delete=models.SET_NULL, blank=True, null=True)
+
+    class Meta:
+        db_table = 'anchor_apply_record'
+        verbose_name = u'店员申请记录'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.nickname
+
+    def audit_pass(self, auditor, type):
+        anchor = Anchor(nickname=self.nickname, city=self.city, birthday=self.birthday, gender=self.gender,
+                        wechat_id=self.wechat_id, audio=self.audio, avatar=self.avatar, image=self.image,
+                        slogan=self.slogan, tags=self.tags, skill=self.skill, online=self.online, type_id=type,
+                        occupation=self.occupation, status=AnchorStatus.active.value, join_date=now())
+        anchor.save()
+        self.audit_date = now()
+        self.auditor = auditor
+        self.status = AnchorAuditStatus.success.value
+        self.save()
+
+    def audit_fail(self, auditor):
+        self.audit_date = now()
+        self.auditor = auditor
+        self.status = AnchorAuditStatus.fail.value
         self.save()

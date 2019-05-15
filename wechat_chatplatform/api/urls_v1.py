@@ -17,7 +17,6 @@ urlpatterns = [
 
     path('info/gender/', get_gender),
     path('info/tag/', get_tag),
-    path('info/city/', get_city),
     path('info/level/', get_anchor_level),
 
     # path('anchor/apply/audit/dingtalk/<str:action>/', anchor_apply_dingtalk_action_router),

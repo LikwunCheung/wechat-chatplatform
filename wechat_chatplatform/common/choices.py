@@ -19,14 +19,23 @@ class IdentityType(Enum):
 class AnchorStatus(Enum):
     leave = 0
     active = 1
-    unaudit = 2
-    audit_fail = 3
 
     AnchorStatusChoice = (
         (leave, u'离职'),
         (active, u'在职'),
+    )
+
+
+@unique
+class AnchorAuditStatus(Enum):
+    unaudit = 1
+    success = 2
+    fail = 3
+
+    AnchorAuditStatusChoice = (
         (unaudit, u'待审核'),
-        (audit_fail, u'审核未通过'),
+        (success, u'审核通过'),
+        (fail, u'审核失败'),
     )
 
 

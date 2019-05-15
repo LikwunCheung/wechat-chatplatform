@@ -7,15 +7,12 @@ from django.http.response import HttpResponse, HttpResponseRedirect, HttpRespons
 from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
 
-from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorGroup, AnchorCity, AnchorTag
+from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorApplyRecord
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.config import *
 from wechat_chatplatform.common.choices import *
-from wechat_chatplatform.handler.anchor_handler import AnchorHandler
+from wechat_chatplatform.handler.anchor_apply_record_handler import anchor_apply_record_handler
 from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_applier_message
-
-
-anchor_handler = AnchorHandler()
 
 
 @require_http_methods(['POST', 'OPTIONS'])
@@ -60,16 +57,14 @@ def anchor_apply_dingtalk_action_router(requset, *args, **kwargs):
 
 
 def anchor_apply_post(request):
-    keys = ['name', 'nickname', 'city_id', 'identity_type', 'identity', 'birthday', 'gender', 'mobile', 'wechat_id',
-            'audio', 'avatar', 'image', 'slogan', 'tags']
+    keys = ['nickname', 'city', 'birthday', 'gender', 'wechat_id', 'audio', 'avatar', 'image', 'slogan', 'tags',
+            'skill', 'experience', 'occupation', 'online']
 
     param = ujson.loads(request.body)
     print(param)
 
     try:
         param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])
-        param['city_id'] = AnchorCity.objects.get(city_id=int(param['city_id']))
-        param['identity_type'] = IdentityType.identity.value
         param['image'] = param['image'][0:3] if len(param['image']) > 3 else param['image']
         param['image'] = ','.join(param['image'])
     except Exception as e:
@@ -77,11 +72,7 @@ def anchor_apply_post(request):
         resp = init_http_bad_request('AttributeError')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    param.update(dict(
-        status=AnchorStatus.unaudit.value
-    ))
-
-    anchor = anchor_handler.apply_anchor(param)
+    anchor = anchor_apply_record_handler.apply_anchor(param)
     if not anchor:
         resp = init_http_bad_request('Some Error Happend')
         return make_json_response(HttpResponseBadRequest, resp)
@@ -92,26 +83,27 @@ def anchor_apply_post(request):
 
 
 def anchor_apply_unaudit_get(request):
-
-    anchors = Anchor.objects.filter(status=AnchorStatus.unaudit.value)
+    anchor_apply_records = AnchorApplyRecord.objects.filter(status=AnchorAuditStatus.unaudit.value)
     results = []
 
-    for anchor in anchors:
+    for anchor_apply_record in anchor_apply_records:
         results.append(dict(
-                id=anchor.anchor_id,
-                name=anchor.name,
-                nickname=anchor.nickname,
-                city=anchor.city_id.name,
-                identity=anchor.identity,
-                birthday=anchor.birthday.strftime('%Y-%m-%d'),
-                gender=Gender.GenderChoices.value[anchor.gender][1],
-                mobile=anchor.mobile,
-                wechat_id=anchor.wechat_id,
-                audio=anchor.audio,
-                image=anchor.image.split(','),
-                slogan=anchor.slogan,
-                tags=anchor.tags.split(',')
-            )
+            id=anchor_apply_record.record_id,
+            nickname=anchor_apply_record.nickname,
+            city=anchor_apply_record.city,
+            birthday=anchor_apply_record.birthday.strftime('%Y-%m-%d'),
+            gender=Gender.GenderChoices.value[anchor_apply_record.gender][1],
+            wechat_id=anchor_apply_record.wechat_id,
+            audio=anchor_apply_record.audio,
+            image=anchor_apply_record.image.split(','),
+            slogan=anchor_apply_record.slogan,
+            tags=anchor_apply_record.tags.split(','),
+            experience=anchor_apply_record.experience,
+            online=anchor_apply_record.online,
+            occupation=anchor_apply_record.occupation,
+            skill=anchor_apply_record.skill,
+            apply_date=anchor_apply_record.apply_date.strftime('%Y-%m-%d %H:%m:%S'),
+        )
         )
 
     resp = init_http_success()
@@ -121,40 +113,34 @@ def anchor_apply_unaudit_get(request):
 
 def anchor_apply_action_post(request, action):
     param = ujson.loads(request.body)
-    anchor_id = param.get('id', None)
+    anchor_apply_reocrd_id = param.get('id', None)
 
-    if not anchor_id:
-        resp = init_http_bad_request('No Anchor ID')
+    if not anchor_apply_reocrd_id:
+        resp = init_http_bad_request('No Apply Record ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
     try:
-        anchor = Anchor.objects.get(anchor_id=anchor_id)
+        anchor_apply_record = AnchorApplyRecord.objects.get(record_id=anchor_apply_reocrd_id)
     except Exception as e:
-        resp = init_http_bad_request('No Match Anchor')
+        resp = init_http_bad_request('No Match Apply Record')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    if anchor.status != AnchorStatus.unaudit.value:
-        resp = init_http_bad_request('Anchor Audited')
+    if anchor_apply_record.status != AnchorAuditStatus.unaudit.value:
+        resp = init_http_bad_request('Anchor Had Been Audited')
         return make_json_response(HttpResponseBadRequest, resp)
 
     if action == 'pass':
-        level = request.POST.get('level', 1)
-        anchor.type_id = AnchorType.objects.get(type_id=level)
-        anchor.status = AnchorStatus.active.value
-        anchor.join_date = now()
-        anchor.audit_date = now()
-        anchor.auditor = None
-        anchor.save()
+        level = param.get('level', 1)
+
+        type = AnchorType.objects.get(type_id=level)
+        anchor_apply_record.audit_pass(None, type)
     elif action == 'reject':
-        anchor.status = AnchorStatus.audit_fail.value
-        anchor.audit_date = now()
-        anchor.auditor = None
-        anchor.save()
+        anchor_apply_record.audit_fail(None)
 
     results = dict(
-        id=anchor.anchor_id,
-        name=anchor.name,
-        status=dict(AnchorStatus.AnchorStatusChoice.value)[anchor.status]
+        id=anchor_apply_record.record_id,
+        name=anchor_apply_record.name,
+        status=dict(AnchorStatus.AnchorStatusChoice.value)[anchor_apply_record.status]
     )
     resp = init_http_success()
     resp['data'] = results
