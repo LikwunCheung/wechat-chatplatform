@@ -10,9 +10,9 @@ from .models import Order
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_id', 'employee_id', 'product_id', 'status', 'rmb_amount', 'order_time')
-    list_filter = ('employee_id', 'status', )
-    search_fields = ('employee_id',)
+    list_display = ('order_id', 'anchor_id', 'product_id', 'status', 'rmb_amount', 'order_time')
+    list_filter = ('anchor_id', 'status', )
+    search_fields = ('anchor_id',)
     empty_value_display = 'N/A'
     date_hierarchy = 'order_time'
 

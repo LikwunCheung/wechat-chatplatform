@@ -23,5 +23,7 @@ def new_order_router(request, *args, **kwargs):
 
 
 def new_order_post(request):
-
+    keys = ['']
     param = ujson.loads(request.body)
+
+

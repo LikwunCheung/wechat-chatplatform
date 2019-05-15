@@ -91,7 +91,7 @@ def anchor_detail_get(request, anchor_id):
     results = dict(
         id=anchor.anchor_id,
         nickname=anchor.nickname,
-        gender=Gender.GenderChoices.value[anchor.gender][1],
+        gender=anchor.gender,
         constellation=anchor.constellation(),
         slogan=anchor.slogan,
         age=anchor.age(),

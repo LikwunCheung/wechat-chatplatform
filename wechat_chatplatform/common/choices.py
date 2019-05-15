@@ -59,7 +59,7 @@ class Gender(Enum):
     GenderChoices = (
         (female, u'女'),
         (male, u'男'),
-        (mix, u'混合'),
+        (mix, u'不限'),
     )
 
 
