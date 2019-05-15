@@ -71,7 +71,7 @@ def anchor_detail_get(request, anchor_id):
         return make_json_response(HttpResponseBadRequest, resp)
 
     products = dict()
-    anchor_products = anchor.type_id.products.all().order_by('price')
+    anchor_products = anchor.type_id.products.filter(status=Status.active.value).order_by('price')
     for anchor_product in anchor_products:
         product_type = anchor_product.product_id.type_id
         products.update({product_type.name: {}}) if product_type.name not in products else None

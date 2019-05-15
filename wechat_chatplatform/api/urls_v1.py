@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.urls import path
+from django.urls import path, include
 
 from .views.anchor.anchor import anchor_list_router, anchor_detail_router
 from .views.anchor.apply_anchor import anchor_apply_router, anchor_apply_unaudit_router, anchor_apply_action_router
@@ -18,6 +18,8 @@ urlpatterns = [
     path('info/gender/', get_gender),
     path('info/tag/', get_tag),
     path('info/level/', get_anchor_level),
+    path('info/product-type/', get_product_type),
+    path('info/product/', get_product),
 
     # path('anchor/apply/audit/dingtalk/<str:action>/', anchor_apply_dingtalk_action_router),
 

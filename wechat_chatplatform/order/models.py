@@ -6,7 +6,7 @@ import math
 from django.db import models
 from django.utils.timezone import now
 
-from wechat_chatplatform.common.choices import OrderStatus
+from wechat_chatplatform.common.choices import OrderStatus, Gender
 
 
 class Order(models.Model):
@@ -15,6 +15,7 @@ class Order(models.Model):
     user_id = models.ForeignKey('user_info.UserInfo', verbose_name=u'用户id', related_name='user', on_delete=models.SET_NULL, blank=True, null=True)
     product_id = models.ForeignKey('product.ProductAnchorType', verbose_name=u'产品', related_name='product', on_delete=models.SET_NULL, blank=True, null=True)
     anchor_id = models.ForeignKey('anchor.Anchor', verbose_name=u'雇员', related_name='anchor', on_delete=models.SET_NULL, blank=True, null=True)
+    gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value, blank=True, null=True)
     status = models.IntegerField(verbose_name=u'状态', choices=OrderStatus.OrderStatusChoices.value, default=OrderStatus.unpaid.value)
     number = models.FloatField(verbose_name=u'件数', default=1)
     comment = models.CharField(verbose_name=u'备注', max_length=100, blank=True, null=True)

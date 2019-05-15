@@ -7,13 +7,13 @@ from .models import Product, ProductType, ProductAnchorType
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('product_id', 'type_id', 'name', 'time', 'partition', 'partition_extend', 'status',)
-    list_filter = ('type_id', 'status',)
+    list_display = ('product_id', 'product_type_id', 'name', 'time', 'partition', 'partition_extend', 'status',)
+    list_filter = ('product_type_id', 'status',)
     empty_value_display = 'N/A'
 
 
 class ProductTypeAdmin(admin.ModelAdmin):
-    list_display = ('type_id', 'name', 'status',)
+    list_display = ('product_type_id', 'name', 'status',)
     list_filter = ('status',)
 
 
