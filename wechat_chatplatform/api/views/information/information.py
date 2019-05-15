@@ -63,7 +63,7 @@ def get_tag(request, *args, **kwargs):
     tags = AnchorTag.objects.values('name').filter(status=Status.active.value)
     results = []
     for tag in tags:
-        results.append(tag['name'])
+        results.append('#' + tag['name'])
 
     resp = init_http_success()
     resp['data'] = results

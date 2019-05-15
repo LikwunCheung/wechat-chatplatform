@@ -13,12 +13,13 @@ urlpatterns = [
     path('anchor/detail/', anchor_detail_router),
 
     path('anchor/apply/', anchor_apply_router),
-    path('anchor/apply/gender/', get_gender),
-    path('anchor/apply/tag/', get_tag),
-    path('anchor/apply/city/', get_city),
-    path('anchor/apply/level/', get_anchor_level),
     path('anchor/apply/unaudit/', anchor_apply_unaudit_router),
     path('anchor/apply/audit/<str:action>/', anchor_apply_action_router),
+
+    path('info/gender/', get_gender),
+    path('info/tag/', get_tag),
+    path('info/city/', get_city),
+    path('info/level/', get_anchor_level),
     # path('anchor/apply/audit/dingtalk/<str:action>/', anchor_apply_dingtalk_action_router),
 
     path('order/new/', new_order_router),
