@@ -14,7 +14,6 @@ class AnchorAdmin(admin.ModelAdmin):
     list_display = ('anchor_id', 'nickname', 'gender', 'age', 'constellation', 'type_id', 'status')
     list_filter = ('type_id', 'gender', 'status')
     search_fields = ('name', 'nickname',)
-    exclude = ('age', 'status',)
     empty_value_display = 'N/A'
 
 
