@@ -148,12 +148,22 @@ def anchor_apply_action_post(request, action):
         employee.join_date = now()
         employee.audit_date = now()
         employee.auditor = None
-
-
         employee.save()
     elif action == 'reject':
-        employee.status = EmployeeStatus.
-    pass
+        employee.status = EmployeeStatus.audit_fail.value
+        employee.audit_date = now()
+        employee.auditor = None
+        employee.save()
+
+    results = dict(
+        id=employee.employee_id,
+        name=employee.name,
+        status=dict(EmployeeStatus.EmployeeStatusChoice.value)[employee.status]
+    )
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
 
 
 def anchor_apply_reject_post(request):
