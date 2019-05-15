@@ -44,6 +44,8 @@ def anchor_list_get(request, index):
     anchors = Anchor.objects.filter(status=AnchorStatus.active.value).order_by('type_id')[index * 8: (index + 1) * 8]
     results = list()
     for anchor in anchors:
+        anchor_products = anchor.type_id.products.all().order_by('price')
+
         results.append(dict(
             id=anchor.anchor_id,
             nickname=anchor.nickname,
@@ -54,7 +56,7 @@ def anchor_list_get(request, index):
             level=anchor.type_id.name,
             audio=anchor.audio,
             avatar=anchor.avatar,
-            price=None,
+            price=anchor_products[0].price,
         ))
 
     resp = init_http_success()
