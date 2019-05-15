@@ -3,8 +3,7 @@
 from django.urls import path
 
 from .views.anchor.anchor import anchor_list_router, anchor_detail_router
-from .views.anchor.apply_anchor import anchor_apply_router, anchor_apply_unaudit_router, anchor_apply_action_router, \
-    anchor_apply_dingtalk_action_router
+from .views.anchor.apply_anchor import anchor_apply_router, anchor_apply_unaudit_router, anchor_apply_action_router
 from .views.information.information import *
 from .views.order.order import *
 

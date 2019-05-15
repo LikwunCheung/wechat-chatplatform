@@ -54,8 +54,8 @@ class Product(models.Model):
 class ProductAnchorType(models.Model):
 
     product_anchor_type_id = models.AutoField(verbose_name=u'产品-店员类型编号', primary_key=True)
-    product_id = models.ForeignKey('product.Product', verbose_name=u'产品', related_name='product', on_delete=models.CASCADE)
-    anchor_type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'店员类型', related_name='anchor_type', on_delete=models.CASCADE)
+    product_id = models.ForeignKey('product.Product', verbose_name=u'产品', related_name='anchor_type', on_delete=models.CASCADE)
+    anchor_type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'店员类型', related_name='products', on_delete=models.CASCADE)
     price = models.FloatField(verbose_name=u'价格')
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
