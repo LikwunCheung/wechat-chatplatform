@@ -5,6 +5,7 @@ from datetime import datetime
 
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.views.decorators.http import require_http_methods
+from django.utils.timezone import now
 
 from wechat_chatplatform.employee.models import Employee, EmployeeType, EmployeeGroup, EmployeeCity, EmployeeTag
 from wechat_chatplatform.common.utils import *
@@ -34,9 +35,14 @@ def anchor_apply_unaudit_router(requset, *args, **kwargs):
 
 @require_http_methods(['POST', 'OPTIONS'])
 @check_api_key
-def anchor_apply_pass_router(requset, *args, **kwargs):
+def anchor_apply_action_router(requset, *args, **kwargs):
+    action = None
+    for arg in args:
+        if isinstance(args, dict):
+            action = args.get('action', None)
+
     if requset.method == 'POST':
-        return anchor_apply_pass_post(requset)
+        return anchor_apply_action_post(requset, action)
     return HttpResponseNotAllowed()
 
 
@@ -59,8 +65,7 @@ def anchor_apply_post(request):
             param.update({'img{}'.format(i + 1): param['image'][i]})
         param.pop('image')
         param['tags'] = ','.join([str(tag) for tag in param['tags']])
-        employee_city = EmployeeCity.objects.get(city_id=param['city_id'])
-        param['city_id'] = employee_city
+        param['city_id'] = EmployeeCity.objects.get(city_id=param['city_id'])
         param['identity_type'] = IdentityType.identity.value
     except Exception as e:
         print(e)
@@ -71,14 +76,10 @@ def anchor_apply_post(request):
         status=EmployeeStatus.unaudit.value
     ))
 
-    print(param)
-    employee = employee_handler.create_new_employee(param)
+    employee = employee_handler.apply_employee(param)
 
-    temp_id = employee.employee_id
-    employee = Employee.objects.get(employee_id=temp_id)
-    print(employee.nickname)
     resp = init_http_success()
-    resp['data'].update(dict(id=temp_id))
+    resp['data'].update(dict(id=employee.employee_id))
     return make_json_response(HttpResponse, resp)
 
 
@@ -124,9 +125,34 @@ def anchor_apply_unaudit_get(request):
     return make_json_response(HttpResponse, resp)
 
 
-def anchor_apply_pass_post(request):
+def anchor_apply_action_post(request, action):
+    employee_id = request.POST.get('id', None)
+    if not employee_id:
+        resp = init_http_bad_request('No Employee ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    try:
+        employee = Employee.objects.get(employee_id=employee_id)
+    except Exception as e:
+        resp = init_http_bad_request('No Match Employee')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    if employee.status != EmployeeStatus.unaudit:
+        resp = init_http_bad_request('Employee Audited')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    if action == 'pass':
+        level = request.POST.get('level', 1)
+        employee.type_id = EmployeeType.objects.get(type_id=level)
+        employee.status = EmployeeStatus.active.value
+        employee.join_date = now()
+        employee.audit_date = now()
+        employee.auditor = None
 
 
+        employee.save()
+    elif action == 'reject':
+        employee.status = EmployeeStatus.
     pass
 
 

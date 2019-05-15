@@ -31,6 +31,7 @@ class Employee(models.Model):
     img2 = models.CharField(verbose_name=u'图片2', max_length=100, blank=True, null=True)
     img3 = models.CharField(verbose_name=u'图片3', max_length=100, blank=True, null=True)
     audit_date = models.DateTimeField(verbose_name=u'审核时间', blank=True, null=True)
+    auditor = models.ForeignKey('platform_admin.AdminUser', verbose_name=u'审核人', related_name='auditor', on_delete=models.SET_NULL, blank=True, null=True)
     join_date = models.DateField(verbose_name=u'入职日期', blank=True, null=True)
     leave_date = models.DateField(verbose_name=u'离职日期', blank=True, null=True)
     slogan = models.CharField(verbose_name=u'标语', max_length=150, null=True)

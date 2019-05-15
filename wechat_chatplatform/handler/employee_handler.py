@@ -10,9 +10,9 @@ class EmployeeHandler(object):
     def __init__(self):
         pass
 
-    def create_new_employee(self, employee_info):
+    def apply_employee(self, employee_info):
         keys = ['name', 'nickname', 'type_id', 'status', 'city_id', 'identity_type', 'identity', 'birthday', 'gender',
-                'mobile', 'dingtalk_id', 'wechat_id', 'audio', 'avatar', 'img1', 'img2', 'img3', 'img4', 'join_date',
+                'mobile', 'wechat_id', 'audio', 'avatar', 'img1', 'img2', 'img3', 'img4', 'join_date',
                 'leave_date', 'slogan', 'tags']
         employee_info = make_dict(keys, employee_info)
         if not employee_info:

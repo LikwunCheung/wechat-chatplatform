@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'wechat_chatplatform.user_info',
     'wechat_chatplatform.order',
     'wechat_chatplatform.product',
+    'wechat_chatplatform.platform_admin',
     'wechat_chatplatform.api',
 ]
 
