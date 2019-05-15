@@ -13,8 +13,8 @@ class Order(models.Model):
 
     order_id = models.AutoField(verbose_name=u'订单编号', primary_key=True)
     user_id = models.ForeignKey('user_info.UserInfo', verbose_name=u'用户id', related_name='user', on_delete=models.SET_NULL, blank=True, null=True)
-    product_id = models.ForeignKey('product.ProductEmployeeType', verbose_name=u'产品', related_name='product', on_delete=models.SET_NULL, blank=True, null=True)
-    employee_id = models.ForeignKey('employee.Employee', verbose_name=u'雇员', related_name='employee', on_delete=models.SET_NULL, blank=True, null=True)
+    product_id = models.ForeignKey('product.ProductAnchorType', verbose_name=u'产品', related_name='product', on_delete=models.SET_NULL, blank=True, null=True)
+    employee_id = models.ForeignKey('anchor.Anchor', verbose_name=u'雇员', related_name='anchor', on_delete=models.SET_NULL, blank=True, null=True)
     status = models.IntegerField(verbose_name=u'状态', choices=OrderStatus.OrderStatusChoices.value, default=OrderStatus.unpaid.value)
     number = models.FloatField(verbose_name=u'件数', default=1)
     origin_amount = models.FloatField(verbose_name=u'原金额')

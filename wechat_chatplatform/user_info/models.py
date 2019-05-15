@@ -1,7 +1,5 @@
 from django.db import models
 
-from wechat_chatplatform.common.choices import Status
-
 
 class UserInfo(models.Model):
 

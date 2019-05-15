@@ -7,14 +7,14 @@ from django.http.response import HttpResponse, HttpResponseRedirect, HttpRespons
 from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
 
-from wechat_chatplatform.employee.models import Employee, EmployeeType, EmployeeGroup, EmployeeCity, EmployeeTag
+from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorGroup, AnchorCity, AnchorTag
 from wechat_chatplatform.common.utils import *
 from wechat_chatplatform.common.config import *
 from wechat_chatplatform.common.choices import *
-from wechat_chatplatform.handler.employee_handler import EmployeeHandler
+from wechat_chatplatform.handler.anchor_handler import AnchorHandler
 
 
-employee_handler = EmployeeHandler()
+anchor_handler = AnchorHandler()
 
 
 @require_http_methods(['POST', 'OPTIONS'])
@@ -38,9 +38,8 @@ def anchor_apply_unaudit_router(requset, *args, **kwargs):
 def anchor_apply_action_router(requset, *args, **kwargs):
     action = None
     for arg in args:
-        if isinstance(args, dict):
-            action = args.get('action', None)
-
+        if isinstance(arg, dict):
+            action = arg.get('action', None)
     if requset.method == 'POST':
         return anchor_apply_action_post(requset, action)
     return HttpResponseNotAllowed()
@@ -58,7 +57,7 @@ def anchor_apply_post(request):
             param.update({'img{}'.format(i + 1): param['image'][i]})
         param.pop('image')
         param['tags'] = ','.join([str(tag) for tag in param['tags']])
-        param['city_id'] = EmployeeCity.objects.get(city_id=param['city_id'])
+        param['city_id'] = AnchorCity.objects.get(city_id=param['city_id'])
         param['identity_type'] = IdentityType.identity.value
     except Exception as e:
         print(e)
@@ -66,49 +65,49 @@ def anchor_apply_post(request):
         return make_json_response(HttpResponseBadRequest, resp)
 
     param.update(dict(
-        status=EmployeeStatus.unaudit.value
+        status=AnchorStatus.unaudit.value
     ))
 
-    employee = employee_handler.apply_employee(param)
+    anchor = anchor_handler.apply_anchor(param)
 
     resp = init_http_success()
-    resp['data'].update(dict(id=employee.employee_id))
+    resp['data'].update(dict(id=anchor.anchor_id))
     return make_json_response(HttpResponse, resp)
 
 
 def anchor_apply_unaudit_get(request):
 
-    employees = Employee.objects.filter(status=EmployeeStatus.unaudit.value)
+    anchors = Anchor.objects.filter(status=AnchorStatus.unaudit.value)
     results = []
 
-    for employee in employees:
+    for anchor in anchors:
         img = []
         tags = []
-        img.append(employee.img1) if employee.img1 else None
-        img.append(employee.img2) if employee.img2 else None
-        img.append(employee.img3) if employee.img3 else None
-        if employee.tags:
-            _tags = employee.tags.split(',')
+        img.append(anchor.img1) if anchor.img1 else None
+        img.append(anchor.img2) if anchor.img2 else None
+        img.append(anchor.img3) if anchor.img3 else None
+        if anchor.tags:
+            _tags = anchor.tags.split(',')
             for tag in _tags:
                 try:
-                    tag_name = EmployeeTag.objects.values('name').get(tag_id=int(tag))
+                    tag_name = AnchorTag.objects.values('name').get(tag_id=int(tag))
                     tags.append(tag_name['name'])
                 except Exception as e:
                     continue
 
         results.append(dict(
-                id=employee.employee_id,
-                name=employee.name,
-                nickname=employee.nickname,
-                city=employee.city_id.name,
-                identity=employee.identity,
-                birthday=employee.birthday.strftime('%Y-%m-%d'),
-                gender=Gender.GenderChoices.value[employee.gender][1],
-                mobile=employee.mobile,
-                wechat_id=employee.wechat_id,
-                audio=employee.audio,
+                id=anchor.anchor_id,
+                name=anchor.name,
+                nickname=anchor.nickname,
+                city=anchor.city_id.name,
+                identity=anchor.identity,
+                birthday=anchor.birthday.strftime('%Y-%m-%d'),
+                gender=Gender.GenderChoices.value[anchor.gender][1],
+                mobile=anchor.mobile,
+                wechat_id=anchor.wechat_id,
+                audio=anchor.audio,
                 img=img,
-                slogan=employee.slogan,
+                slogan=anchor.slogan,
                 tags=tags
             )
         )
@@ -119,39 +118,41 @@ def anchor_apply_unaudit_get(request):
 
 
 def anchor_apply_action_post(request, action):
-    employee_id = request.POST.get('id', None)
-    if not employee_id:
-        resp = init_http_bad_request('No Employee ID')
+    param = ujson.loads(request.body)
+    anchor_id = param.get('id', None)
+
+    if not anchor_id:
+        resp = init_http_bad_request('No Anchor ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
     try:
-        employee = Employee.objects.get(employee_id=employee_id)
+        anchor = Anchor.objects.get(anchor_id=anchor_id)
     except Exception as e:
-        resp = init_http_bad_request('No Match Employee')
+        resp = init_http_bad_request('No Match Anchor')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    if employee.status != EmployeeStatus.unaudit:
-        resp = init_http_bad_request('Employee Audited')
+    if anchor.status != AnchorStatus.unaudit.value:
+        resp = init_http_bad_request('Anchor Audited')
         return make_json_response(HttpResponseBadRequest, resp)
 
     if action == 'pass':
         level = request.POST.get('level', 1)
-        employee.type_id = EmployeeType.objects.get(type_id=level)
-        employee.status = EmployeeStatus.active.value
-        employee.join_date = now()
-        employee.audit_date = now()
-        employee.auditor = None
-        employee.save()
+        anchor.type_id = AnchorType.objects.get(type_id=level)
+        anchor.status = AnchorStatus.active.value
+        anchor.join_date = now()
+        anchor.audit_date = now()
+        anchor.auditor = None
+        anchor.save()
     elif action == 'reject':
-        employee.status = EmployeeStatus.audit_fail.value
-        employee.audit_date = now()
-        employee.auditor = None
-        employee.save()
+        anchor.status = AnchorStatus.audit_fail.value
+        anchor.audit_date = now()
+        anchor.auditor = None
+        anchor.save()
 
     results = dict(
-        id=employee.employee_id,
-        name=employee.name,
-        status=dict(EmployeeStatus.EmployeeStatusChoice.value)[employee.status]
+        id=anchor.anchor_id,
+        name=anchor.name,
+        status=dict(AnchorStatus.AnchorStatusChoice.value)[anchor.status]
     )
     resp = init_http_success()
     resp['data'] = results

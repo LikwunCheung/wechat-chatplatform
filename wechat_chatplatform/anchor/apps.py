@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class EmployeeConfig(AppConfig):
-    name = 'wechat_chatplatform.employee'
+    name = 'wechat_chatplatform.anchor'

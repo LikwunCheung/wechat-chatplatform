@@ -6,7 +6,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect, HttpRespons
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 
-from wechat_chatplatform.employee.models import Employee, EmployeeType, EmployeeTag, EmployeeCity
+from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorTag, AnchorCity
 from wechat_chatplatform.common.utils import *
 from wechat_chatplatform.common.choices import *
 
@@ -15,7 +15,7 @@ from wechat_chatplatform.common.choices import *
 @check_api_key
 @cache_page(15 * 60)
 def get_city(request, *args, **kwargs):
-    citys = EmployeeCity.objects.values('city_id', 'name').filter(status=Status.active.value)
+    citys = AnchorCity.objects.values('city_id', 'name').filter(status=Status.active.value)
     print(citys)
 
     results = []
@@ -55,7 +55,7 @@ def get_gender(request, *args, **kwargs):
 @check_api_key
 @cache_page(15 * 60)
 def get_level(request, *args, **kwargs):
-    levels = EmployeeType.objects.values('type_id', 'name').filter(status=Status.active.value)
+    levels = AnchorType.objects.values('type_id', 'name').filter(status=Status.active.value)
     results = []
     for level in levels:
         results.append(dict(
@@ -71,7 +71,7 @@ def get_level(request, *args, **kwargs):
 @check_api_key
 @cache_page(15 * 60)
 def get_tag(request, *args, **kwargs):
-    tags = EmployeeTag.objects.values('tag_id', 'name').filter(status=Status.active.value)
+    tags = AnchorTag.objects.values('tag_id', 'name').filter(status=Status.active.value)
     results = []
     for tag in tags:
         results.append(dict(

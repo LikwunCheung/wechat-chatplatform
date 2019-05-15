@@ -6,17 +6,17 @@ import math
 from django.db import models
 from django.utils.timezone import now
 
-from wechat_chatplatform.common.choices import IdentityType, EmployeeStatus, Gender, Status
+from wechat_chatplatform.common.choices import IdentityType, AnchorStatus, Gender, Status
 
 
-class Employee(models.Model):
+class Anchor(models.Model):
 
-    employee_id = models.AutoField(verbose_name=u'雇员编号', primary_key=True)
+    anchor_id = models.AutoField(verbose_name=u'店员编号', primary_key=True)
     name = models.CharField(verbose_name=u'姓名', max_length=20)
     nickname = models.CharField(verbose_name=u'昵称', max_length=30)
-    type_id = models.ForeignKey('employee.EmployeeType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL, blank=True, null=True)
-    status = models.IntegerField(verbose_name=u'状态', choices=EmployeeStatus.EmployeeStatusChoice.value, default=2)
-    city_id = models.ForeignKey('employee.EmployeeCity', verbose_name=u'城市', related_name='city', on_delete=models.SET_NULL, blank=True, null=True)
+    type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL, blank=True, null=True)
+    status = models.IntegerField(verbose_name=u'状态', choices=AnchorStatus.AnchorStatusChoice.value, default=2)
+    city_id = models.ForeignKey('anchor.AnchorCity', verbose_name=u'城市', related_name='city', on_delete=models.SET_NULL, blank=True, null=True)
     identity_type = models.IntegerField(verbose_name=u'证件类型', choices=IdentityType.IdentityTypeChoice.value, default=0)
     identity = models.CharField(verbose_name=u'证件号码', max_length=20)
     birthday = models.DateField(verbose_name=u'生日')
@@ -38,8 +38,8 @@ class Employee(models.Model):
     tags = models.CharField(verbose_name=u'标签', max_length=50, blank=True, null=True)
 
     class Meta:
-        db_table = 'employee'
-        verbose_name = u'雇员信息'
+        db_table = 'anchor'
+        verbose_name = u'店员信息'
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -58,35 +58,35 @@ class Employee(models.Model):
     constellation.short_description = u'星座'
 
     def delete(self, using=None, keep_parents=False):
-        self.status = EmployeeStatus.leave.value
+        self.status = AnchorStatus.leave.value
         self.leave_date = now().date()
         self.save()
 
     def audit_pass(self):
-        if self.status == EmployeeStatus.unaudit.value:
-            self.status = EmployeeStatus.active.value
+        if self.status == AnchorStatus.unaudit.value:
+            self.status = AnchorStatus.active.value
             self.join_date = now().date()
             self.save()
             return True
         return False
 
     def audit_reject(self):
-        if self.status == EmployeeStatus.unaudit.value:
-            self.status = EmployeeStatus.audit_fail.value
+        if self.status == AnchorStatus.unaudit.value:
+            self.status = AnchorStatus.audit_fail.value
             self.save()
             return True
         return False
 
 
-class EmployeeTag(models.Model):
+class AnchorTag(models.Model):
 
     tag_id = models.AutoField(verbose_name=u'标签编号', primary_key=True)
     name = models.CharField(verbose_name=u'标签', max_length=15)
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
-        db_table = 'employee_tag'
-        verbose_name = u'雇员标签信息'
+        db_table = 'anchor_tag'
+        verbose_name = u'店员标签信息'
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -97,7 +97,7 @@ class EmployeeTag(models.Model):
         self.save()
 
 
-class EmployeeCity(models.Model):
+class AnchorCity(models.Model):
     STATUS_CHOICES = (
         (Status.inactive.value, u'停用'),
         (Status.active.value, u'激活'),
@@ -109,8 +109,8 @@ class EmployeeCity(models.Model):
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
-        db_table = 'employee_city'
-        verbose_name = u'雇员城市信息'
+        db_table = 'anchor_city'
+        verbose_name = u'店员城市信息'
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -126,19 +126,19 @@ class EmployeeCity(models.Model):
     #     pass
 
 
-class EmployeeType(models.Model):
+class AnchorType(models.Model):
     STATUS_CHOICES = (
         (Status.inactive.value, u'停用'),
         (Status.active.value, u'激活'),
     )
 
-    type_id = models.AutoField(verbose_name=u'雇员类型编号', primary_key=True)
-    name = models.CharField(verbose_name=u'雇员类型', max_length=15)
+    type_id = models.AutoField(verbose_name=u'店员类型编号', primary_key=True)
+    name = models.CharField(verbose_name=u'店员类型', max_length=15)
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
-        db_table = 'employee_type'
-        verbose_name = u'雇员类型信息'
+        db_table = 'anchor_type'
+        verbose_name = u'店员类型信息'
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -149,7 +149,7 @@ class EmployeeType(models.Model):
         self.save()
 
 
-class EmployeeGroup(models.Model):
+class AnchorGroup(models.Model):
     GENDER_CHOICES = (
         (Gender.male.value, u'男'),
         (Gender.female.value, u'女'),
@@ -160,15 +160,15 @@ class EmployeeGroup(models.Model):
         (Status.active.value, u'激活'),
     )
 
-    group_id = models.AutoField(verbose_name=u'雇员钉钉群编号', primary_key=True)
+    group_id = models.AutoField(verbose_name=u'店员钉钉群编号', primary_key=True)
     name = models.CharField(verbose_name=u'群名称', max_length=20)
     dingding_id = models.CharField(verbose_name=u'钉钉id', max_length=30)
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value, default=Gender.mix.value)
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
-        db_table = 'employee_group'
-        verbose_name = u'雇员群信息'
+        db_table = 'anchor_group'
+        verbose_name = u'店员群信息'
         verbose_name_plural = verbose_name
 
     def __str__(self):

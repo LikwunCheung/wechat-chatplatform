@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib import admin
 from django.urls import path
 
-from wechat_chatplatform.api.views.employees import *
-from wechat_chatplatform.api.views.employee_applay import *
-from wechat_chatplatform.api.views.information import *
+from .views.anchor.anchor import anchor_list_router, anchor_detail_router
+from .views.anchor.apply_anchor import anchor_apply_router, anchor_apply_unaudit_router, anchor_apply_action_router
+from .views.information.information import *
+from .views.order.order import *
 
 
 urlpatterns = [
@@ -18,4 +18,6 @@ urlpatterns = [
     path('anchor/apply/level/', get_level),
     path('anchor/apply/unaudit/', anchor_apply_unaudit_router),
     path('anchor/apply/audit/<str:action>/', anchor_apply_action_router),
+
+    path('order/new/', new_order_router),
 ]

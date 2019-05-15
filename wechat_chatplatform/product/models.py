@@ -51,21 +51,21 @@ class Product(models.Model):
         self.save()
 
 
-class ProductEmployeeType(models.Model):
+class ProductAnchorType(models.Model):
 
-    product_employee_type_id = models.AutoField(verbose_name=u'产品-雇员类型编号', primary_key=True)
+    product_anchor_type_id = models.AutoField(verbose_name=u'产品-店员类型编号', primary_key=True)
     product_id = models.ForeignKey('product.Product', verbose_name=u'产品', related_name='product', on_delete=models.CASCADE)
-    employee_type_id = models.ForeignKey('employee.EmployeeType', verbose_name=u'雇员类型', related_name='employee_type', on_delete=models.CASCADE)
+    anchor_type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'店员类型', related_name='anchor_type', on_delete=models.CASCADE)
     price = models.FloatField(verbose_name=u'价格')
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
     class Meta:
-        db_table = 'product_employee_type'
-        verbose_name = u'产品-雇员类型'
+        db_table = 'product_anchor_type'
+        verbose_name = u'产品-店员类型'
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.product_id.__str__() + ' - ' + self.employee_type_id.__str__()
+        return self.product_id.__str__() + ' - ' + self.anchor_type_id.__str__()
 
     def delete(self, using=None, keep_parents=False):
         self.status = Status.inactive.value

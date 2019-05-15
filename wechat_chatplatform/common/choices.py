@@ -16,17 +16,17 @@ class IdentityType(Enum):
 
 
 @unique
-class EmployeeStatus(Enum):
+class AnchorStatus(Enum):
     leave = 0
     active = 1
     unaudit = 2
     audit_fail = 3
 
-    EmployeeStatusChoice = (
+    AnchorStatusChoice = (
         (leave, u'离职'),
         (active, u'在职'),
         (unaudit, u'待审核'),
-        (audit_fail, u'审核失败'),
+        (audit_fail, u'审核未通过'),
     )
 
 
@@ -100,4 +100,4 @@ class ExtendStatus(Enum):
 
 
 if __name__ == '__main__':
-    print(EmployeeStatus.leave.value)
+    print(AnchorStatus.leave.value)

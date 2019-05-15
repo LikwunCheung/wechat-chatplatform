@@ -4,16 +4,12 @@ import ujson
 
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.cache import cache_page
 
-from wechat_chatplatform.employee.models import Employee, EmployeeType, EmployeeGroup, EmployeeCity
+from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorGroup, AnchorCity
 from wechat_chatplatform.common.utils import *
 from wechat_chatplatform.common.config import *
 from wechat_chatplatform.common.choices import *
-from wechat_chatplatform.handler.employee_handler import EmployeeHandler
-
-
-employee_handler = EmployeeHandler()
+from wechat_chatplatform.handler.anchor_handler import anchor_handler
 
 
 @require_http_methods(['GET', 'OPTIONS'])
@@ -45,10 +41,10 @@ def anchor_detail_router(requset, *args, **kwargs):
 
 def anchor_list_get(request, index):
     mode = request.GET.get('mode', 'default')
-    employees = Employee.objects.filter(status=EmployeeStatus.active.value)
-    print(employees)
-    for employee in employees:
-        print(employee)
+    anchors = Anchor.objects.filter(status=AnchorStatus.active.value)
+    print(anchors)
+    for anchor in anchors:
+        print(anchor)
 
     resp = init_http_success()
     return make_json_response(HttpResponse, resp)
@@ -56,10 +52,10 @@ def anchor_list_get(request, index):
 
 def anchor_detail_get(request, index):
     mode = request.GET.get('mdoe', 'default')
-    employees = Employee.objects.all()
-    print(employees)
-    for employee in employees:
-        print(employee)
+    anchors = Anchor.objects.all()
+    print(anchors)
+    for anchor in anchors:
+        print(anchor)
 
     resp = init_http_success()
     return make_json_response(HttpResponse, resp)

@@ -39,11 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'wechat_chatplatform.employee',
+    'wechat_chatplatform.anchor',
     'wechat_chatplatform.user_info',
     'wechat_chatplatform.order',
     'wechat_chatplatform.product',
     'wechat_chatplatform.platform_admin',
+    'wechat_chatplatform.platform_info',
     'wechat_chatplatform.api',
 ]
 
