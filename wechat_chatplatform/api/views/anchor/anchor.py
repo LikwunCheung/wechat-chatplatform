@@ -47,7 +47,7 @@ def anchor_list_get(request, index):
         results.append(dict(
             id=anchor.anchor_id,
             nickname=anchor.nickname,
-            gender=Gender.GenderChoices.value[anchor.gender][1],
+            gender=anchor.gender,
             constellation=anchor.constellation(),
             slogan=anchor.slogan,
             age=anchor.age(),
