@@ -86,7 +86,7 @@ def anchor_detail_get(request, anchor_id):
                 _products.append([_product])
     for product in products:
         for _product in _products:
-            _product.append(products[product].get(_product[0], 'N/A'))
+            _product.append(products[product].get(_product[0], ''))
 
     results = dict(
         id=anchor.anchor_id,

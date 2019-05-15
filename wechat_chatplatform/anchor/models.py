@@ -14,7 +14,7 @@ class Anchor(models.Model):
     nickname = models.CharField(verbose_name=u'昵称', max_length=30)
     type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL,
                                 blank=True, null=True)
-    status = models.IntegerField(verbose_name=u'状态', choices=AnchorStatus.AnchorStatusChoice.value, default=2)
+    status = models.IntegerField(verbose_name=u'状态', choices=AnchorStatus.AnchorStatusChoice.value, default=1)
     city = models.CharField(verbose_name=u'城市', max_length=20, blank=True, null=True)
     birthday = models.DateField(verbose_name=u'生日')
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value)
