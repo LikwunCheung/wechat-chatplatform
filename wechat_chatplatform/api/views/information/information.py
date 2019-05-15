@@ -62,7 +62,16 @@ def get_product_type(request, *args, **kwargs):
         resp = init_http_bad_request('No Anchor ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    anchor = Anchor.objects.get(anchor_id=anchor_id)
+    try:
+        anchor = Anchor.objects.get(anchor_id=anchor_id)
+    except Exception as e:
+        resp = init_http_bad_request('Invalid Anchor ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    if anchor.status != AnchorStatus.active.value:
+        resp = init_http_bad_request('Invalid Anchor ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
     products = anchor.type_id.products.filter(status=Status.active.value)
     results = list()
     temp = list()
@@ -87,7 +96,16 @@ def get_product(request, *args, **kwargs):
         resp = init_http_bad_request('No Anchor ID or No Type')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    anchor = Anchor.objects.get(anchor_id=anchor_id)
+    try:
+        anchor = Anchor.objects.get(anchor_id=anchor_id)
+    except Exception as e:
+        resp = init_http_bad_request('Invalid Anchor ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    if anchor.status != AnchorStatus.active.value:
+        resp = init_http_bad_request('Invalid Anchor ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
     products = anchor.type_id.products.filter(status=Status.active.value)
     results = list()
     for product in products:
