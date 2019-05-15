@@ -18,7 +18,7 @@ def anchor_list_router(request, *args, **kwargs):
     index = request.GET.get('index', None)
 
     if index == None:
-        return HttpResponseRedirect(DOMAIN + ANCHOR_REDIRECT)
+        return HttpResponseRedirect(DOMAIN)
     if request.method == 'GET':
         return anchor_list_get(request, index)
     return HttpResponseNotAllowed()
@@ -33,7 +33,7 @@ def anchor_detail_router(requset, *args, **kwargs):
             index = arg.get('anchor_id', None)
 
     if anchor_id == None:
-        return HttpResponseRedirect(DOMAIN + ANCHOR_REDIRECT)
+        return HttpResponseRedirect(DOMAIN)
     if requset.method == 'GET':
         return anchor_detail_get(requset, index)
     return HttpResponseNotAllowed()
@@ -41,12 +41,25 @@ def anchor_detail_router(requset, *args, **kwargs):
 
 def anchor_list_get(request, index):
     mode = request.GET.get('mode', 'default')
-    anchors = Anchor.objects.filter(status=AnchorStatus.active.value)
+    anchors = Anchor.objects.filter(status=AnchorStatus.active.value).order_by('type_id')
     print(anchors)
+    results = dict()
     for anchor in anchors:
-        print(anchor)
+        results.update(dict(
+            id=anchor.anchor_id,
+            nickname=anchor.nickname,
+            gender=Gender.GenderChoices.value[anchor.gender][1],
+            constellation=anchor.constellation(),
+            slogan=anchor.slogan,
+            age=anchor.age(),
+            level=anchor.type_id.name,
+            audio=anchor.audio,
+            avatar=anchor.avatar,
+            price=None,
+        ))
 
     resp = init_http_success()
+    resp['data'] = results
     return make_json_response(HttpResponse, resp)
 
 

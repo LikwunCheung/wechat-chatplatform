@@ -11,7 +11,7 @@ admin.site.site_title = u'后台管理系统'
 
 
 class AnchorAdmin(admin.ModelAdmin):
-    list_display = ('anchor_id', 'name', 'nickname', 'gender', 'age', 'type_id', 'mobile', 'status')
+    list_display = ('anchor_id', 'name', 'nickname', 'gender', 'age', 'constellation', 'type_id', 'mobile', 'status')
     list_filter = ('type_id', 'gender', 'status')
     search_fields = ('name', 'nickname',)
     exclude = ('age', 'status',)

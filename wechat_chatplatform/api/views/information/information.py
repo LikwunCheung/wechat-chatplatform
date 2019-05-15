@@ -43,18 +43,7 @@ def get_gender(request, *args, **kwargs):
 @require_http_methods(['GET'])
 @check_api_key
 @cache_page(15 * 60)
-def get_gender(request, *args, **kwargs):
-    results = [dict(id=k, gender=v) for k, v in Gender.GenderChoices.value[0: -1]]
-
-    resp = init_http_success()
-    resp['data'] = results
-    return make_json_response(HttpResponse, resp)
-
-
-@require_http_methods(['GET'])
-@check_api_key
-@cache_page(15 * 60)
-def get_level(request, *args, **kwargs):
+def get_anchor_level(request, *args, **kwargs):
     levels = AnchorType.objects.values('type_id', 'name').filter(status=Status.active.value)
     results = []
     for level in levels:
@@ -71,13 +60,10 @@ def get_level(request, *args, **kwargs):
 @check_api_key
 @cache_page(15 * 60)
 def get_tag(request, *args, **kwargs):
-    tags = AnchorTag.objects.values('tag_id', 'name').filter(status=Status.active.value)
+    tags = AnchorTag.objects.values('name').filter(status=Status.active.value)
     results = []
     for tag in tags:
-        results.append(dict(
-            id=tag['tag_id'],
-            name=tag['name']
-        ))
+        results.append(tag['name'])
 
     resp = init_http_success()
     resp['data'] = results

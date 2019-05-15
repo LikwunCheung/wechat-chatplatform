@@ -12,6 +12,7 @@ from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.config import *
 from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.handler.anchor_handler import AnchorHandler
+from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_applier_message
 
 
 anchor_handler = AnchorHandler()
@@ -81,9 +82,12 @@ def anchor_apply_post(request):
     ))
 
     anchor = anchor_handler.apply_anchor(param)
+    if not anchor:
+        resp = init_http_bad_request('Some Error Happend')
+        return make_json_response(HttpResponseBadRequest, resp)
 
+    send_new_applier_message(anchor)
     resp = init_http_success()
-    resp['data'].update(dict(id=anchor.anchor_id))
     return make_json_response(HttpResponse, resp)
 
 
@@ -93,20 +97,6 @@ def anchor_apply_unaudit_get(request):
     results = []
 
     for anchor in anchors:
-        img = []
-        tags = []
-        img.append(anchor.img1) if anchor.img1 else None
-        img.append(anchor.img2) if anchor.img2 else None
-        img.append(anchor.img3) if anchor.img3 else None
-        if anchor.tags:
-            _tags = anchor.tags.split(',')
-            for tag in _tags:
-                try:
-                    tag_name = AnchorTag.objects.values('name').get(tag_id=int(tag))
-                    tags.append(tag_name['name'])
-                except Exception as e:
-                    continue
-
         results.append(dict(
                 id=anchor.anchor_id,
                 name=anchor.name,
@@ -118,9 +108,9 @@ def anchor_apply_unaudit_get(request):
                 mobile=anchor.mobile,
                 wechat_id=anchor.wechat_id,
                 audio=anchor.audio,
-                img=img,
+                image=anchor.image.split(','),
                 slogan=anchor.slogan,
-                tags=tags
+                tags=anchor.tags.split(',')
             )
         )
 

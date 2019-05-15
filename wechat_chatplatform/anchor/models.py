@@ -51,7 +51,33 @@ class Anchor(models.Model):
     age.short_description = u'年龄'
 
     def constellation(self):
-        pass
+        if not self.birthday:
+            return 'N/A'
+        birthday = self.birthday.strftime('%m-%d')
+        if birthday >= '12-22' or birthday <= '01-19':
+            return u'摩羯座'
+        elif '01-20' <= birthday <= '02-18':
+            return u'水瓶座'
+        elif '02-19' <= birthday <= '03-20':
+            return u'双鱼座'
+        elif '03-21' <= birthday <= '04-19':
+            return u'白羊座'
+        elif '04-20' <= birthday <= '05-20':
+            return u'金牛座'
+        elif '05-21' <= birthday <= '06-21':
+            return u'双子座'
+        elif '06-22' <= birthday <= '07-22':
+            return u'巨蟹座'
+        elif '07-23' <= birthday <= '08-22':
+            return u'狮子座'
+        elif '08-23' <= birthday <= '09-22':
+            return u'处女座'
+        elif '09-23' <= birthday <= '10-23':
+            return u'天秤座'
+        elif '10-24' <= birthday <= '11-22':
+            return u'天蝎座'
+        elif '11-23' <= birthday <= '12-21':
+            return u'射手座'
 
     constellation.short_description = u'星座'
 
