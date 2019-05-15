@@ -6,7 +6,7 @@ from datetime import datetime
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.views.decorators.http import require_http_methods
 
-from wechat_chatplatform.employee.models import Employee, EmployeeType, EmployeeGroup, EmployeeCity
+from wechat_chatplatform.employee.models import Employee, EmployeeType, EmployeeGroup, EmployeeCity, EmployeeTag
 from wechat_chatplatform.common.utils import *
 from wechat_chatplatform.common.config import *
 from wechat_chatplatform.common.choices import *
@@ -61,6 +61,7 @@ def anchor_apply_post(request):
         param['tags'] = ','.join([str(tag) for tag in param['tags']])
         employee_city = EmployeeCity.objects.get(city_id=param['city_id'])
         param['city_id'] = employee_city
+        param['identity_type'] = IdentityType.identity.value
     except Exception as e:
         print(e)
         resp = init_http_bad_request('AttributeError')
@@ -82,16 +83,27 @@ def anchor_apply_post(request):
 
 
 def anchor_apply_unaudit_get(request):
+
     employees = Employee.objects.filter(status=EmployeeStatus.unaudit.value)
-    print(employees)
-    results = dict()
+    results = []
+
     for employee in employees:
         img = []
+        tags = []
         img.append(employee.img1) if employee.img1 else None
         img.append(employee.img2) if employee.img2 else None
         img.append(employee.img3) if employee.img3 else None
-        results.update({
-            employee.employee_id: dict(
+        if employee.tags:
+            _tags = employee.tags.split(',')
+            for tag in _tags:
+                try:
+                    tag_name = EmployeeTag.objects.values('name').get(tag_id=int(tag))
+                    tags.append(tag_name['name'])
+                except Exception as e:
+                    continue
+
+        results.append(dict(
+                id=employee.employee_id,
                 name=employee.name,
                 nickname=employee.nickname,
                 city=employee.city_id.name,
@@ -103,16 +115,18 @@ def anchor_apply_unaudit_get(request):
                 audio=employee.audio,
                 img=img,
                 slogan=employee.slogan,
-                tags=employee.tags
+                tags=tags
             )
-        })
-    print(results)
+        )
+
     resp = init_http_success()
     resp['data'] = results
     return make_json_response(HttpResponse, resp)
 
 
 def anchor_apply_pass_post(request):
+
+
     pass
 
 
