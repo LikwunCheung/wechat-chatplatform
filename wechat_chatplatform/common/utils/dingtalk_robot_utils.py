@@ -20,7 +20,7 @@ def send_new_applier_message(anchor):
                        anchor.city_id, anchor.wechat_id, anchor.identity)
     for admin_user in admin_users:
         if admin_user['dingtalk_robot']:
-            _text = 'Hi, {}:\n'.format(admin_user['nickname']) + text
+            _text = '**Hi, {}:**\n\n'.format(admin_user['nickname']) + text
             resp = dingtalk_robot_handler.send_action_card(token=admin_user['dingtalk_robot'], title=title, text=_text,
                                                            btns=btns)
 
