@@ -15,9 +15,9 @@ def send_new_applier_message(anchor):
     ))
     title = '[有新店员申请待审核]'
     text = '有新店员申请待你审核，申请人详情:\n- **姓名:** {}\n- **昵称:** {}\n- **生日:** {}\n- **性别:** {}\n- **城市:** {}\n' \
-           '- **微信:** {}\n- **身份证:** {}\n\n请联系申请人微信核实情况后点击 [查看详情] 前往审核'
+           '- **身份证:** {}\n- **微信:** {}\n\n请联系申请人微信，核实情况后点击 [查看详情] 前往审核'
     text = text.format(anchor.name, anchor.nickname, anchor.birthday, Gender.GenderChoices.value[anchor.gender][1],
-                       anchor.city_id, anchor.wechat_id, anchor.identity)
+                       anchor.city_id, anchor.identity, anchor.wechat_id)
     for admin_user in admin_users:
         if admin_user['dingtalk_robot']:
             _text = '**Hi, {}:**\n\n'.format(admin_user['nickname']) + text

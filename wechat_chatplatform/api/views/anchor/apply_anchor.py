@@ -67,7 +67,7 @@ def anchor_apply_post(request):
     print(param)
 
     try:
-        param['tags'] = ','.join([str(tag) for tag in param['tags']])
+        param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])
         param['city_id'] = AnchorCity.objects.get(city_id=int(param['city_id']))
         param['identity_type'] = IdentityType.identity.value
         param['image'] = param['image'][0:3] if len(param['image']) > 3 else param['image']
