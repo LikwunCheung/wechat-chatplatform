@@ -163,8 +163,3 @@ def anchor_apply_action_post(request, action):
     resp = init_http_success()
     resp['data'] = results
     return make_json_response(HttpResponse, resp)
-
-
-
-def anchor_apply_reject_post(request):
-    pass
