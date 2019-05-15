@@ -31,6 +31,17 @@ class EmployeeStatus(Enum):
 
 
 @unique
+class AdminUserStatus(Enum):
+    leave = 0
+    active = 1
+
+    AdminUserStatusChoice = (
+        (leave, u'离职'),
+        (active, u'在职'),
+    )
+
+
+@unique
 class Gender(Enum):
     female = 0
     male = 1

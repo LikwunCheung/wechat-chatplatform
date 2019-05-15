@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from django.urls import path
-
-from .views.employee import *
-from .views.order import *
+from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('v1/', include('wechat_chatplatform.api.urls_v1')),
 ]

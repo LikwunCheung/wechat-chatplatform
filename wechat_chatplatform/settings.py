@@ -43,13 +43,14 @@ INSTALLED_APPS = [
     'wechat_chatplatform.user_info',
     'wechat_chatplatform.order',
     'wechat_chatplatform.product',
+    'wechat_chatplatform.api',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -124,3 +125,58 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(module)s:%(funcName)s] [%(levelname)s]- %(message)s'
+        },
+        'debug': {
+            'format': '%(asctime)s [%(module)s:%(funcName)s][%(levelname)s] %(message)s'
+        },
+    },
+    'filters': {
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'debug.console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'debug',
+        },
+        # 'default': {
+        #     'level': 'DEBUG',
+        #     'class': 'logging.handlers.RotatingFileHandler',
+        #     'filename': '/home/ubuntu/log/all.log',
+        #     'maxBytes': 1024*1024*5,
+        #     'backupCount': 5,
+        #     'formatter': 'debug',
+        # },
+        # 'error': {
+        #     'level': 'ERROR',
+        #     'class': 'logging.handlers.RotatingFileHandler',
+        #     'filename': '/home/ubuntu/log/error.log',
+        #     'maxBytes': 1024 * 1024 * 5,
+        #     'backupCount': 5,
+        #     'formatter': 'debug',
+        # },
+    },
+    'loggers': {
+        'django.debug': {
+            'handlers': ['debug.console'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+        # 'server.debug': {
+        #     'handlers': ['default', 'debug.console'],
+        #     'propagate': True,
+        #     'level': 'DEBUG',
+        # },
+    }
+}
