@@ -54,6 +54,6 @@ def send_accept_order_message(order):
     title = '[接单成功]'
     text = '**Hi, {}:**\n\n接单成功:\n- **类型:** {}\n- **时长:** {}\n- **客户微信:** {}\n- **备注:** {}\n'
     text = text.format(anchor.nickname, order.product_id.product_id.product_type_id.name,
-                       order.product_id.product_id.name, order.comment, order.wechat_id)
+                       order.product_id.product_id.name, order.wechat_id, order.comment)
     resp = dingtalk_robot_handler.sned_markdown_card(token=anchor.dingtalk_robot, title=title, text=text)
 

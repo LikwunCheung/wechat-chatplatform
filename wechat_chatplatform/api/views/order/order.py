@@ -131,8 +131,6 @@ def dingtalk_accept_order(request):
     return HttpResponseRedirect(DOMAIN)
 
 
-
-
 def order_list_get(request):
     pass
 
