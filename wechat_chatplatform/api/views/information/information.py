@@ -152,7 +152,7 @@ def get_platform_info(request, *args, **kwargs):
         resp = init_http_bad_request('No Match Tag')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    if tag == 'user-order-ack':
+    if tag == 'order-user-ack':
         results = platform_info['content'].split(';')
 
     resp = init_http_success()
