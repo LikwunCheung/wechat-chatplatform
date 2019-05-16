@@ -50,7 +50,7 @@ def anchor_list_get(request, index):
     if level:
         query_param.update(dict(type_id=level))
 
-    anchors = Anchor.objects.filter(query_param).order_by('type_id')[index * 8: (index + 1) * 8]
+    anchors = Anchor.objects.filter(**query_param).order_by('type_id')[index * 8: (index + 1) * 8]
     results = list()
     for anchor in anchors:
         anchor_products = anchor.type_id.products.all().order_by('price')
