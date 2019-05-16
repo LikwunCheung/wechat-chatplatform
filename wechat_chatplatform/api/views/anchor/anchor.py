@@ -74,7 +74,7 @@ def anchor_list_get(request, index):
             level=anchor.type_id.name,
             audio=anchor.audio,
             avatar=anchor.avatar,
-            price=anchor_products[0].price,
+            price=anchor_products[0].price if anchor_products else 15,
         ))
 
     resp = init_http_success()
