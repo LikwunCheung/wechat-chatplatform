@@ -37,9 +37,20 @@ def anchor_detail_router(requset, *args, **kwargs):
 
 def anchor_list_get(request, index):
     mode = request.GET.get('mode', 'default')
+    gender = request.GET.get('gender', None)
+    level = request.GET.get('level', None)
+
     index = int(index)
 
-    anchors = Anchor.objects.filter(status=AnchorStatus.active.value).order_by('type_id')[index * 8: (index + 1) * 8]
+    query_param = dict(
+        status=AnchorStatus.active.value,
+    )
+    if gender:
+        query_param.update(dict(gender=gender))
+    if level:
+        query_param.update(dict(type_id=level))
+
+    anchors = Anchor.objects.filter(query_param).order_by('type_id')[index * 8: (index + 1) * 8]
     results = list()
     for anchor in anchors:
         anchor_products = anchor.type_id.products.all().order_by('price')
