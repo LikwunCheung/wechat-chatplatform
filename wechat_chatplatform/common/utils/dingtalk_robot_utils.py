@@ -34,13 +34,25 @@ def send_new_order_message(order):
 
     btns = list()
     btns.append(dict(
-        title=u'接单',
+        title=u'确认接单',
         actionURL='http://www.suavechat.com/api/v1/order/accept/?id={}'.format(order.order_id)
     ))
 
     title = '[你有一个新订单]'
-    text = '**Hi, {}:**\n你有一个新订单待接单，订单详情:\n- **类型:** {}\n- **时长:** {}\n- **客户微信:** {}\n接单后请尽快联系客户'
+    text = '**Hi, {}:**\n\n你有一个新订单待接单，订单详情:\n- **类型:** {}\n- **时长:** {}\n\n接单后提供客户微信'
+    text = text.format(anchor.nickname, order.product_id.product_id.product_type_id.name,
+                       order.product_id.product_id.name)
+    resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=text, btns=btns)
+
+
+def send_accept_order_message(order):
+    anchor = order.anchor_id
+    if not anchor.dingtalk_robot:
+        return
+
+    title = '[接单成功]'
+    text = '**Hi, {}:**\n\n接单成功:\n- **类型:** {}\n- **时长:** {}\n- **客户微信:** {}'
     text = text.format(anchor.nickname, order.product_id.product_id.product_type_id.name,
                        order.product_id.product_id.name, order.wechat_id)
-    resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=text, btns=btns)
+    resp = dingtalk_robot_handler.sned_markdown_card(token=anchor.dingtalk_robot, title=title, text=text)
 

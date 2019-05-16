@@ -34,5 +34,23 @@ class DingTalkRobotHandler(object):
             raise DingTalkRobotError('Response Error: %s' % resp.content)
         return resp
 
+    def sned_markdown_card(self, token, title, text, at=None, at_all=False):
+        content = dict(
+            msgtype='markdown',
+            markdown=dict(
+                title=title,
+                text=text
+            ),
+            at=dict(
+                atMobiles=at
+            ),
+            isAtAll=at_all
+        )
+        url = DINGTALK_ROBOT_URL.format(token)
+        resp = requests.post(url, json=content)
+        if resp.status_code != 200:
+            raise DingTalkRobotError('Response Error: %s' % resp.content)
+        return resp
+
 
 dingtalk_robot_handler = DingTalkRobotHandler()
