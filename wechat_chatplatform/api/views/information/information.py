@@ -143,7 +143,12 @@ def get_platform_info(request, *args, **kwargs):
     tag = None
     for arg in args:
         if isinstance(arg, dict):
-            action = arg.get('tag', None)
+            tag = arg.get('tag', None)
+
+    if not tag:
+        resp = init_http_bad_request('No Tag')
+        return make_json_response(HttpResponseBadRequest, resp)
+
     try:
         platform_info = PlatformInfo.objects.values('content').get(tag=tag, status=Status.active.value)
     except Exception as e:
