@@ -67,6 +67,7 @@ def anchor_apply_post(request):
         param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])
         param['image'] = param['image'][0:3] if len(param['image']) > 3 else param['image']
         param['image'] = ','.join(param['image'])
+        param['open_id'] = None
     except Exception as e:
         print(e)
         resp = init_http_bad_request('AttributeError')

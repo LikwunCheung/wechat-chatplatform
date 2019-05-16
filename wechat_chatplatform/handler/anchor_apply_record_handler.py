@@ -14,7 +14,7 @@ class AnchorApplyRecordHandler(object):
 
     def apply_anchor(self, anchor_info):
         keys = ['nickname', 'city', 'birthday', 'gender', 'wechat_id', 'audio', 'avatar', 'image', 'slogan', 'tags',
-                'skill', 'experience', 'occupation', 'online']
+                'skill', 'experience', 'occupation', 'online', 'open_id']
         anchor_info = make_dict(keys, anchor_info)
         if not anchor_info:
             raise ValueError()

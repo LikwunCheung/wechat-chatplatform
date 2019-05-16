@@ -24,6 +24,7 @@ class Anchor(models.Model):
     dingtalk_id = models.CharField(verbose_name=u'钉钉', max_length=30, blank=True, null=True)
     dingtalk_robot = models.CharField(verbose_name=u'钉钉个人机器人', max_length=100, blank=True, null=True)
     wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
+    open_id = models.CharField(verbose_name=u'微信openid', max_length=60, blank=True, null=True)
     audio = models.CharField(verbose_name=u'音频', max_length=100, blank=True, null=True)
     avatar = models.CharField(verbose_name=u'头像', max_length=100, blank=True, null=True)
     image = models.CharField(verbose_name=u'图片', max_length=300, blank=True, null=True)
@@ -203,6 +204,7 @@ class AnchorApplyRecord(models.Model):
     birthday = models.DateField(verbose_name=u'生日')
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value)
     wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
+    open_id = models.CharField(verbose_name=u'微信openid', max_length=60, blank=True, null=True)
     audio = models.CharField(verbose_name=u'音频', max_length=100, blank=True, null=True)
     avatar = models.CharField(verbose_name=u'头像', max_length=100, blank=True, null=True)
     image = models.CharField(verbose_name=u'图片', max_length=300, blank=True, null=True)
@@ -231,7 +233,8 @@ class AnchorApplyRecord(models.Model):
         anchor = Anchor(nickname=self.nickname, city=self.city, birthday=self.birthday, gender=self.gender,
                         wechat_id=self.wechat_id, audio=self.audio, avatar=self.avatar, image=self.image,
                         slogan=self.slogan, tags=self.tags, skill=self.skill, online=self.online, type_id=type,
-                        occupation=self.occupation, status=AnchorStatus.active.value, join_date=now())
+                        occupation=self.occupation, status=AnchorStatus.active.value, join_date=now(),
+                        open_id=self.open_id)
         anchor.save()
         self.audit_date = now()
         self.auditor = auditor

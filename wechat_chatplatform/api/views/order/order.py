@@ -23,6 +23,14 @@ def new_order_router(request, *args, **kwargs):
     return HttpResponseNotAllowed()
 
 
+@require_http_methods(['GET'])
+@check_api_key
+def order_list_router(request, *args, **kwargs):
+    if request.method == 'GET':
+        return order_list_get(request)
+    return HttpResponseNotAllowed()
+
+
 def new_order_post(request):
     keys = ['id', 'product_id', 'number', 'wechat_id', 'comment']
     param = ujson.loads(request.body)
@@ -61,5 +69,7 @@ def new_order_post(request):
     return make_json_response(HttpResponse, resp)
 
 
+def order_list_get(request):
+    pass
 
 
