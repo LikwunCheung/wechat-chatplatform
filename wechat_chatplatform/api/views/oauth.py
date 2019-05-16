@@ -43,7 +43,7 @@ def oauth_get_code(request):
         user = UserInfo(**params)
         user.save()
 
-    user_record = UserLoginInfo(user_id=user.user_id, time=now())
+    user_record = UserLoginInfo(user_id=user, time=now())
     user_record.save()
 
     return HttpResponseRedirect('http://www.suavechat.com/')
