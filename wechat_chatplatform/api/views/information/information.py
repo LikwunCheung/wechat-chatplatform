@@ -140,10 +140,7 @@ def get_product(request, *args, **kwargs):
 @check_api_key
 @cache_page(15 * 60)
 def get_platform_info(request, *args, **kwargs):
-    tag = None
-    for arg in args:
-        if isinstance(arg, dict):
-            tag = arg.get('tag', None)
+    tag = request.GET.get('tag', None)
 
     if not tag:
         resp = init_http_bad_request('No Tag')
