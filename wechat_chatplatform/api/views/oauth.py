@@ -5,15 +5,17 @@ from datetime import datetime
 
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.utils.timezone import now
+from django.views.decorators.http import require_http_methods
 
 from wechat_chatplatform.user_info.models import UserInfo
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.handler.wechat_handler.wechat_handler import wechat_handler
 
 
+@require_http_methods(['GET', 'OPTIONS'])
 def oauth_router(request):
     if request.method == 'GET':
-        oauth_get_code(request)
+        return oauth_get_code(request)
     return HttpResponseNotAllowed()
 
 
