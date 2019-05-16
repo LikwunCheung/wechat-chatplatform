@@ -13,6 +13,7 @@ class Order(models.Model):
 
     order_id = models.AutoField(verbose_name=u'订单编号', primary_key=True)
     user_id = models.ForeignKey('user_info.UserInfo', verbose_name=u'用户id', related_name='user', on_delete=models.SET_NULL, blank=True, null=True)
+    wechat_id = models.CharField(verbose_name=u'微信号', max_length=30, blank=True, null=True)
     product_id = models.ForeignKey('product.ProductAnchorType', verbose_name=u'产品', related_name='product', on_delete=models.SET_NULL, blank=True, null=True)
     anchor_id = models.ForeignKey('anchor.Anchor', verbose_name=u'雇员', related_name='anchor', on_delete=models.SET_NULL, blank=True, null=True)
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value, blank=True, null=True)

@@ -8,6 +8,7 @@ from django.views.decorators.cache import cache_page
 
 from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorTag
 from wechat_chatplatform.common.utils.utils import *
+from wechat_chatplatform.common.utils.currency import AUD_CNY
 from wechat_chatplatform.common.choices import *
 
 
@@ -16,6 +17,17 @@ from wechat_chatplatform.common.choices import *
 @cache_page(15 * 60)
 def get_gender(request, *args, **kwargs):
     results = [dict(id=k, gender=v) for k, v in Gender.GenderChoices.value[0: -1]]
+
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
+
+@require_http_methods(['GET'])
+@check_api_key
+@cache_page(15 * 60)
+def get_aud_rate(request, *args, **kwargs):
+    results = dict(rate=AUD_CNY.get())
 
     resp = init_http_success()
     resp['data'] = results

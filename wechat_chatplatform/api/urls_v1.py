@@ -18,6 +18,7 @@ urlpatterns = [
     path('info/gender/', get_gender),
     path('info/tag/', get_tag),
     path('info/city/', get_anchor_city),
+    path('info/aud-rate/', get_aud_rate),
     path('info/level/', get_anchor_level),
     path('info/product-type/', get_product_type),
     path('info/product/', get_product),
