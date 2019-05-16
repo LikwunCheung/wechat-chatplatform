@@ -61,7 +61,7 @@ def new_order_post(request):
     order = Order(**param)
     order.save()
 
-
+    send_new_order_message(order)
     resp = init_http_success()
     resp['data'].update(dict(
         id=order.order_id,
