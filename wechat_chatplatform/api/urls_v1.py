@@ -6,6 +6,7 @@ from .views.anchor.anchor import anchor_list_router, anchor_detail_router
 from .views.anchor.apply_anchor import anchor_apply_router, anchor_apply_unaudit_router, anchor_apply_action_router
 from .views.information.information import *
 from .views.order.order import *
+from .views.oauth import *
 
 urlpatterns = [
     path('anchor/list/', anchor_list_router),
@@ -26,4 +27,6 @@ urlpatterns = [
     # path('anchor/apply/audit/dingtalk/<str:action>/', anchor_apply_dingtalk_action_router),
 
     path('order/new/', new_order_router),
+
+    path('wxoauth/recall/', oauth_router),
 ]

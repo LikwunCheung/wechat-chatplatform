@@ -6,6 +6,9 @@ class UserInfo(models.Model):
     user_id = models.AutoField(verbose_name=u'用户编号', primary_key=True)
     open_id = models.CharField(verbose_name=u'微信开放编号', max_length=60, blank=True, null=True)
     nickname = models.CharField(verbose_name=u'用户昵称', max_length=20, blank=True, null=True)
+    access_token = models.CharField(verbose_name=u'Token', max_length=150, blank=True, null=True)
+    avatar = models.CharField(verbose_name=u'用户头像', max_length=100, blank=True, null=True)
+    gender = models.IntegerField(verbose_name=u'性别', default=0)
     last_login = models.DateTimeField(verbose_name=u'最后登入时间', blank=True, null=True)
 
     class Meta:
