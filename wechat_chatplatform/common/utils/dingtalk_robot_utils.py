@@ -28,4 +28,19 @@ def send_new_applier_message(anchor_apply_record):
 
 
 def send_new_order_message(order):
-    pass
+    anchor = order.anchor_id
+    if not anchor.dingtalk_robot:
+        return
+
+    btns = list()
+    btns.append(dict(
+        title=u'接单',
+        actionURL='http://www.suavechat.com/api/v1/order/accept/?id={}'.format(order.order_id)
+    ))
+
+    title = '[你有一个新订单]'
+    text = '**Hi, {}:**\n你有一个新订单待接单，订单详情:\n- **类型:** {}\n- **时长:** {}\n- **客户微信:** {}\n接单后请尽快联系客户'
+    text = text.format(anchor.nickname, order.product_id.product_id.product_type_id.name,
+                       order.product_id.product_id.name, order.wechat_id)
+    resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=text, btns=btns)
+
