@@ -120,7 +120,8 @@ def anchor_detail_get(request, anchor_id):
         image=anchor.image.split(',') if anchor.image else None,
         avatar=anchor.avatar,
         product_type=product_type,
-        product=_products
+        product=_products,
+        tags=anchor.tags.strip(',')
     )
 
     resp = init_http_success()

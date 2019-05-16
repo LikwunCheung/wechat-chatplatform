@@ -29,12 +29,19 @@ def oauth_get_code(request):
     open_id, access_token = wechat_handler.get_user_open_id_access_token(code)
 
     try:
-        UserInfo.objects.get(open_id=open_id)
+        user = UserInfo.objects.get(open_id=open_id)
     except Exception as e:
+        userinfo = wechat_handler.get_user_info(open_id, access_token)
         params = dict(
             open_id=open_id,
             access_token=access_token,
-
+            nickname=userinfo['nickname'],
+            avatar=userinfo['headimgurl'],
+            gender=0 if userinfo['sex'] == 2 else 1
         )
-        UserInfo.objects
+        user = UserInfo(**params)
+        user.save()
+
+    return HttpResponseRedirect('http://www.suavechat.com/')
+
 
