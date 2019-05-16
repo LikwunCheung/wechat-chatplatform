@@ -4,14 +4,10 @@ import ujson
 from datetime import datetime
 
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
-from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
 
 from wechat_chatplatform.user_info.models import UserInfo
-from wechat_chatplatform.order.models import Order
 from wechat_chatplatform.common.utils.utils import *
-from wechat_chatplatform.common.utils.currency import AUD_CNY
-from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.handler.wechat_handler.wechat_handler import wechat_handler
 
 
@@ -37,7 +33,8 @@ def oauth_get_code(request):
             access_token=access_token,
             nickname=userinfo['nickname'],
             avatar=userinfo['headimgurl'],
-            gender=0 if userinfo['sex'] == 2 else 1
+            gender=0 if userinfo['sex'] == 2 else 1,
+            last_login=now()
         )
         user = UserInfo(**params)
         user.save()
