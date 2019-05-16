@@ -5,7 +5,7 @@ import requests
 import time
 import urllib.parse
 
-# from .config import *
+from .config import *
 
 
 class AccessTokenError(BaseException):
