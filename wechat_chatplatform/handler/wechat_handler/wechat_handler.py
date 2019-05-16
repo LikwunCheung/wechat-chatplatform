@@ -65,7 +65,7 @@ class WeChatHandler(object):
             grant_type=USER_TOKEN_GRANT_TYPE
         )
         resp = requests.get(USER_TOKEN_URL, params=params)
-        resp = ujson.loads(resp)
+        resp = ujson.loads(resp.content)
         openid = resp['openid']
         access_token = resp['access_token']
         return openid, access_token
@@ -77,7 +77,7 @@ class WeChatHandler(object):
             lang=USER_INFO_LANG
         )
         resp = requests.get(USER_INFO_URL, params=params)
-        resp = ujson.loads(resp)
+        resp = ujson.loads(resp.content)
         return resp
 
 
@@ -85,5 +85,5 @@ wechat_handler = WeChatHandler()
 
 
 if __name__ == '__main__':
-    from wechat_chatplatform.handler.wechat_handler.config import *
+    pass
     # print(wechat_handler.get_access_token())
