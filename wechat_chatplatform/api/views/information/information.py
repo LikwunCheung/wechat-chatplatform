@@ -7,6 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 
 from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorTag
+from wechat_chatplatform.platform_info.models import PlatformInfo
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.utils.currency import AUD_CNY
 from wechat_chatplatform.common.choices import *
@@ -129,6 +130,28 @@ def get_product(request, *args, **kwargs):
     for product in products:
         if product.product_id.product_type_id.product_type_id == int(product_type):
             results.append(dict(id=product.product_id.product_id, name=product.product_id.name, price=product.price))
+
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
+
+@require_http_methods(['GET'])
+@check_api_key
+@cache_page(15 * 60)
+def get_platform_info(request, *args, **kwargs):
+    tag = None
+    for arg in args:
+        if isinstance(arg, dict):
+            action = arg.get('tag', None)
+    try:
+        platform_info = PlatformInfo.objects.values('content').get(tag=tag, status=Status.active.value)
+    except Exception as e:
+        resp = init_http_bad_request('No Match Tag')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    if tag == 'user-order-ack':
+        results = platform_info['content'].split(';')
 
     resp = init_http_success()
     resp['data'] = results

@@ -23,6 +23,7 @@ urlpatterns = [
     path('info/level/', get_anchor_level),
     path('info/product-type/', get_product_type),
     path('info/product/', get_product),
+    path('info/platform/<str:tag>/', get_platform_info),
 
     # path('anchor/apply/audit/dingtalk/<str:action>/', anchor_apply_dingtalk_action_router),
 
