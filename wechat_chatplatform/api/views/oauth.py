@@ -7,7 +7,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect, HttpRespons
 from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
 
-from wechat_chatplatform.user_info.models import UserInfo
+from wechat_chatplatform.user_info.models import UserInfo, UserLoginInfo
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.handler.wechat_handler.wechat_handler import wechat_handler
 
@@ -22,12 +22,14 @@ def oauth_router(request):
 def oauth_get_code(request):
     code = request.GET.get('code', None)
     if not code:
-        return HttpResponseBadRequest
+        resp = init_http_bad_request('No Open ID')
+        return make_json_response(HttpResponseBadRequest, resp)
 
     open_id, access_token = wechat_handler.get_user_open_id_access_token(code)
 
     try:
         user = UserInfo.objects.get(open_id=open_id)
+        user.last_login = now()
     except Exception as e:
         userinfo = wechat_handler.get_user_info(open_id, access_token)
         params = dict(
@@ -40,6 +42,9 @@ def oauth_get_code(request):
         )
         user = UserInfo(**params)
         user.save()
+
+    user_record = UserLoginInfo(user_id=user.user_id, time=now())
+    user_record.save()
 
     return HttpResponseRedirect('http://www.suavechat.com/')
 
