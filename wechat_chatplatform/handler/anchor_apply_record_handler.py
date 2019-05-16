@@ -19,14 +19,7 @@ class AnchorApplyRecordHandler(object):
         if not anchor_info:
             raise ValueError()
 
-        anchor_apply_record = AnchorApplyRecord(nickname=anchor_info['nickname'], city=anchor_info['city'],
-                                                birthday=anchor_info['birthday'], gender=anchor_info['gender'],
-                                                wechat_id=anchor_info['wechat_id'], audio=anchor_info['audio'],
-                                                avatar=anchor_info['avatar'], image=anchor_info['image'],
-                                                slogan=anchor_info['slogan'], tags=anchor_info['tags'],
-                                                skill=anchor_info['skill'], experience=anchor_info['experience'],
-                                                occupation=anchor_info['occupation'], online=anchor_info['online'],
-                                                status=AnchorAuditStatus.unaudit.value, apply_date=now())
+        anchor_apply_record = AnchorApplyRecord(status=AnchorAuditStatus.unaudit.value, apply_date=now(), **anchor_info)
         try:
             anchor_apply_record.save()
             return anchor_apply_record

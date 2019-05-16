@@ -27,12 +27,20 @@ def get_gender(request, *args, **kwargs):
 @cache_page(15 * 60)
 def get_anchor_level(request, *args, **kwargs):
     levels = AnchorType.objects.values('type_id', 'name').filter(status=Status.active.value)
-    results = []
-    for level in levels:
-        results.append(dict(
-            id=level['type_id'],
-            name=level['name']
-        ))
+    results = [dict(id=level['type_id'], name=level['name']) for level in levels]
+
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
+
+@require_http_methods(['GET'])
+@check_api_key
+@cache_page(15 * 60)
+def get_anchor_city(request, *args, **kwargs):
+    levels = Anchor.objects.distinct().values('city').filter(status=Status.active.value)
+    results = [item['city'] for item in levels]
+
     resp = init_http_success()
     resp['data'] = results
     return make_json_response(HttpResponse, resp)
@@ -43,9 +51,7 @@ def get_anchor_level(request, *args, **kwargs):
 @cache_page(15 * 60)
 def get_tag(request, *args, **kwargs):
     tags = AnchorTag.objects.values('name').filter(status=Status.active.value)
-    results = []
-    for tag in tags:
-        results.append('#' + tag['name'])
+    results = [('#' + tag['name']) for tag in tags]
 
     resp = init_http_success()
     resp['data'] = results

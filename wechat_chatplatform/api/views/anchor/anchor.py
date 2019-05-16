@@ -39,6 +39,7 @@ def anchor_list_get(request, index):
     mode = request.GET.get('mode', 'default')
     gender = request.GET.get('gender', None)
     level = request.GET.get('level', None)
+    city = request.GET.get('city', None)
 
     index = int(index)
 
@@ -49,8 +50,16 @@ def anchor_list_get(request, index):
         query_param.update(dict(gender=gender))
     if level:
         query_param.update(dict(type_id=level))
+    if city:
+        query_param.update(dict(city=city))
 
-    anchors = Anchor.objects.filter(**query_param).order_by('type_id')[index * 8: (index + 1) * 8]
+    try:
+        anchors = Anchor.objects.filter(**query_param).order_by('type_id')[index * 8: (index + 1) * 8]
+    except Exception as e:
+        print(e)
+        resp = init_http_bad_request('No Match Record')
+        return make_json_response(HttpResponseBadRequest, resp)
+
     results = list()
     for anchor in anchors:
         anchor_products = anchor.type_id.products.all().order_by('price')
