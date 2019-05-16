@@ -10,9 +10,10 @@ from django.utils.timezone import now
 from wechat_chatplatform.anchor.models import Anchor
 from wechat_chatplatform.order.models import Order
 from wechat_chatplatform.common.utils.utils import *
-from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_order_message
+from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_order_message, send_accept_order_message
 from wechat_chatplatform.common.utils.currency import AUD_CNY
 from wechat_chatplatform.common.choices import *
+from wechat_chatplatform.common.config import DOMAIN
 
 
 @require_http_methods(['POST', 'OPTIONS'])
@@ -110,7 +111,30 @@ def random_order_post(request):
     return make_json_response(HttpResponse, resp)
 
 
+def dingtalk_accept_order(request):
+    order_id = request.GET.get('id', None)
+    if not order_id:
+        resp = init_http_bad_request('No Order ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    try:
+        order = Order.objects.get(order_id=order_id, status=OrderStatus.unacknowledge.value)
+    except Exception as e:
+        resp = init_http_bad_request('No Order ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    order.status = OrderStatus.salary.value
+    order.complete_time = now()
+    order.save()
+
+    send_accept_order_message(order)
+    return HttpResponseRedirect(DOMAIN)
+
+
+
+
 def order_list_get(request):
     pass
+
 
 

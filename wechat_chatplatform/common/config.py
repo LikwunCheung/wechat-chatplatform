@@ -21,4 +21,5 @@ HTTP_X_API_KEY = 'HTTP_X_API_KEY'
 API_KEY = '227415ba68c811e9b1a48c8590c7151e'
 DOMAIN = 'http://www.suavechat.com/'
 LOGIN_REDIRECT = 'admin/login/'
+ACCEPT_ORDER = '/api/v1/order/accept/?id={}'
 

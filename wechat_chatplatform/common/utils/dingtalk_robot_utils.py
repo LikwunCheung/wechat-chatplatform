@@ -2,6 +2,7 @@
 
 from wechat_chatplatform.handler.dingtalk_robot_handler.dingtalk_robot_handler import dingtalk_robot_handler
 from wechat_chatplatform.common.choices import AdminUserStatus, Gender
+from wechat_chatplatform.common.config import DOMAIN, ACCEPT_ORDER
 from wechat_chatplatform.platform_admin.models import AdminUser
 
 
@@ -35,7 +36,7 @@ def send_new_order_message(order):
     btns = list()
     btns.append(dict(
         title=u'确认接单',
-        actionURL='http://www.suavechat.com/api/v1/order/accept/?id={}'.format(order.order_id)
+        actionURL=DOMAIN + ACCEPT_ORDER.format(order.order_id)
     ))
 
     title = '[你有一个新订单]'
