@@ -117,7 +117,7 @@ def random_order_post(request):
     order = Order(**param)
     order.save()
 
-    send_random_order_message(order)
+    send_random_order_message(order, tags=param['tags'])
     resp = init_http_success()
     resp['data'].update(dict(
         id=order.order_id,
