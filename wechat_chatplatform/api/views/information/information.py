@@ -76,22 +76,30 @@ def get_tag(request, *args, **kwargs):
 @cache_page(15 * 60)
 def get_product_type(request, *args, **kwargs):
     anchor_id = request.GET.get('id', None)
+    anchor_type_id = request.GET.get('level', None)
 
-    if not anchor_id:
-        resp = init_http_bad_request('No Anchor ID')
+    if not anchor_id and not anchor_type_id:
+        resp = init_http_bad_request('No Anchor ID or Level')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    try:
-        anchor = Anchor.objects.get(anchor_id=anchor_id)
-    except Exception as e:
-        resp = init_http_bad_request('Invalid Anchor ID')
-        return make_json_response(HttpResponseBadRequest, resp)
+    if anchor_id:
+        try:
+            anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
+        except Exception as e:
+            resp = init_http_bad_request('Invalid Anchor ID')
+            return make_json_response(HttpResponseBadRequest, resp)
 
-    if anchor.status != AnchorStatus.active.value:
-        resp = init_http_bad_request('Invalid Anchor ID')
-        return make_json_response(HttpResponseBadRequest, resp)
+        products = anchor.type_id.products.filter(status=Status.active.value)
 
-    products = anchor.type_id.products.filter(status=Status.active.value)
+    if anchor_type_id:
+        try:
+            anchor_type = AnchorType.objects.get(type_id=anchor_type_id, status=Status.active.value)
+        except Exception as e:
+            resp = init_http_bad_request('Invalid Level')
+            return make_json_response(HttpResponseBadRequest, resp)
+
+        products = anchor_type.products.filter(status=Status.active.value)
+
     results = list()
     temp = list()
     for product in products:
@@ -109,23 +117,31 @@ def get_product_type(request, *args, **kwargs):
 @cache_page(15 * 60)
 def get_product(request, *args, **kwargs):
     anchor_id = request.GET.get('id', None)
+    anchor_type_id = request.GET.get('level', None)
     product_type = request.GET.get('type', None)
 
-    if not anchor_id or not product_type:
-        resp = init_http_bad_request('No Anchor ID or No Type')
+    if (not anchor_id and not anchor_type_id) or not product_type:
+        resp = init_http_bad_request('No Anchor ID or Level or Product Type')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    try:
-        anchor = Anchor.objects.get(anchor_id=anchor_id)
-    except Exception as e:
-        resp = init_http_bad_request('Invalid Anchor ID')
-        return make_json_response(HttpResponseBadRequest, resp)
+    if anchor_id:
+        try:
+            anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
+        except Exception as e:
+            resp = init_http_bad_request('Invalid Anchor ID')
+            return make_json_response(HttpResponseBadRequest, resp)
 
-    if anchor.status != AnchorStatus.active.value:
-        resp = init_http_bad_request('Invalid Anchor ID')
-        return make_json_response(HttpResponseBadRequest, resp)
+        products = anchor.type_id.products.filter(status=Status.active.value)
 
-    products = anchor.type_id.products.filter(status=Status.active.value)
+    if anchor_type_id:
+        try:
+            anchor_type = AnchorType.objects.get(type_id=anchor_type_id, status=Status.active.value)
+        except Exception as e:
+            resp = init_http_bad_request('Invalid Level')
+            return make_json_response(HttpResponseBadRequest, resp)
+
+        products = anchor_type.products.filter(status=Status.active.value)
+
     results = list()
     for product in products:
         if product.product_id.product_type_id.product_type_id == int(product_type):
