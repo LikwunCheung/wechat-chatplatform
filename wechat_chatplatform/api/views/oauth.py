@@ -22,6 +22,7 @@ def oauth_router(request):
 
 def oauth_get_code(request):
     code = request.GET.get('code', None)
+    state = request.GET.get('state', None)
     if not code:
         resp = init_http_bad_request('No Open ID')
         return make_json_response(HttpResponseBadRequest, resp)
@@ -30,7 +31,8 @@ def oauth_get_code(request):
 
     try:
         anchor = Anchor.objects.get(open_id=open_id)
-        return anchor_login(request, anchor)
+        anchor_login(request, anchor)
+        return HttpResponseRedirect(DOMAIN + state)
     except Exception as e:
         pass
 
@@ -52,7 +54,8 @@ def oauth_get_code(request):
 
     user_record = UserLoginInfo(user_id=user, time=now())
     user_record.save()
-    return user_login(request, user)
+    user_login(request, user)
+    return HttpResponseRedirect(DOMAIN + state)
 
 
 def anchor_login(request, anchor):
@@ -64,8 +67,6 @@ def anchor_login(request, anchor):
     request.session['is_login'] = True
     request.session.set_expiry(60 * 60)
 
-    return HttpResponseRedirect(DOMAIN)
-
 
 def user_login(request, user):
     request.session['id'] = user.user_id
@@ -74,5 +75,3 @@ def user_login(request, user):
     request.session['is_user'] = True
     request.session['is_login'] = True
     request.session.set_expiry(60 * 60)
-
-    return HttpResponseRedirect(DOMAIN)

@@ -47,11 +47,12 @@ class WeChatHandler(object):
                 raise AccessTokenError('Wechat Server Connect Error')
         return self.access_token
 
-    def get_code_url(self):
+    def get_code_url(self, state=None):
         params = dict(
             appid=APP_ID,
             redirect_uri=USER_CODE_REDIRECT_URL,
             response_type=USER_CODE_RESPONSE_TYPE,
+            state=state,
             scope=USER_CODE_SCOPE,
         )
         url = USER_CODE_URL + '?' + urllib.parse.urlencode(params) + USER_CODE_WECHAT
