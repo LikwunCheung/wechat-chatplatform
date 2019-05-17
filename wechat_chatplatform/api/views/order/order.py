@@ -61,6 +61,9 @@ def new_order_post(request):
         resp = init_http_bad_request(u'下单失败')
         make_json_response(HttpResponseBadRequest, resp)
 
+    history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor_id=anchor)
+    renew_order = OrderRenew.renew.value if history_orders else OrderRenew.first.value
+
     product = anchor.type_id.products.get(product_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
@@ -68,6 +71,8 @@ def new_order_post(request):
         product_id=product,
         anchor_id=anchor,
         anchor_type_id=None,
+        order_type=OrderType.normal.value,
+        renew_order=renew_order,
         gender=None,
         status=OrderStatus.unpaid.value,
         origin_amount=product.price * param['number'],
@@ -107,6 +112,8 @@ def random_order_post(request):
         user_id=user_id,
         product_id=product,
         anchor_id=None,
+        order_type=OrderType.random.value,
+        renew_order=OrderRenew.first.value,
         anchor_type_id=anchor_type,
         gender=param['gender'],
         status=OrderStatus.unpaid.value,
