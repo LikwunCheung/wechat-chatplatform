@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from wechat_chatplatform.handler.dingtalk_robot_handler.dingtalk_robot_handler import dingtalk_robot_handler
-from wechat_chatplatform.common.choices import AdminUserStatus, Gender, Status
+from wechat_chatplatform.common.choices import AdminUserStatus, Gender, Status, OrderRenew
 from wechat_chatplatform.anchor.models import AnchorGroup
 from wechat_chatplatform.common.config import DOMAIN, ACCEPT_ORDER, GRAB_ORDER
 from wechat_chatplatform.platform_admin.models import AdminUser
@@ -53,9 +53,11 @@ def send_accept_order_message(order):
         return
 
     title = '[接单成功]'
-    text = '**Hi, {}:**\n\n接单成功:\n- **类型:** {}\n- **时长:** {}\n- **数量:** {}\n- **客户微信:** {}\n- **备注:** {}\n'
-    text = text.format(anchor.nickname, order.product_id.product_id.product_type_id.name,
-                       order.product_id.product_id.name, order.number, order.wechat_id, order.comment)
+    text = '**Hi, {}:**\n\n接单成功:\n- **订单类型:** {}\n- **服务类型:** {}\n- **时长:** {}\n- **数量:** {}\n' \
+           '- **客户微信:** {}\n- **备注:** {}\n'
+    text = text.format(anchor.nickname, dict(OrderRenew.OrderRenewChoices.value)[order.renew_order],
+                       order.product_id.product_id.product_type_id.name, order.product_id.product_id.name, order.number,
+                       order.wechat_id, order.comment)
     resp = dingtalk_robot_handler.sned_markdown_card(token=anchor.dingtalk_robot, title=title, text=text)
 
 
@@ -69,10 +71,11 @@ def send_random_order_message(order, tags=None):
     ))
 
     title = '[新随机订单]'
-    text = '**[新随机订单]**\n\n订单详情:\n- **店员等级:** {}\n- **店员性别:** {}\n- **类型:** {}\n- **时长:** {}\n' \
+    text = '**[新随机订单]**\n\n订单详情:\n- **店员等级:** {}\n- **店员性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
            '- **数量:** {}\n- **标签:** {}\n- **备注:** {}\n\n抢单后提供客户微信'
     text = text.format(order.anchor_type_id.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_id.product_id.product_type_id.name, order.product_id.product_id.name, order.number,
                        tags, order.comment)
     for anchor_group in anchor_groups:
-        resp = dingtalk_robot_handler.send_action_card(token=anchor_group.dingtalk_robot, title=title, text=text, btns=btns)
+        resp = dingtalk_robot_handler.send_action_card(token=anchor_group.dingtalk_robot, title=title, text=text,
+                                                       btns=btns)

@@ -83,7 +83,7 @@ class OrderStatus(Enum):
     salary = 4
     close = 5
     change = 6
-    overtime = 7
+    overtime = -1
 
     OrderStatusChoices = (
         (delete, u'已删除'),
