@@ -8,6 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
 
 from wechat_chatplatform.anchor.models import Anchor
+from wechat_chatplatform.user_info.models import UserInfo
 from wechat_chatplatform.order.models import Order
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_order_message, send_accept_order_message
@@ -44,6 +45,8 @@ def new_order_post(request):
     if not (user_id and is_user):
         return HttpResponseRedirect(wechat_handler.get_code_url(state='/#/detail?id={}'.format(param['id'])))
 
+    user = UserInfo.objects.get(user_id=user_id)
+
     try:
         anchor = Anchor.objects.get(anchor_id=param['id'], status=AnchorStatus.active.value)
     except Exception as e:
@@ -54,7 +57,7 @@ def new_order_post(request):
     product = anchor.type_id.products.get(product_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
-        user_id=user_id,
+        user_id=user,
         product_id=product,
         anchor_id=anchor,
         gender=anchor.gender,
