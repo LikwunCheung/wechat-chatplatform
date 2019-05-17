@@ -101,7 +101,6 @@ def random_order_post(request):
 
     anchor_type = AnchorType.objects.get(type_id=param['level'])
     product = anchor_type.products.get(product_id=int(param['product_id']))
-    param.pop('id')
     param.update(dict(
         user_id=user_id,
         product_id=product,
