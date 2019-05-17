@@ -42,7 +42,7 @@ def new_order_post(request):
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
     if not (user_id and is_user):
-        return HttpResponseRedirect(wechat_handler.get_code_url(state=DOMAIN))
+        return HttpResponseRedirect(wechat_handler.get_code_url(state='/#/detail?id={}'.format(param['id'])))
 
     try:
         anchor = Anchor.objects.get(anchor_id=param['id'], status=AnchorStatus.active.value)
