@@ -41,9 +41,11 @@ def send_new_order_message(order):
     ))
 
     title = '[你有一个新订单]'
-    text = '**Hi, {}:**\n\n你有一个新订单待接单，订单详情:\n- **类型:** {}\n- **时长:** {}\n- **数量:** {}\n- **备注:** {}\n\n接单后提供客户微信'
-    text = text.format(anchor.nickname, order.product_id.product_id.product_type_id.name,
-                       order.product_id.product_id.name, order.number, order.comment)
+    text = '**Hi, {}:**\n\n你有一个新订单待接单，订单详情:\n- **订单类型:** {}\n- **类型:** {}\n- **时长:** {}\n' \
+           '- **数量:** {}\n- **备注:** {}\n\n接单后提供客户微信'
+    text = text.format(anchor.nickname, dict(OrderRenew.OrderRenewChoices.value)[order.renew_order],
+                       order.product_id.product_id.product_type_id.name, order.product_id.product_id.name, order.number,
+                       order.comment)
     resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=text, btns=btns)
 
 
