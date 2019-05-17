@@ -29,6 +29,7 @@ urlpatterns = [
     # path('anchor/apply/audit/dingtalk/<str:action>/', anchor_apply_dingtalk_action_router),
 
     path('order/new/', new_order_router),
+    path('order/random/', new_order_router),
     path('order/accept/', dingtalk_accept_order),
 
     path('wxoauth/recall/', oauth_router),

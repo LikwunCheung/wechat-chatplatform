@@ -21,9 +21,16 @@ from wechat_chatplatform.handler.wechat_handler.wechat_handler import wechat_han
 @require_http_methods(['POST', 'OPTIONS'])
 @check_api_key
 def new_order_router(request, *args, **kwargs):
-
     if request.method == 'POST':
         return new_order_post(request)
+    return HttpResponseNotAllowed()
+
+
+@require_http_methods(['POST', 'OPTIONS'])
+@check_api_key
+def random_order_router(request, *args, **kwargs):
+    if request.method == 'POST':
+        return random_order_post(request)
     return HttpResponseNotAllowed()
 
 
