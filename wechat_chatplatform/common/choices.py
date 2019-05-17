@@ -98,6 +98,30 @@ class OrderStatus(Enum):
 
 
 @unique
+class OrderType(Enum):
+    normal = 0
+    random = 1
+    biaobai = 2
+
+    OrderTypeChoices = (
+        (normal, u'指定单'),
+        (random, u'随机单'),
+        (biaobai, u'表白单'),
+    )
+
+
+@unique
+class OrderRenew(Enum):
+    first = 0
+    renew = 1
+
+    OrderRenewChoices = (
+        (first, u'首单'),
+        (renew, u'续单'),
+    )
+
+
+@unique
 class ExtendStatus(Enum):
     first = False
     extend = True

@@ -6,12 +6,14 @@ import math
 from django.db import models
 from django.utils.timezone import now
 
-from wechat_chatplatform.common.choices import OrderStatus, Gender
+from wechat_chatplatform.common.choices import OrderStatus, Gender, OrderType, OrderRenew
 
 
 class Order(models.Model):
 
     order_id = models.AutoField(verbose_name=u'订单编号', primary_key=True)
+    order_type = models.IntegerField(verbose_name=u'订单类型', choices=OrderType.OrderTypeChoices.value, default=OrderType.normal.value, blank=True, null=True)
+    renew_order = models.IntegerField(verbose_name=u'续单', choices=OrderRenew.OrderRenewChoices.value, default=OrderRenew.first.value, blank=True, null=True)
     user_id = models.ForeignKey('user_info.UserInfo', verbose_name=u'用户id', related_name='user', on_delete=models.SET_NULL, blank=True, null=True)
     wechat_id = models.CharField(verbose_name=u'微信号', max_length=30, blank=True, null=True)
     product_id = models.ForeignKey('product.ProductAnchorType', verbose_name=u'产品', related_name='product', on_delete=models.SET_NULL, blank=True, null=True)
