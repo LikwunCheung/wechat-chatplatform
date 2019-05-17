@@ -190,7 +190,7 @@ class AnchorGroup(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.dingding_id
+        return self.name
 
     def delete(self, using=None, keep_parents=False):
         self.status = Status.inactive.value
