@@ -10,7 +10,7 @@ from .models import Order
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_id', 'anchor_id', 'product_id', 'status', 'rmb_amount', 'order_time')
+    list_display = ('order_id', 'anchor_id', 'product_id', 'status', 'order_type', 'renew_order', 'rmb_amount', 'order_time')
     list_filter = ('anchor_id', 'status', )
     search_fields = ('anchor_id',)
     empty_value_display = 'N/A'
