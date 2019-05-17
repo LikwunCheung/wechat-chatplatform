@@ -6,6 +6,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

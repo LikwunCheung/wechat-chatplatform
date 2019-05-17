@@ -32,3 +32,7 @@ def admin_user_login(request):
             return HttpResponseRedirect(redirect)
         return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
     return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
+
+
+def admin_user_logout(request):
+    pass

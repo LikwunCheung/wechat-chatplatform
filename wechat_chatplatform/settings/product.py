@@ -2,26 +2,28 @@
 
 from .base_setting import *
 
+# SECRET_KEY = 'w-l*xefx)8+p_1yu^8)mk6df(pushufs(hp6!hyx)a$u4o@*kz'
+
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-ROOT_URLCONF = 'wechat_chatplatform.urls'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, '../../db.sqlite3'),
     },
-    'mysql': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'suave',
-        'USER': 'lihuan',
-        'PASSWORD': 'lihuan',
-        'HOST': '115.146.85.81',
-        'PORT': 8088,
-        'CHARSET': 'utf8mb4'
-    }
+    # 'mysql': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'suave',
+    #     'USER': 'lihuan',
+    #     'PASSWORD': 'lihuan',
+    #     'HOST': '115.146.85.81',
+    #     'PORT': 8088,
+    #     'CHARSET': 'utf8mb4'
+    # }
 }
 
 LOGGING = {
