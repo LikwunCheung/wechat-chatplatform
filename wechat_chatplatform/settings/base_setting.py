@@ -15,7 +15,8 @@ import os
 from django.contrib import admin
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,9 +26,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'w-l*xefx)8+p_1yu^8)mk6df(pushufs(hp6!hyx)a$u4o@*kz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -79,17 +77,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'wechat_chatplatform.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -127,58 +114,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(module)s:%(funcName)s] [%(levelname)s]- %(message)s'
-        },
-        'debug': {
-            'format': '%(asctime)s [%(module)s:%(funcName)s][%(levelname)s] %(message)s'
-        },
-    },
-    'filters': {
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'standard',
-        },
-        'debug.console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'debug',
-        },
-        # 'default': {
-        #     'level': 'DEBUG',
-        #     'class': 'logging.handlers.RotatingFileHandler',
-        #     'filename': '/home/ubuntu/log/all.log',
-        #     'maxBytes': 1024*1024*5,
-        #     'backupCount': 5,
-        #     'formatter': 'debug',
-        # },
-        # 'error': {
-        #     'level': 'ERROR',
-        #     'class': 'logging.handlers.RotatingFileHandler',
-        #     'filename': '/home/ubuntu/log/error.log',
-        #     'maxBytes': 1024 * 1024 * 5,
-        #     'backupCount': 5,
-        #     'formatter': 'debug',
-        # },
-    },
-    'loggers': {
-        'django.debug': {
-            'handlers': ['debug.console'],
-            'propagate': True,
-            'level': 'DEBUG',
-        },
-        # 'server.debug': {
-        #     'handlers': ['default', 'debug.console'],
-        #     'propagate': True,
-        #     'level': 'DEBUG',
-        # },
-    }
-}
