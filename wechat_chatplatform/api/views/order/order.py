@@ -51,8 +51,7 @@ def new_order_post(request):
     is_user = request.session.get('is_user', False)
     # if not (user_id and is_user):
     #     return HttpResponseRedirect(wechat_handler.get_code_url(state='/#/detail?id={}'.format(param['id'])))
-
-    user = UserInfo.objects.get(user_id=user_id)
+    # user = UserInfo.objects.get(user_id=user_id)
 
     try:
         anchor = Anchor.objects.get(anchor_id=param['id'], status=AnchorStatus.active.value)
@@ -67,7 +66,8 @@ def new_order_post(request):
     product = anchor.type_id.products.get(product_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
-        user_id=user,
+        user_id=None,
+        # user_id=user,
         product_id=product,
         anchor_id=anchor,
         anchor_type_id=None,
@@ -103,13 +103,15 @@ def random_order_post(request):
     is_user = request.session.get('is_user', False)
     # if not (user_id and is_user):
     #     return HttpResponseRedirect(wechat_handler.get_code_url())
+    # user = UserInfo.objects.get(user_id=user_id)
 
     anchor_type = AnchorType.objects.get(type_id=param['level'])
     product = anchor_type.products.get(product_id=int(param['product_id']))
     param.pop('level')
-    tags = param.pop('tags', None)
+    tags = param.pop('tags', u'无')
     param.update(dict(
-        user_id=user_id,
+        user_id=None,
+        # user_id=user,
         product_id=product,
         anchor_id=None,
         order_type=OrderType.random.value,
