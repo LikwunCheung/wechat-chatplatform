@@ -180,7 +180,8 @@ class AnchorGroup(models.Model):
 
     group_id = models.AutoField(verbose_name=u'店员钉钉群编号', primary_key=True)
     name = models.CharField(verbose_name=u'群名称', max_length=20)
-    dingding_id = models.CharField(verbose_name=u'钉钉id', max_length=30)
+    dingtalk_id = models.CharField(verbose_name=u'钉钉id', max_length=30, blank=True, null=True)
+    dingtalk_robot = models.CharField(verbose_name=u'钉钉机器人', max_length=100, blank=True, null=True)
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value, default=Gender.mix.value)
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 

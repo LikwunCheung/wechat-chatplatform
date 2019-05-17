@@ -7,11 +7,11 @@ from django.http.response import HttpResponse, HttpResponseRedirect, HttpRespons
 from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
 
-from wechat_chatplatform.anchor.models import Anchor
+from wechat_chatplatform.anchor.models import Anchor, AnchorType
 from wechat_chatplatform.user_info.models import UserInfo
 from wechat_chatplatform.order.models import Order
 from wechat_chatplatform.common.utils.utils import *
-from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_order_message, send_accept_order_message
+from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_order_message, send_accept_order_message, send_random_order_message
 from wechat_chatplatform.common.utils.currency import AUD_CNY
 from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.common.config import DOMAIN
@@ -60,7 +60,8 @@ def new_order_post(request):
         user_id=user,
         product_id=product,
         anchor_id=anchor,
-        gender=anchor.gender,
+        anchor_type_id=None,
+        gender=None,
         status=OrderStatus.unpaid.value,
         origin_amount=product.price * param['number'],
         deduction=0,
@@ -82,29 +83,24 @@ def new_order_post(request):
 
 
 def random_order_post(request):
-    keys = ['product_id', 'number', 'wechat_id', 'comment', 'tags', 'level']
+    keys = ['product_id', 'number', 'wechat_id', 'comment', 'tags', 'level', 'gender']
     param = ujson.loads(request.body)
     param = make_dict(keys, param)
 
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
-    if not (user_id and is_user):
-        return HttpResponseRedirect(wechat_handler.get_code_url())
+    # if not (user_id and is_user):
+    #     return HttpResponseRedirect(wechat_handler.get_code_url())
 
-    try:
-        anchor = Anchor.objects.get(anchor_id=param['id'], status=AnchorStatus.active.value)
-    except Exception as e:
-        print(e)
-        resp = init_http_bad_request(u'下单失败')
-        make_json_response(HttpResponseBadRequest, resp)
-
-    product = anchor.type_id.products.get(product_id=int(param['product_id']))
+    anchor_type = AnchorType.objects.get(type_id=param['level'])
+    product = anchor_type.products.get(product_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
         user_id=user_id,
         product_id=product,
-        anchor_id=anchor,
-        gender=anchor.gender,
+        anchor_id=None,
+        anchor_type_id=anchor_type,
+        gender=param['gender'],
         status=OrderStatus.unpaid.value,
         origin_amount=product.price * param['number'],
         deduction=0,
@@ -115,7 +111,7 @@ def random_order_post(request):
     order = Order(**param)
     order.save()
 
-    send_new_order_message(order)
+    send_random_order_message(order)
     resp = init_http_success()
     resp['data'].update(dict(
         id=order.order_id,

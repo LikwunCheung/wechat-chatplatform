@@ -23,7 +23,7 @@ class AnchorTypeAdmin(admin.ModelAdmin):
 
 
 class AnchorGroupAdmin(admin.ModelAdmin):
-    list_display = ('group_id', 'dingding_id', 'gender', 'status',)
+    list_display = ('group_id', 'dingtalk_robot', 'gender', 'status',)
 
 
 class AnchorTagAdmin(admin.ModelAdmin):
