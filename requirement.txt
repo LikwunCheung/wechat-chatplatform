@@ -3,6 +3,7 @@ chardet==3.0.4
 Django==2.1.7
 django-cors-headers==2.5.1
 idna==2.8
+mysqlclient==1.4.2.post1
 pytz==2018.9
 requests==2.21.0
 ujson==1.35
