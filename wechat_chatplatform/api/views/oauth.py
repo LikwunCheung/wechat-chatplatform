@@ -8,6 +8,7 @@ from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
 
 from wechat_chatplatform.user_info.models import UserInfo, UserLoginInfo
+from wechat_chatplatform.anchor.models import Anchor
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.handler.wechat_handler.wechat_handler import wechat_handler
 
@@ -28,6 +29,12 @@ def oauth_get_code(request):
     open_id, access_token = wechat_handler.get_user_open_id_access_token(code)
 
     try:
+        anchor = Anchor.objects.get(open_id=open_id)
+        return anchor_login(request, anchor)
+    except Exception as e:
+        pass
+
+    try:
         user = UserInfo.objects.get(open_id=open_id)
         user.last_login = now()
     except Exception as e:
@@ -45,7 +52,27 @@ def oauth_get_code(request):
 
     user_record = UserLoginInfo(user_id=user, time=now())
     user_record.save()
+    return user_login(request, user)
 
-    return HttpResponseRedirect('http://www.suavechat.com/')
+
+def anchor_login(request, anchor):
+    request.session['id'] = anchor.anchor_id
+    request.session['type'] = anchor.type_id.type_id
+    request.session['is_admin'] = False
+    request.session['is_anchor'] = True
+    request.session['is_user'] = False
+    request.session['is_login'] = True
+    request.session.set_expiry(60 * 60)
+
+    return HttpResponseRedirect(DOMAIN)
 
 
+def user_login(request, user):
+    request.session['id'] = user.user_id
+    request.session['is_admin'] = False
+    request.session['is_anchor'] = False
+    request.session['is_user'] = True
+    request.session['is_login'] = True
+    request.session.set_expiry(60 * 60)
+
+    return HttpResponseRedirect(DOMAIN)

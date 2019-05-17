@@ -33,5 +33,5 @@ urlpatterns = [
 
     path('wxoauth/recall/', oauth_router),
 
-    path('admin/login/', admin_user_login)
+    path('admin/login/', admin_user_login),
 ]

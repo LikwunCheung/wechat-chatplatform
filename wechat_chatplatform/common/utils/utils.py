@@ -30,6 +30,13 @@ def check_api_key(func):
     return wrapper
 
 
+def check_user_login(func):
+    def wrapper(request):
+        user_id = request.session.get('id', '')
+        login = request.session.get('isUser', False)
+    pass
+
+
 def check_admin_user(func):
     def wrapper(request, *args, **kwargs):
         username = request.session.get('username', '')

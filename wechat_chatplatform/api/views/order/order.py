@@ -14,6 +14,7 @@ from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_order
 from wechat_chatplatform.common.utils.currency import AUD_CNY
 from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.common.config import DOMAIN
+from wechat_chatplatform.handler.wechat_handler.wechat_handler import wechat_handler
 
 
 @require_http_methods(['POST', 'OPTIONS'])
@@ -38,6 +39,11 @@ def new_order_post(request):
     param = ujson.loads(request.body)
     param = make_dict(keys, param)
 
+    user_id = request.session.get('id', None)
+    is_user = request.session.get('is_user', False)
+    if not (user_id and is_user):
+        return HttpResponseRedirect(wechat_handler.get_code_url())
+
     try:
         anchor = Anchor.objects.get(anchor_id=param['id'], status=AnchorStatus.active.value)
     except Exception as e:
@@ -48,7 +54,7 @@ def new_order_post(request):
     product = anchor.type_id.products.get(product_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
-        user_id=None,
+        user_id=user_id,
         product_id=product,
         anchor_id=anchor,
         gender=anchor.gender,
@@ -77,6 +83,11 @@ def random_order_post(request):
     param = ujson.loads(request.body)
     param = make_dict(keys, param)
 
+    user_id = request.session.get('id', None)
+    is_user = request.session.get('is_user', False)
+    if not (user_id and is_user):
+        return HttpResponseRedirect(wechat_handler.get_code_url())
+
     try:
         anchor = Anchor.objects.get(anchor_id=param['id'], status=AnchorStatus.active.value)
     except Exception as e:
@@ -87,7 +98,7 @@ def random_order_post(request):
     product = anchor.type_id.products.get(product_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
-        user_id=None,
+        user_id=user_id,
         product_id=product,
         anchor_id=anchor,
         gender=anchor.gender,
