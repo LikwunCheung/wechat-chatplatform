@@ -61,7 +61,7 @@ def new_order_post(request):
         resp = init_http_bad_request(u'下单失败')
         make_json_response(HttpResponseBadRequest, resp)
 
-    history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor_id=anchor)
+    history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor_id=anchor, user_id=user_id)
     renew_order = OrderRenew.renew.value if history_orders else OrderRenew.first.value
 
     product = anchor.type_id.products.get(product_id=int(param['product_id']))
