@@ -10,7 +10,9 @@ from wechat_chatplatform.common.config import DOMAIN, ADMIN_INDEX, LOGIN_REDIREC
 
 
 def admin_user_login(request):
+    print('hello')
     if request.method == 'POST':
+
         username = request.POST.get('username')
         password = request.POST.get('password')
         print(username, password)
@@ -32,6 +34,7 @@ def admin_user_login(request):
         if redirect:
             return HttpResponseRedirect(redirect)
         return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
+
     print(DOMAIN + LOGIN_REDIRECT)
     return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
 
