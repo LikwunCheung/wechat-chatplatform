@@ -36,10 +36,10 @@ def admin_user_login(request):
         redirect = param.get('redirect', None)
         if redirect:
             return HttpResponseRedirect(redirect)
-        print(ADMIN_INDEX)
+        print(DOMAIN + ADMIN_INDEX)
         return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
     print(LOGIN_REDIRECT)
-    return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
+    return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
 
 
 def admin_user_logout(request):
