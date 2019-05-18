@@ -20,22 +20,23 @@ class Order(models.Model):
     anchor_id = models.ForeignKey('anchor.Anchor', verbose_name=u'店员', related_name='order', on_delete=models.SET_NULL, blank=True, null=True)
     anchor_type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'店员等级', related_name='random_order', on_delete=models.SET_NULL, blank=True, null=True)
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value, blank=True, null=True)
-    status = models.IntegerField(verbose_name=u'状态', choices=OrderStatus.OrderStatusChoices.value, default=OrderStatus.unpaid.value)
+    status = models.IntegerField(verbose_name=u'状态', choices=OrderStatus.OrderStatusChoices.value, default=OrderStatus.unpaid.value, db_index=True)
     number = models.FloatField(verbose_name=u'件数', default=1)
     comment = models.CharField(verbose_name=u'备注', max_length=100, blank=True, null=True)
     origin_amount = models.FloatField(verbose_name=u'原金额')
     deduction = models.FloatField(verbose_name=u'折扣金额', default=0)
     total_amount = models.FloatField(verbose_name=u'总金额')
     rmb_amount = models.FloatField(verbose_name=u'人民币金额')
-    order_time = models.DateTimeField(verbose_name=u'下单时间')
-    pay_time = models.DateTimeField(verbose_name=u'付款时间', blank=True, null=True)
-    complete_time = models.DateTimeField(verbose_name=u'完成时间', blank=True, null=True)
-    salary_time = models.DateTimeField(verbose_name=u'工资结算时间', blank=True, null=True)
+    order_time = models.DateTimeField(verbose_name=u'下单时间', db_index=True)
+    pay_time = models.DateTimeField(verbose_name=u'付款时间', blank=True, null=True, db_index=True)
+    complete_time = models.DateTimeField(verbose_name=u'完成时间', blank=True, null=True, db_index=True)
+    salary_time = models.DateTimeField(verbose_name=u'工资结算时间', blank=True, null=True, db_index=True)
 
     class Meta:
         db_table = 'order'
         verbose_name = u'订单信息'
         verbose_name_plural = verbose_name
+        indexes = []
 
     def __str__(self):
         return self.order_id.__str__()
@@ -53,3 +54,32 @@ class Order(models.Model):
             self.salary_time = now()
             self.save()
         return None
+
+
+class OrderHistory(models.Model):
+
+    order_history_id = models.AutoField(verbose_name=u'订单记录编号', primary_key=True)
+    date = models.DateField(verbose_name=u'日期', db_index=True)
+    update_date = models.DateTimeField(verbose_name=u'更新时间')
+    order_number = models.IntegerField(verbose_name=u'订单数量')
+    order_amount = models.FloatField(verbose_name=u'订单金额')
+    direct_order_number = models.IntegerField(verbose_name=u'指定单数量')
+    direct_order_amount = models.FloatField(verbose_name=u'指定单金额')
+    random_order_number = models.IntegerField(verbose_name=u'随机单数量')
+    random_order_amount = models.FloatField(verbose_name=u'随机单金额')
+    first_order_number = models.IntegerField(verbose_name=u'首单数量')
+    first_order_amount = models.FloatField(verbose_name=u'首单金额')
+    renew_order_number = models.IntegerField(verbose_name=u'续单数量')
+    renew_order_amount = models.FloatField(verbose_name=u'续单金额')
+    complete_number = models.IntegerField(verbose_name=u'结单数量')
+    complete_amount = models.FloatField(verbose_name=u'结单金额')
+    salary_number = models.IntegerField(verbose_name=u'发工资数量')
+    salary_amount = models.FloatField(verbose_name=u'发工资金额')
+
+    class Meta:
+        db_table = 'order_history'
+        verbose_name = u'订单统计'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.date.strftime('%Y-%m-%d')

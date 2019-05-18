@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import Order
+from .models import Order, OrderHistory
 
 
 # Register your models here.
@@ -17,4 +17,10 @@ class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'order_time'
 
 
+class OrderHistoryAdmin(admin.ModelAdmin):
+    list_display = ('order_history_id', 'date', 'update_date', 'order_number', 'order_amount')
+    empty_value_display = 'N/A'
+
+
 admin.site.register(Order, OrderAdmin)
+admin.site.register(OrderHistory, OrderHistoryAdmin)
