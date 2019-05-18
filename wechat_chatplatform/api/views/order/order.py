@@ -190,7 +190,7 @@ def user_order_list_get(request):
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
             amount=order.rmb_amount,
-            time=order.order_time.strftime('%Y-%m-%d %H:%m:%s')
+            time=order.order_time.strftime('%Y-%m-%d %H:%m:%S')
         ))
     resp = init_http_success()
     resp.update(
@@ -224,7 +224,7 @@ def anchor_order_list_get(request):
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
             amount=order.rmb_amount * (order.product_id.product_id.partition if order.renew_order == OrderRenew.first.value else order.product_id.product_id.partition_extend),
-            time=order.order_time.strftime('%Y-%m-%d %H:%m:%s')
+            time=order.order_time.strftime('%Y-%m-%d %H:%m:%S')
         ))
     resp = init_http_success()
     resp.update(
