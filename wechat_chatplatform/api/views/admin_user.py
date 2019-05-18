@@ -12,10 +12,10 @@ from wechat_chatplatform.common.config import DOMAIN, ADMIN_INDEX, LOGIN_REDIREC
 
 
 def admin_user_login(request):
-    param = ujson.loads(request.body)
-    print(param)
+
     if request.method == 'POST':
         param = ujson.loads(request.body)
+        print(param)
         username = param.get(r'username', None)
         password = param['password']
         print(password, username)
