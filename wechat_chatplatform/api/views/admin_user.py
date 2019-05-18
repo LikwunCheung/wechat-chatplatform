@@ -34,7 +34,7 @@ def admin_user_login(request):
         redirect = param.get('redirect', None)
         if redirect:
             return HttpResponseRedirect(redirect)
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/admin/#/manage')
     return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
 
 
