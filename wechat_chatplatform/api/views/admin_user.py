@@ -12,11 +12,13 @@ from wechat_chatplatform.common.config import DOMAIN, ADMIN_INDEX, LOGIN_REDIREC
 
 
 def admin_user_login(request):
+    param = ujson.loads(request.body)
+    print(param)
     if request.method == 'POST':
         param = ujson.loads(request.body)
         username = param.get('username', None)
         password = param.get('password', None)
-        print(username, password)
+        print(password, username)
 
         try:
             admin_user = AdminUser.objects.get(status=AdminUserStatus.active.value, username=username, password=password)
@@ -34,7 +36,9 @@ def admin_user_login(request):
         redirect = param.get('redirect', None)
         if redirect:
             return HttpResponseRedirect(redirect)
+        print(ADMIN_INDEX)
         return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
+    print(LOGIN_REDIRECT)
     return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
 
 
