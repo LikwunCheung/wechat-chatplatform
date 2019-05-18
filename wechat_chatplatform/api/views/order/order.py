@@ -38,16 +38,14 @@ def random_order_router(request, *args, **kwargs):
 @require_http_methods(['GET'])
 @check_api_key
 def order_list_router(request, *args, **kwargs):
-    if not request.session.get('is_login', False) or not request.session.get('id', None):
-        # resp = init_redirect_response(wechat_handler.get_code_url(state='#/order'))
-        # return make_redirect_response(HttpResponse, resp)
-        return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
+    # if not request.session.get('is_login', False) or not request.session.get('id', None):
+    #     return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
 
     if request.method == 'GET':
-        if request.session.get('is_user', False):
-            return user_order_list_get(request)
-        if request.session.get('is_anchor', False):
-            return anchor_order_list_get(request)
+        # if request.session.get('is_user', False):
+        return user_order_list_get(request)
+        # if request.session.get('is_anchor', False):
+        #     return anchor_order_list_get(request)
     return HttpResponseNotAllowed()
 
 
