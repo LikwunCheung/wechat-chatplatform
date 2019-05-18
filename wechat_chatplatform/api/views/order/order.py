@@ -37,8 +37,16 @@ def random_order_router(request, *args, **kwargs):
 @require_http_methods(['GET'])
 @check_api_key
 def order_list_router(request, *args, **kwargs):
+    if not request.session.get('is_login', False) or not request.session.get('id', None):
+        # resp = init_redirect_response(wechat_handler.get_code_url(state='#/order'))
+        # return make_redirect_response(HttpResponse, resp)
+        return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
+
     if request.method == 'GET':
-        return order_list_get(request)
+        if request.session.get('is_user', False):
+            return user_order_list_get(request)
+        if request.session.get('is_anchor', False):
+            return anchor_order_list_get(request)
     return HttpResponseNotAllowed()
 
 
@@ -49,9 +57,9 @@ def new_order_post(request):
 
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
-    # if not (user_id and is_user):
-    #     return HttpResponseRedirect(wechat_handler.get_code_url(state='/#/detail?id={}'.format(param['id'])))
-    # user = UserInfo.objects.get(user_id=user_id)
+    if not (user_id and is_user):
+        return HttpResponseRedirect(wechat_handler.get_code_url(state='#/detail?id={}'.format(param['id'])))
+    user = UserInfo.objects.get(user_id=user_id)
 
     try:
         anchor = Anchor.objects.get(anchor_id=param['id'], status=AnchorStatus.active.value)
@@ -66,8 +74,8 @@ def new_order_post(request):
     product = anchor.type_id.products.get(product_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
-        user_id=None,
-        # user_id=user,
+        # user_id=None,
+        user_id=user,
         product_id=product,
         anchor_id=anchor,
         anchor_type_id=None,
@@ -101,17 +109,17 @@ def random_order_post(request):
 
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
-    # if not (user_id and is_user):
-    #     return HttpResponseRedirect(wechat_handler.get_code_url())
-    # user = UserInfo.objects.get(user_id=user_id)
+    if not (user_id and is_user):
+        return HttpResponseRedirect(wechat_handler.get_code_url())
+    user = UserInfo.objects.get(user_id=user_id)
 
     anchor_type = AnchorType.objects.get(type_id=param['level'])
     product = anchor_type.products.get(product_id=int(param['product_id']))
     param.pop('level')
     tags = param.pop('tags', u'无')
     param.update(dict(
-        user_id=None,
-        # user_id=user,
+        # user_id=None,
+        user_id=user,
         product_id=product,
         anchor_id=None,
         order_type=OrderType.random.value,
@@ -158,7 +166,11 @@ def dingtalk_accept_order(request):
     return HttpResponseRedirect(DOMAIN)
 
 
-def order_list_get(request):
+def user_order_list_get(request):
+    pass
+
+
+def anchor_order_list_get(request):
     pass
 
 
