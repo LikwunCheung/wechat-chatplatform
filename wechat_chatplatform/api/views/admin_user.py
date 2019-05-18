@@ -16,10 +16,9 @@ def admin_user_login(request):
         param = ujson.loads(request.body)
         username = param.get('username', None)
         password = param.get('password', None)
-        print(username, password)
 
-        admin_user = AdminUser.objects.filter(status=AdminUserStatus.active.value, username=username, password=password)
-        if admin_user:
+        try:
+            admin_user = AdminUser.objects.get(status=AdminUserStatus.active.value, username=username, password=password)
             request.session['username'] = username
             request.session['type'] = admin_user.type_id.tag
             request.session['is_admin'] = True
@@ -27,16 +26,14 @@ def admin_user_login(request):
             request.session['is_user'] = False
             request.session['is_login'] = True
             request.session.set_expiry(15 * 60)
-        else:
+        except Exception as e:
             resp = init_http_bad_request('Error Username Or Password')
-            make_json_response(HttpResponseBadRequest, resp)
+            return make_json_response(HttpResponseBadRequest, resp)
 
-        redirect = request.GET.get('redirect', '')
+        redirect = param.get('redirect', None)
         if redirect:
             return HttpResponseRedirect(redirect)
         return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
-
-    print(DOMAIN + LOGIN_REDIRECT)
     return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
 
 
