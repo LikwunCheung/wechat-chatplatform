@@ -21,7 +21,7 @@ class Order(models.Model):
     anchor_type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'店员等级', related_name='random_order', on_delete=models.SET_NULL, blank=True, null=True)
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value, blank=True, null=True)
     status = models.IntegerField(verbose_name=u'状态', choices=OrderStatus.OrderStatusChoices.value, default=OrderStatus.unpaid.value, db_index=True)
-    number = models.FloatField(verbose_name=u'件数', default=1)
+    number = models.IntegerField(verbose_name=u'件数', default=1)
     comment = models.CharField(verbose_name=u'备注', max_length=100, blank=True, null=True)
     origin_amount = models.FloatField(verbose_name=u'原金额')
     deduction = models.FloatField(verbose_name=u'折扣金额', default=0)
