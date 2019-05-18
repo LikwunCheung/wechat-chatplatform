@@ -116,6 +116,8 @@ def random_order_post(request):
     product = anchor_type.products.get(product_id=int(param['product_id']))
     param.pop('level')
     tags = param.pop('tags', u'无')
+    if isinstance(tags, list):
+        tags = ','.join([tag.strip('#') for tag in tags])
     param.update(dict(
         # user_id=None,
         user_id=user,
