@@ -175,7 +175,7 @@ def user_order_list_get(request):
 
     try:
         user = UserInfo.objects.get(user_id=user_id)
-        orders = user.user.all().order_by('order_time')
+        orders = user.user.all().order_by('-order_time')
     except Exception as e:
         resp = init_http_bad_request('Error ID')
         return make_json_response(HttpResponseBadRequest, resp)
@@ -210,7 +210,7 @@ def anchor_order_list_get(request):
 
     try:
         anchor = Anchor.objects.get(status=AnchorStatus.active.value, anchor_id=anchor_id)
-        orders = anchor.order.all().order_by('order_time')
+        orders = anchor.order.all().order_by('-order_time')
     except Exception as e:
         resp = init_http_bad_request('Error ID')
         return make_json_response(HttpResponseBadRequest, resp)
