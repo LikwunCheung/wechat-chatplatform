@@ -39,7 +39,7 @@ def admin_user_login(request):
         print(ADMIN_INDEX)
         return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
     print(LOGIN_REDIRECT)
-    return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
+    return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
 
 
 def admin_user_logout(request):
