@@ -3,7 +3,7 @@
 import ujson
 
 from django.contrib.auth.hashers import make_password, check_password
-from django.http import HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse
 
 from wechat_chatplatform.platform_admin.models import AdminUser
 from wechat_chatplatform.common.choices import AdminUserStatus
@@ -34,12 +34,13 @@ def admin_user_login(request):
             return make_json_response(HttpResponseBadRequest, resp)
 
         redirect = param.get('redirect', None)
-        if redirect:
-            return HttpResponseRedirect(redirect)
+        # if redirect:
+            # return HttpResponseRedirect(redirect)
         print(ADMIN_INDEX)
-        return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
+        # return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
     print(LOGIN_REDIRECT)
-    return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
+    # return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
+    return HttpResponse
 
 
 def admin_user_logout(request):
