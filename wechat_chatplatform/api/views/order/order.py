@@ -162,7 +162,7 @@ def dingtalk_accept_order(request):
     order.save()
 
     send_accept_order_message(order)
-    return HttpResponseRedirect(DOMAIN)
+    return HttpResponseRedirect(DOMAIN + ORDER_PAGE)
 
 
 def user_order_list_get(request):

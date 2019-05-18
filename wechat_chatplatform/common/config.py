@@ -20,6 +20,7 @@ class ErrorMsg(Enum):
 HTTP_X_API_KEY = 'HTTP_X_API_KEY'
 API_KEY = '227415ba68c811e9b1a48c8590c7151e'
 DOMAIN = 'http://www.suavechat.com/'
+ORDER_PAGE = '#/order'
 LOGIN_REDIRECT = 'admin/'
 ACCEPT_ORDER = 'api/v1/order/accept/?id={}'
 GRAB_ORDER = 'api/v1/order/random/accept/?id={}'
