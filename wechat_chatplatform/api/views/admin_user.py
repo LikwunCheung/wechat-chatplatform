@@ -32,10 +32,9 @@ def admin_user_login(request):
             return make_json_response(HttpResponseBadRequest, resp)
 
         redirect = param.get('redirect', None)
-        if redirect:
-            return HttpResponseRedirect(redirect)
-        return HttpResponseRedirect('/admin/#/manage')
-    return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
+        return HttpResponse()
+
+    return HttpResponseBadRequest()
 
 
 def admin_user_logout(request):
