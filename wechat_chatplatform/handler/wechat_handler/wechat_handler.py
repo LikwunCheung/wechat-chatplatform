@@ -87,5 +87,5 @@ wechat_handler = WeChatHandler()
 
 
 if __name__ == '__main__':
-    pass
-    # print(wechat_handler.get_access_token())
+    from wechat_chatplatform.handler.wechat_handler.config import *
+    print(wechat_handler.get_code_url('#/random'))

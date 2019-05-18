@@ -102,7 +102,7 @@ def new_order_post(request):
 
 
 def random_order_post(request):
-    keys = ['product_id', 'number', 'wechat_id', 'comment', 'tags', 'level', 'gender']
+    keys = ['product_id', 'wechat_id', 'comment', 'tags', 'level', 'gender']
     param = ujson.loads(request.body)
     param = make_dict(keys, param)
 
@@ -123,13 +123,14 @@ def random_order_post(request):
         anchor_id=None,
         order_type=OrderType.random.value,
         renew_order=OrderRenew.first.value,
+        number=1,
         anchor_type_id=anchor_type,
         gender=param['gender'],
         status=OrderStatus.ungrab.value,
-        origin_amount=product.price * param['number'],
+        origin_amount=product.price,
         deduction=0,
-        total_amount=product.price * param['number'],
-        rmb_amount=round(product.price * param['number'] * AUD_CNY.get(), 2),
+        total_amount=product.price,
+        rmb_amount=round(product.price * AUD_CNY.get(), 2),
         order_time=now(),
     ))
     order = Order(**param)
