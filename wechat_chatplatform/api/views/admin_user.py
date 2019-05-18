@@ -16,8 +16,8 @@ def admin_user_login(request):
     print(param)
     if request.method == 'POST':
         param = ujson.loads(request.body)
-        username = param.get('username', None)
-        password = param.get('password', None)
+        username = param.get(r'username', None)
+        password = param.get(r'password', None)
         print(password, username)
 
         try:
