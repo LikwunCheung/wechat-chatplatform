@@ -43,9 +43,9 @@ def order_list_router(request, *args, **kwargs):
 
     if request.method == 'GET':
         # if request.session.get('is_user', False):
-        return user_order_list_get(request)
+        #     return user_order_list_get(request)
         # if request.session.get('is_anchor', False):
-        #     return anchor_order_list_get(request)
+        return anchor_order_list_get(request)
     return HttpResponseNotAllowed()
 
 
@@ -185,6 +185,7 @@ def user_order_list_get(request):
         results.append(dict(
             id=order.order_id,
             anchor=order.anchor_id.nickname,
+            avatar=order.anchor_id.avatar,
             product=order.product_id.__str__(),
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
@@ -200,7 +201,8 @@ def user_order_list_get(request):
 
 
 def anchor_order_list_get(request):
-    anchor_id = request.session.get('id', None)
+    # anchor_id = request.session.get('id', None)
+    anchor_id = request.session.get('id', 5)
 
     if not anchor_id:
         resp = init_http_bad_request('Error ID')
