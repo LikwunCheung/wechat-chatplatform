@@ -23,7 +23,7 @@ DOMAIN = 'http://www.suavechat.com/'
 LOGIN_REDIRECT = 'admin/login/'
 ACCEPT_ORDER = '/api/v1/order/accept/?id={}'
 GRAB_ORDER = 'api/v1/order/random/accept/?id={}'
-ADMIN_INDEX = 'admin/'
+ADMIN_INDEX = 'admin/#/manage'
 
 MYSQL_COMMAND = 'sudo docker run --name mysql --restart always  --privileged=true -e MYSQL_USER="lihuan" ' \
                 '-e MYSQL_PASSWORD="lihuan" -e MYSQL_ROOT_PASSWORD="lihuan" -v=/mnt/mysql/log/:/var/log/mysql/ ' \
