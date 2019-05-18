@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import ujson
+
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 
@@ -10,11 +12,10 @@ from wechat_chatplatform.common.config import DOMAIN, ADMIN_INDEX, LOGIN_REDIREC
 
 
 def admin_user_login(request):
-    print('hello')
     if request.method == 'POST':
-
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        param = ujson.loads(request.body)
+        username = param.get('username', None)
+        password = param.get('password', None)
         print(username, password)
 
         admin_user = AdminUser.objects.filter(status=AdminUserStatus.active.value, username=username, password=password)
