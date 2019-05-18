@@ -31,6 +31,7 @@ def admin_user_login(request):
         if redirect:
             return HttpResponseRedirect(redirect)
         return HttpResponseRedirect(DOMAIN + ADMIN_INDEX)
+    print(DOMAIN + LOGIN_REDIRECT)
     return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
 
 
