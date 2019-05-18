@@ -166,7 +166,8 @@ def dingtalk_accept_order(request):
 
 
 def user_order_list_get(request):
-    user_id = request.session.get('id', None)
+    # user_id = request.session.get('id', None)
+    user_id = request.session.get('id', 2)
 
     if not user_id:
         resp = init_http_bad_request('Error ID')
