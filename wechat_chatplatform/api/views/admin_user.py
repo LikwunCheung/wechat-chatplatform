@@ -13,6 +13,7 @@ def admin_user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        print(username, password)
 
         admin_user = AdminUser.objects.filter(status=AdminUserStatus.active.value, username=username, password=password)
         if admin_user:
