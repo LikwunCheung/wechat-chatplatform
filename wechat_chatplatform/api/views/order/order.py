@@ -388,13 +388,12 @@ def anchor_order_detail_get(request):
     try:
         anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
         order = anchor.orders.get(order_id=order_id, status__gte=OrderStatus.unpaid.value)
-        print(order)
         partition = order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend
         results = dict(
             id=order.order_id,
             product_type=order.product_anchor.product.product_type.name,
             product=order.product_anchor.product.name,
-            price=order.product_anchor.price * partition,
+            price=round(order.product_anchor.price * partition, 2),
             number=order.number,
             amount=round(order.total_amount, 2),
             renew=dict(OrderRenew.OrderRenewChoices.value)[order.renew],
@@ -403,7 +402,7 @@ def anchor_order_detail_get(request):
             my_amount=round(order.rmb_amount * partition, 2),
             order_time=order.order_time,
             salary_time=order.salary_time if order.salary_time else None,
-            wechat_id=order.wechat_id if order.status >= OrderStatus.salary else '******',
+            wechat_id=order.wechat_id if order.status >= OrderStatus.salary.value else '******',
             comment=order.comment,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
             modify=False
