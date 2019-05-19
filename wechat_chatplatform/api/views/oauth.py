@@ -31,6 +31,7 @@ def oauth_get_code(request):
 
     try:
         anchor = Anchor.objects.get(open_id=open_id)
+        print(anchor)
         anchor_login(request, anchor)
         return HttpResponseRedirect(DOMAIN + state)
     except Exception as e:
