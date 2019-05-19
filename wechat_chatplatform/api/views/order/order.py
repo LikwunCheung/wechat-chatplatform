@@ -498,7 +498,7 @@ def anchor_salary_get(request):
     )
     for order in orders:
         results['amount'] += round(order.rmb_amount * (
-            order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend), 2)
+            order.product_anchor.product.partition if order.renew_order == OrderRenew.first else order.product_anchor.product.partition_extend), 2)
 
     resp = init_http_success()
     resp['data'] = results
