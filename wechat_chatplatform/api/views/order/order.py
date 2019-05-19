@@ -388,7 +388,7 @@ def anchor_order_detail_get(request):
     try:
         anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
         order = anchor.orders.get(order_id=order_id, status__gte=OrderStatus.unpaid.value)
-        partition = order.product_anchor.product.partition if order.renew_order == OrderRenew.first else order.product_anchor.product.partition_extend
+        partition = order.product_anchor.product.partition if order.renew == OrderRenew.first else order.product_anchor.product.partition_extend
         results = dict(
             id=order.order_id,
             product_type=order.product_anchor.product.product_type.name,
@@ -498,7 +498,7 @@ def anchor_salary_get(request):
     )
     for order in orders:
         results['amount'] += round(order.rmb_amount * (
-            order.product_anchor.product.partition if order.renew_order == OrderRenew.first else order.product_anchor.product.partition_extend), 2)
+            order.product_anchor.product.partition if order.renew == OrderRenew.first else order.product_anchor.product.partition_extend), 2)
 
     resp = init_http_success()
     resp['data'] = results
