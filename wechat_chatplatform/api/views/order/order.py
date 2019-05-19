@@ -314,6 +314,7 @@ def anchor_order_list_get(request):
     results = list()
     my_results = list()
     for order in orders:
+        partition = order.product_anchor.product.partition if order.renew == OrderRenew.first else order.product_anchor.product.partition_extend
         results.append(dict(
             id=order.order_id,
             renew=dict(OrderRenew.OrderRenewChoices.value)[order.renew],
@@ -321,9 +322,7 @@ def anchor_order_list_get(request):
             product=order.product_anchor.__str__(),
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
-            amount=round(order.rmb_amount * (
-                order.product_anchor.product.partition if order.renew == OrderRenew.first.value else order.product_anchor.product.partition_extend),
-                         2),
+            amount=round(order.rmb_amount * partition, 2),
             time=order.order_time,
             detail=True if order.status > 0 else False,
         ))
