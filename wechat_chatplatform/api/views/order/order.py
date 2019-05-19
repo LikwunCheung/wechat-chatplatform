@@ -96,13 +96,13 @@ def new_order_post(request):
     history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor=anchor, user=user_id)
     renew_order = OrderRenew.renew.value if history_orders else OrderRenew.first.value
 
-    product = anchor.anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
+    product_anchor = anchor.anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
     param.pop('id')
     param.pop('product_id')
     param.update(dict(
         # user_id=None,
         user=user,
-        product=product,
+        product_anchor=product_anchor,
         anchor=anchor,
         anchor_type=anchor.anchor_type,
         order_type=OrderType.normal.value,
@@ -110,10 +110,10 @@ def new_order_post(request):
         gender=None,
         # status=OrderStatus.unpaid.value,
         status=OrderStatus.unacknowledge.value,
-        origin_amount=product.price * param['number'],
+        origin_amount=product_anchor.price * param['number'],
         deduction=0,
-        total_amount=product.price * param['number'],
-        rmb_amount=round(product.price * param['number'] * AUD_CNY.get(), 2),
+        total_amount=product_anchor.price * param['number'],
+        rmb_amount=round(product_anchor.price * param['number'] * AUD_CNY.get(), 2),
         order_time=now(),
     ))
     order = Order(**param)
@@ -141,7 +141,7 @@ def random_order_post(request):
     user = UserInfo.objects.get(user_id=user_id)
 
     anchor_type = AnchorType.objects.get(anchor_type_id=param['level'])
-    product = anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
+    product_anchor = anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
     param.pop('level')
     tags = param.pop('tags', u'无')
     if isinstance(tags, list):
@@ -149,7 +149,7 @@ def random_order_post(request):
     param.update(dict(
         # user_id=None,
         user=user,
-        product=product,
+        product_anchor=product_anchor,
         anchor=None,
         order_type=OrderType.random.value,
         renew_order=OrderRenew.first.value,
@@ -158,10 +158,10 @@ def random_order_post(request):
         gender=param['gender'],
         # status=OrderStatus.unpaid.value,
         status=OrderStatus.ungrab.value,
-        origin_amount=product.price,
+        origin_amount=product_anchor.price,
         deduction=0,
-        total_amount=product.price,
-        rmb_amount=round(product.price * AUD_CNY.get(), 2),
+        total_amount=product_anchor.price,
+        rmb_amount=round(product_anchor.price * AUD_CNY.get(), 2),
         order_time=now(),
     ))
     order = Order(**param)
@@ -171,7 +171,7 @@ def random_order_post(request):
     resp = init_http_success()
     resp['data'].update(dict(
         id=order.order_id,
-        product=product.__str__(),
+        product=product_anchor.__str__(),
         amount=order.rmb_amount
     ))
     return make_json_response(HttpResponse, resp)
