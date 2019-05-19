@@ -126,9 +126,9 @@ def new_order_post(request):
         gender=None,
         # status=OrderStatus.unpaid.value,
         status=OrderStatus.unacknowledge.value,
-        origin_amount=product_anchor.price * int(param['number']),
+        origin_amount=round(product_anchor.price * int(param['number']), 2),
         deduction=0,
-        total_amount=product_anchor.price * int(param['number']),
+        total_amount=round(product_anchor.price * int(param['number']), 2),
         rmb_amount=round(product_anchor.price * int(param['number']) * AUD_CNY.get(), 2),
         order_time=now(),
     ))
@@ -140,7 +140,7 @@ def new_order_post(request):
     resp['data'].update(dict(
         id=order.order_id,
         product=product_anchor.__str__(),
-        amount=order.rmb_amount
+        amount=round(order.rmb_amount, 2)
     ))
     return make_json_response(HttpResponse, resp)
 
@@ -182,9 +182,9 @@ def random_order_post(request):
         gender=param['gender'],
         # status=OrderStatus.unpaid.value,
         status=OrderStatus.ungrab.value,
-        origin_amount=product_anchor.price,
+        origin_amount=round(product_anchor.price, 2),
         deduction=0,
-        total_amount=product_anchor.price,
+        total_amount=round(product_anchor.price, 2),
         rmb_amount=round(product_anchor.price * AUD_CNY.get(), 2),
         order_time=now(),
     ))
@@ -196,7 +196,7 @@ def random_order_post(request):
     resp['data'].update(dict(
         id=order.order_id,
         product=product_anchor.__str__(),
-        amount=order.rmb_amount
+        amount=round(order.rmb_amount, 2)
     ))
     return make_json_response(HttpResponse, resp)
 
@@ -221,7 +221,8 @@ def dingtalk_accept_order(request):
 
     order.status = OrderStatus.salary.value
     if anchor_id:
-        order.anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value, anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
+        order.anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value,
+                                          anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
     order.complete_time = now()
     order.save()
 
@@ -260,8 +261,9 @@ def user_order_list_get(request):
             avatar=order.anchor.avatar if order.anchor else None,
             product=order.product_anchor.__str__(),
             number=order.number,
-            status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
-            amount=order.rmb_amount,
+            status=dict(OrderStatus.OrderStatusChoices.value)[
+                (OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
+            amount=round(order.rmb_amount, 2),
             time=order.order_time,
             detail=True if order.status > 0 else False,
         ))
@@ -305,8 +307,9 @@ def anchor_order_list_get(request):
             product=order.product_anchor.__str__(),
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
-            amount=order.rmb_amount * (
+            amount=round(order.rmb_amount * (
                 order.product_anchor.product.partition if order.renew == OrderRenew.first.value else order.product_anchor.product.partition_extend),
+                         2),
             time=order.order_time,
             detail=True if order.status > 0 else False,
         ))
@@ -319,12 +322,13 @@ def anchor_order_list_get(request):
                 avatar=order.anchor.avatar if order.anchor else None,
                 product=order.product_anchor.__str__(),
                 number=order.number,
-                status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
-                amount=order.rmb_amount,
+                status=dict(OrderStatus.OrderStatusChoices.value)[
+                    (OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
+                amount=round(order.rmb_amount, 2),
                 time=order.order_time,
                 detail=True if order.status > 0 else False,
             ))
-    
+
     resp = init_http_success()
     resp.update(
         type=1,
@@ -357,12 +361,13 @@ def user_order_detail_get(request):
         product=order.product_anchor.product.name,
         price=order.product_anchor.price,
         number=order.number,
-        amount=order.total_amount,
-        rmb_amount=order.rmb_amount,
+        amount=round(order.total_amount, 2),
+        rmb_amount=round(order.rmb_amount, 2),
         order_time=order.order_time,
         wechat_id=order.wechat_id,
         comment=order.comment,
-        status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
+        status=dict(OrderStatus.OrderStatusChoices.value)[
+            (OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
         modify=True if order.status == OrderStatus.unpaid.value else False,
     )
 
@@ -391,17 +396,17 @@ def anchor_order_detail_get(request):
             product=order.product_anchor.product.name,
             price=order.product_anchor.price * partition,
             number=order.number,
-            amount=order.total_amount,
+            amount=round(order.total_amount, 2),
             renew=dict(OrderRenew.OrderRenewChoices.value)[order.renew],
             type=dict(OrderType.OrderTypeChoices.value)[order.order_type],
-            rmb_amount=order.rmb_amount,
-            my_amount=order.rmb_amount * partition,
+            rmb_amount=round(order.rmb_amount, 2),
+            my_amount=round(order.rmb_amount * partition, 2),
             order_time=order.order_time,
             salary_time=order.salary_time if order.salary_time else None,
             wechat_id=order.wechat_id if order.status >= OrderStatus.salary else '******',
             comment=order.comment,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
-            modify = False
+            modify=False
         )
     except Exception as e:
         try:
@@ -414,12 +419,13 @@ def anchor_order_detail_get(request):
                 product=order.product_anchor.product.name,
                 price=order.product_anchor.price,
                 number=order.number,
-                amount=order.total_amount,
-                rmb_amount=order.rmb_amount,
+                amount=round(order.total_amount, 2),
+                rmb_amount=round(order.rmb_amount, 2),
                 order_time=order.order_time,
                 wechat_id=order.wechat_id,
                 comment=order.comment,
-                status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
+                status=dict(OrderStatus.OrderStatusChoices.value)[
+                    (OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
                 modify=True if order.status == OrderStatus.unpaid.value else False
             )
         except Exception as e:
@@ -431,7 +437,6 @@ def anchor_order_detail_get(request):
 
 
 def order_cancel_post(request):
-
     try:
         param = ujson.loads(request.body)
         order_id = param.get('id', None)
@@ -492,8 +497,8 @@ def anchor_salary_get(request):
         amount=0
     )
     for order in orders:
-        results['amount'] += order.rmb_amount * (
-            order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend)
+        results['amount'] += round(order.rmb_amount * (
+            order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend), 2)
 
     resp = init_http_success()
     resp['data'] = results
