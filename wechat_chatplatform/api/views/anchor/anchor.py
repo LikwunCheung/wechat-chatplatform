@@ -103,6 +103,7 @@ def anchor_detail_get(request, anchor_id):
         for _product in products[product]:
             if [_product] not in _products:
                 _products.append([_product])
+    print(_products)
     for product in products:
         for _product in _products:
             _product.append(products[product].get(_product[0], ''))
@@ -122,6 +123,8 @@ def anchor_detail_get(request, anchor_id):
         product=_products,
         tags=['#' + tag for tag in anchor.tags.split(',')]
     )
+
+    print(results)
 
     resp = init_http_success()
     resp['data'] = results
