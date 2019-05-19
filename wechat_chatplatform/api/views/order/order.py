@@ -294,9 +294,9 @@ def user_order_detail_get(request):
 
     results = dict(
         id=order.order_id,
-        product_type=order.product_id.product_id.product_type_id.name,
-        product=order.product_id.product_id.name,
-        price=order.product_id.price,
+        product_type=order.product_anchor.product.product_type.name,
+        product=order.product_anchor.product.name,
+        price=order.product_anchor.price,
         number=order.number,
         amount=order.total_amount,
         rmb_amount=order.rmb_amount,
