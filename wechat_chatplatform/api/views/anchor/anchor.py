@@ -108,10 +108,11 @@ def anchor_detail_get(request, anchor_id):
     #     products[anchor_product['product__product_type__name']].update(
     #         {anchor_product['product__name']: anchor_product['price']})
 
+    print(anchor_product_times)
     for anchor_product in anchor_products:
         for anchor_product_time in anchor_product_times:
             if anchor_product_time[0] == anchor_product['product__name']:
-                index = anchor_product_types.index(anchor_product['product__product_type__name']) + 1
+                index = anchor_product_types.index(anchor_product['product__product_type__name'])
                 anchor_product_time[index] = anchor_product['price']
     #
     # product_type = list()
