@@ -61,7 +61,6 @@ def anchor_apply_post(request):
             'skill', 'experience', 'occupation', 'online']
 
     param = ujson.loads(request.body)
-    print(param)
 
     try:
         param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])
@@ -117,7 +116,7 @@ def anchor_apply_action_post(request, action):
         return make_json_response(HttpResponseBadRequest, resp)
 
     try:
-        anchor_apply_record = AnchorApplyRecord.objects.get(record_id=anchor_apply_reocrd_id)
+        anchor_apply_record = AnchorApplyRecord.objects.get(anchor_apply_record_id=anchor_apply_reocrd_id)
     except Exception as e:
         resp = init_http_bad_request('No Match Apply Record')
         return make_json_response(HttpResponseBadRequest, resp)
