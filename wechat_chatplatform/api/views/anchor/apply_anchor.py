@@ -59,13 +59,14 @@ def anchor_apply_dingtalk_action_router(requset, *args, **kwargs):
 def anchor_apply_post(request):
 
     user_id = request.session.get('id', None)
-    if not user_id:
+    is_user = request.session.get('is_user', None)
+    if not (user_id and is_user):
         return HttpResponseBadRequest()
 
     user = UserInfo.objects.get(user_id=user_id)
 
-    keys = ['nickname', 'city', 'birthday', 'gender', 'wechat_id', 'audio', 'avatar', 'image', 'slogan', 'tags',
-            'skill', 'experience', 'occupation', 'online']
+    # keys = ['nickname', 'city', 'birthday', 'gender', 'wechat_id', 'audio', 'avatar', 'image', 'slogan', 'tags',
+    #         'skill', 'experience', 'occupation', 'online']
 
     param = ujson.loads(request.body)
 

@@ -81,10 +81,15 @@ def new_order_post(request):
 
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
-    if not (user_id and is_user):
+    is_anchor = request.session.get('is_anchor', False)
+    if not (user_id and (is_user or is_anchor)):
         return HttpResponseRedirect(wechat_handler.get_code_url(state='#/detail?id={}'.format(param['id'])))
 
-    user = UserInfo.objects.get(user_id=user_id)
+    if is_user:
+        user = UserInfo.objects.get(user_id=user_id)
+    elif is_anchor:
+        anchor = Anchor.objects.get(anchor_id=user_id)
+        user = UserInfo.objects.get(open_id=anchor.open_id)
 
     try:
         anchor = Anchor.objects.get(anchor_id=param['id'], status=AnchorStatus.active.value)
@@ -93,7 +98,7 @@ def new_order_post(request):
         resp = init_http_bad_request(u'下单失败')
         make_json_response(HttpResponseBadRequest, resp)
 
-    history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor=anchor, user=user_id)
+    history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor=anchor, user=user)
     renew_order = OrderRenew.renew.value if history_orders else OrderRenew.first.value
 
     product_anchor = anchor.anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
@@ -136,9 +141,15 @@ def random_order_post(request):
 
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
-    if not (user_id and is_user):
+    is_anchor = request.session.get('is_anchor', False)
+    if not (user_id and (is_user or is_anchor)):
         return HttpResponseRedirect(wechat_handler.get_code_url())
-    user = UserInfo.objects.get(user_id=user_id)
+
+    if is_user:
+        user = UserInfo.objects.get(user_id=user_id)
+    elif is_anchor:
+        anchor = Anchor.objects.get(anchor_id=user_id)
+        user = UserInfo.objects.get(open_id=anchor.open_id)
 
     anchor_type = AnchorType.objects.get(anchor_type_id=param['level'])
     product_anchor = anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
@@ -258,11 +269,20 @@ def anchor_order_list_get(request):
         resp = init_http_bad_request('Error ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
+    my_orders = None
+    try:
+        user = UserInfo.objects.get(open_id=anchor.open_id)
+        my_orders = user.orders.all().order_by('-order_time')
+    except Exception as e:
+        pass
+
     results = list()
+    my_results = list()
     for order in orders:
         results.append(dict(
             id=order.order_id,
-            anchor=anchor.nickname,
+            renew=dict(OrderRenew.OrderRenewChoices.value)[order.renew],
+            type=dict(OrderType.OrderTypeChoices.value)[order.order_type],
             product=order.product_anchor.__str__(),
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
@@ -271,10 +291,26 @@ def anchor_order_list_get(request):
             time=order.order_time,
             detail=True if order.status > 0 else False,
         ))
+
+    if my_orders:
+        for order in my_orders:
+            my_results.append(dict(
+                id=order.order_id,
+                anchor=order.anchor.nickname if order.anchor else None,
+                avatar=order.anchor.avatar if order.anchor else None,
+                product=order.product_anchor.__str__(),
+                number=order.number,
+                status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
+                amount=order.rmb_amount,
+                time=order.order_time,
+                detail=True if order.status > 0 else False,
+            ))
+    
     resp = init_http_success()
     resp.update(
         type=1,
-        data=results
+        data=my_results,
+        data1=results
     )
     return make_json_response(HttpResponse, resp)
 
@@ -282,6 +318,7 @@ def anchor_order_list_get(request):
 def user_order_detail_get(request):
     order_id = request.GET.get('id', None)
     user_id = request.session.get('id', 1)
+    is_user = request.session.get('is_user', False)
 
     if not order_id or not user_id:
         resp = init_http_bad_request('Error ID')
@@ -299,7 +336,9 @@ def user_order_detail_get(request):
         anchor=order.anchor.nickname if order.anchor else None,
         level=order.anchor_type.anchor_type_id,
         product_type=order.product_anchor.product.product_type.name,
+        product_type_id=order.product_anchor.product.product_type.product_type_id,
         product=order.product_anchor.product.name,
+        product_id=order.product_anchor.product.product_id,
         price=order.product_anchor.price,
         number=order.number,
         amount=order.total_amount,
@@ -307,7 +346,7 @@ def user_order_detail_get(request):
         order_time=order.order_time,
         wechat_id=order.wechat_id,
         comment=order.comment,
-        status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
+        status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
         modify=True if order.status == OrderStatus.unpaid.value else False,
     )
 
@@ -324,27 +363,52 @@ def anchor_order_detail_get(request):
         resp = init_http_bad_request('Error ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
+    results = None
     try:
         anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
-        order = Order.objects.get(order_id=order_id, anchor_id=anchor)
-    except Exception as e:
-        resp = init_http_bad_request('Error ID')
-        return make_json_response(HttpResponseBadRequest, resp)
+        order = Order.objects.get(order_id=order_id, anchor=anchor, status__gte=OrderStatus.unpaid.value)
 
-    partition = order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend
-    results = dict(
-        id=order.order_id,
-        product_type=order.product_anchor.product.product_type.name,
-        product=order.product_anchor.product.name,
-        price=order.product_anchor.price * partition,
-        number=order.number,
-        amount=order.total_amount * partition,
-        rmb_amount=order.rmb_amount * partition,
-        order_time=order.order_time,
-        wechat_id=order.wechat_id if order.status >= OrderStatus.salary else '******',
-        comment=order.comment,
-        status=dict(OrderStatus.OrderStatusChoices.value)[order.status]
-    )
+        partition = order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend
+        results = dict(
+            id=order.order_id,
+            product_type=order.product_anchor.product.product_type.name,
+            product=order.product_anchor.product.name,
+            price=order.product_anchor.price * partition,
+            number=order.number,
+            amount=order.total_amount,
+            rmb_amount=order.rmb_amount,
+            my_amount=order.rmb_amount * partition,
+            order_time=order.order_time,
+            salary_time=order.salary_time if order.salary_time else None,
+            wechat_id=order.wechat_id if order.status >= OrderStatus.salary else '******',
+            comment=order.comment,
+            status=dict(OrderStatus.OrderStatusChoices.value)[order.status]
+        )
+    except Exception as e:
+        try:
+            user = UserInfo.objects.get(open_id=anchor.open_id)
+            order = Order.objects.get(order_id=order_id, user=user, status__gte=OrderStatus.unpaid.value)
+            results = dict(
+                id=order.order_id,
+                anchor=order.anchor.nickname if order.anchor else None,
+                level=order.anchor_type.anchor_type_id,
+                product_type=order.product_anchor.product.product_type.name,
+                product_type_id=order.product_anchor.product.product_type.product_type_id,
+                product=order.product_anchor.product.name,
+                product_id=order.product_anchor.product.product_id,
+                price=order.product_anchor.price,
+                number=order.number,
+                amount=order.total_amount,
+                rmb_amount=order.rmb_amount,
+                order_time=order.order_time,
+                wechat_id=order.wechat_id,
+                comment=order.comment,
+                status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
+                modify=True if order.status == OrderStatus.unpaid.value else False,
+            )
+        except Exception as e:
+            pass
+
 
     resp = init_http_success()
     resp['data'] = results

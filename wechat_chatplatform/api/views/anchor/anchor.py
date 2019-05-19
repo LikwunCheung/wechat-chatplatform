@@ -42,9 +42,8 @@ def anchor_list_get(request, index):
 
     index = int(index)
 
-    query_param = dict(
-        status=AnchorStatus.active.value,
-    )
+    query_param = dict(status=AnchorStatus.active.value)
+
     if gender:
         query_param.update(dict(gender=gender))
     if level:
@@ -56,8 +55,8 @@ def anchor_list_get(request, index):
         anchors = Anchor.objects.filter(**query_param).order_by('anchor_type')[index * 8: (index + 1) * 8]
     except Exception as e:
         print(e)
-        resp = init_http_bad_request('No Match Record')
-        return make_json_response(HttpResponseBadRequest, resp)
+        resp = init_http_success()
+        return make_json_response(HttpResponse, resp)
 
     results = list()
     for anchor in anchors:
