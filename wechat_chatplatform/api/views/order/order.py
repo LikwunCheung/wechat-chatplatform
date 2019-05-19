@@ -207,7 +207,7 @@ def user_order_list_get(request):
 
     try:
         user = UserInfo.objects.get(user_id=user_id)
-        orders = user.user.all().order_by('-order_time')
+        orders = user.orders.all().order_by('-order_time')
     except Exception as e:
         resp = init_http_bad_request('Error ID')
         return make_json_response(HttpResponseBadRequest, resp)
@@ -216,9 +216,9 @@ def user_order_list_get(request):
     for order in orders:
         results.append(dict(
             id=order.order_id,
-            anchor=order.anchor_id.nickname if order.anchor_id else None,
-            avatar=order.anchor_id.avatar if order.anchor_id else None,
-            product=order.product_id.__str__(),
+            anchor=order.anchor.nickname if order.anchor_id else None,
+            avatar=order.anchor.avatar if order.anchor_id else None,
+            product=order.product_anchor.__str__(),
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
             amount=order.rmb_amount,
@@ -242,7 +242,7 @@ def anchor_order_list_get(request):
 
     try:
         anchor = Anchor.objects.get(status=AnchorStatus.active.value, anchor_id=anchor_id)
-        orders = anchor.order.all().order_by('-order_time')
+        orders = anchor.orders.all().order_by('-order_time')
     except Exception as e:
         resp = init_http_bad_request('Error ID')
         return make_json_response(HttpResponseBadRequest, resp)
@@ -252,11 +252,11 @@ def anchor_order_list_get(request):
         results.append(dict(
             id=order.order_id,
             anchor=anchor.nickname,
-            product=order.product_id.__str__(),
+            product=order.product_anchor.__str__(),
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
             amount=order.rmb_amount * (
-                order.product_id.product_id.partition if order.renew_order == OrderRenew.first.value else order.product_id.product_id.partition_extend),
+                order.product_anchor.product.partition if order.renew == OrderRenew.first.value else order.product_anchor.product.partition_extend),
             time=order.order_time
         ))
     resp = init_http_success()
