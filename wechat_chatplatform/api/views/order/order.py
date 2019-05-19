@@ -226,8 +226,8 @@ def user_order_list_get(request):
     for order in orders:
         results.append(dict(
             id=order.order_id,
-            anchor=order.anchor.nickname if order.anchor_id else None,
-            avatar=order.anchor.avatar if order.anchor_id else None,
+            anchor=order.anchor.nickname if order.anchor else None,
+            avatar=order.anchor.avatar if order.anchor else None,
             product=order.product_anchor.__str__(),
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
