@@ -195,6 +195,14 @@ def dingtalk_accept_order(request):
     order.complete_time = now()
     order.save()
 
+    request.session['id'] = order.anchor.anchor_id
+    request.session['type'] = order.anchor.anchor_type.anchor_type_id
+    request.session['is_admin'] = False
+    request.session['is_anchor'] = True
+    request.session['is_user'] = False
+    request.session['is_login'] = True
+    request.session.set_expiry(60 * 60)
+
     send_accept_order_message(order)
     return HttpResponseRedirect(DOMAIN + ORDER_PAGE)
 

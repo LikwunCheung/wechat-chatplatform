@@ -60,7 +60,7 @@ def oauth_get_code(request):
 
 def anchor_login(request, anchor):
     request.session['id'] = anchor.anchor_id
-    request.session['type'] = anchor.type_id.type_id
+    request.session['type'] = anchor.anchor_type.anchor_type_id
     request.session['is_admin'] = False
     request.session['is_anchor'] = True
     request.session['is_user'] = False
