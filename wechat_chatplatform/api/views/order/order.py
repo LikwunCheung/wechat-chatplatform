@@ -95,7 +95,7 @@ def new_order_post(request):
     history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor=anchor, user=user_id)
     renew_order = OrderRenew.renew.value if history_orders else OrderRenew.first.value
 
-    product = anchor.anchor_type.products.get(product_id=int(param['product_id']))
+    product = anchor.anchor_type.products.get(product=int(param['product_id']))
     param.pop('id')
     param.update(dict(
         # user_id=None,
