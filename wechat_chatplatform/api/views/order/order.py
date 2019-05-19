@@ -38,14 +38,39 @@ def random_order_router(request, *args, **kwargs):
 @require_http_methods(['GET'])
 @check_api_key
 def order_list_router(request, *args, **kwargs):
-    # if not request.session.get('is_login', False) or not request.session.get('id', None):
-    #     return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
+    if not request.session.get('is_login', False) or not request.session.get('id', None):
+        return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
 
     if request.method == 'GET':
-        # if request.session.get('is_user', False):
-        return user_order_list_get(request)
-        # if request.session.get('is_anchor', False):
-        # return anchor_order_list_get(request)
+        if request.session.get('is_user', False):
+            return user_order_list_get(request)
+        if request.session.get('is_anchor', False):
+            return anchor_order_list_get(request)
+    return HttpResponseNotAllowed()
+
+
+@require_http_methods(['GET'])
+@check_api_key
+def order_detail_router(request, *args, **kwargs):
+    if not request.session.get('is_login', False) or not request.session.get('id', None):
+        return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
+
+    if request.method == 'GET':
+        if request.session.get('is_user', False):
+            return user_order_detail_get(request)
+        if request.session.get('is_anchor', False):
+            return anchor_order_detail_get(request)
+    return HttpResponseNotAllowed()
+
+
+@require_http_methods(['GET'])
+@check_api_key
+def order_salary_router(request, *args, **kwargs):
+    if not request.session.get('is_login', False) or not request.session.get('id', None):
+        return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
+
+    if request.method == 'GET' and request.session.get('is_anchor', False):
+        return anchor_salary_get(request)
     return HttpResponseNotAllowed()
 
 
@@ -226,7 +251,8 @@ def anchor_order_list_get(request):
             product=order.product_id.__str__(),
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
-            amount=order.rmb_amount * (order.product_id.product_id.partition if order.renew_order == OrderRenew.first.value else order.product_id.product_id.partition_extend),
+            amount=order.rmb_amount * (
+                order.product_id.product_id.partition if order.renew_order == OrderRenew.first.value else order.product_id.product_id.partition_extend),
             time=order.order_time
         ))
     resp = init_http_success()
@@ -234,4 +260,100 @@ def anchor_order_list_get(request):
         type=1,
         data=results
     )
+    return make_json_response(HttpResponse, resp)
+
+
+def user_order_detail_get(request):
+    order_id = request.GET.get('id', None)
+    user_id = request.session.get('id', None)
+
+    if not order_id or not user_id:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    try:
+        user = UserInfo.objects.get(user_id=user_id)
+        order = Order.objects.get(order_id=order_id, user_id=user)
+    except Exception as e:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    results = dict(
+        id=order.order_id,
+        product_type=order.product_id.product_id.product_type_id.name,
+        product=order.product_id.product_id.name,
+        price=order.product_id.price,
+        number=order.number,
+        amount=order.total_amount,
+        rmb_amount=order.rmb_amount,
+        order_time=order.order_time,
+        wechat_id=order.wechat_id,
+        comment=order.comment,
+        status=dict(OrderStatus.OrderStatusChoices.value)[order.status]
+    )
+
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
+
+def anchor_order_detail_get(request):
+    order_id = request.GET.get('id', None)
+    anchor_id = request.session.get('id', None)
+
+    if not order_id or not anchor_id:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    try:
+        anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
+        order = Order.objects.get(order_id=order_id, anchor_id=anchor)
+    except Exception as e:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    partition = order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend
+    results = dict(
+        id=order.order_id,
+        product_type=order.product_id.product_id.product_type_id.name,
+        product=order.product_id.product_id.name,
+        price=order.product_id.price * partition,
+        number=order.number,
+        amount=order.total_amount * partition,
+        rmb_amount=order.rmb_amount * partition,
+        order_time=order.order_time,
+        wechat_id=order.wechat_id if order.status >= OrderStatus.salary else '******',
+        comment=order.comment,
+        status=dict(OrderStatus.OrderStatusChoices.value)[order.status]
+    )
+
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
+
+def anchor_salary_get(request):
+    anchor_id = request.session.get('id', None)
+
+    if not anchor_id:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    try:
+        anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
+    except Exception as e:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    orders = Order.objects.filter(anchor_id=anchor, status=OrderStatus.salary)
+    results = dict(
+        numbers=len(orders),
+        amount=0
+    )
+    for order in orders:
+        results['amount'] += order.rmb_amount * (
+            order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend)
+
+    resp = init_http_success()
+    resp['data'] = results
     return make_json_response(HttpResponse, resp)
