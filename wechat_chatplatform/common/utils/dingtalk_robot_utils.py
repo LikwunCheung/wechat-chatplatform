@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from time import sleep
+
 from wechat_chatplatform.handler.dingtalk_robot_handler.dingtalk_robot_handler import dingtalk_robot_handler
-from wechat_chatplatform.common.choices import AdminUserStatus, Gender, Status, OrderRenew
-from wechat_chatplatform.anchor.models import AnchorGroup
+from wechat_chatplatform.common.choices import AdminUserStatus, Gender, Status, OrderRenew, AnchorStatus
+from wechat_chatplatform.anchor.models import AnchorGroup, Anchor
 from wechat_chatplatform.common.config import DOMAIN, ACCEPT_ORDER, GRAB_ORDER
 from wechat_chatplatform.platform_admin.models import AdminUser
 
@@ -60,23 +62,33 @@ def send_accept_order_message(order):
     text = text.format(anchor.nickname, dict(OrderRenew.OrderRenewChoices.value)[order.renew],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        order.wechat_id, order.comment)
-    resp = dingtalk_robot_handler.sned_markdown_card(token=anchor.dingtalk_robot, title=title, text=text)
+    resp = dingtalk_robot_handler.send_markdown_card(token=anchor.dingtalk_robot, title=title, text=text)
 
 
 def send_random_order_message(order, tags=None):
     anchor_groups = AnchorGroup.objects.filter(status=Status.active.value)
-
-    btns = list()
-    btns.append(dict(
-        title=u'前往抢单',
-        actionURL=DOMAIN + GRAB_ORDER.format(order.order_id)
-    ))
+    anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value, anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
 
     title = '[新随机订单]'
-    text = '**[新随机订单]**\n\n订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
-           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单，标签要求非硬性，抢单后提供客户微信'
+    text = '**15秒后开始抢单，请及时查看个人机器人抢单**\n\n订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
+           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n要求标签非硬性\n抢单成功后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
     for anchor_group in anchor_groups:
-        resp = dingtalk_robot_handler.send_action_card(token=anchor_group.dingtalk_robot, title=title, text=text, btns=btns)
+        resp = dingtalk_robot_handler.send_markdown_card(token=anchor_group.dingtalk_robot, title=title, text=text)
+
+    sleep(15)
+    text = '已开始抢单, 订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
+           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n要求标签非硬性\n抢单成功后提供客户微信'
+    text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
+                       order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
+                       tags, order.comment)
+    for anchor in anchors:
+        btns = list()
+        btns.append(dict(
+            title=u'前往抢单',
+            actionURL=DOMAIN + GRAB_ORDER.format(order.order_id, anchor.anchor_id)
+        ))
+        _text = '**Hi, {}:**'.format(anchor.nickname) + text
+        resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=_text, btns=btns)

@@ -23,7 +23,7 @@ DOMAIN = 'http://www.suavechat.com/'
 ORDER_PAGE = '#/order'
 LOGIN_REDIRECT = 'admin/'
 ACCEPT_ORDER = 'api/v1/order/accept/?id={}'
-GRAB_ORDER = 'api/v1/order/random/accept/?id={}'
+GRAB_ORDER = 'api/v1/order/random/accept/?id={}&anchor_id={}'
 ADMIN_INDEX = 'admin/#/manage'
 
 MYSQL_COMMAND = 'sudo docker run --name mysql --restart always  --privileged=true -e MYSQL_USER="lihuan" ' \

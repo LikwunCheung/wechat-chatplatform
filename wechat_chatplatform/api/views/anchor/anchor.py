@@ -90,7 +90,7 @@ def anchor_detail_get(request, anchor_id):
 
     anchor_products = anchor.anchor_type.products.values('product__product_type__name', 'product__name',
                                                          'product__time', 'price').filter(
-        status=Status.active.value).order_by('product__time')
+        product__product_type__status=Status.active.value).order_by('product__time')
 
     anchor_product_types = list(
         set([anchor_product['product__product_type__name'] for anchor_product in anchor_products]))
