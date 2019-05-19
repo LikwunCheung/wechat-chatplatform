@@ -92,20 +92,21 @@ def new_order_post(request):
         resp = init_http_bad_request(u'下单失败')
         make_json_response(HttpResponseBadRequest, resp)
 
-    history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor_id=anchor, user_id=user_id)
+    history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor=anchor, user=user_id)
     renew_order = OrderRenew.renew.value if history_orders else OrderRenew.first.value
 
-    product = anchor.type_id.products.get(product_id=int(param['product_id']))
+    product = anchor.anchor_type.products.get(product_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
         # user_id=None,
-        user_id=user,
-        product_id=product,
-        anchor_id=anchor,
-        anchor_type_id=None,
+        user=user,
+        product=product,
+        anchor=anchor,
+        anchor_type=anchor.anchor_type,
         order_type=OrderType.normal.value,
         renew_order=renew_order,
         gender=None,
+        # status=OrderStatus.unpaid.value,
         status=OrderStatus.unacknowledge.value,
         origin_amount=product.price * param['number'],
         deduction=0,
@@ -137,7 +138,7 @@ def random_order_post(request):
         return HttpResponseRedirect(wechat_handler.get_code_url())
     user = UserInfo.objects.get(user_id=user_id)
 
-    anchor_type = AnchorType.objects.get(type_id=param['level'])
+    anchor_type = AnchorType.objects.get(anchor_type_id=param['level'])
     product = anchor_type.products.get(product_id=int(param['product_id']))
     param.pop('level')
     tags = param.pop('tags', u'无')
@@ -145,13 +146,13 @@ def random_order_post(request):
         tags = ','.join([tag.strip('#') for tag in tags])
     param.update(dict(
         # user_id=None,
-        user_id=user,
-        product_id=product,
-        anchor_id=None,
+        user=user,
+        product=product,
+        anchor=None,
         order_type=OrderType.random.value,
         renew_order=OrderRenew.first.value,
         number=1,
-        anchor_type_id=anchor_type,
+        anchor_type=anchor_type,
         gender=param['gender'],
         status=OrderStatus.ungrab.value,
         origin_amount=product.price,

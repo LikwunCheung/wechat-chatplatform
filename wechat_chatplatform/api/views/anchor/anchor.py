@@ -91,6 +91,7 @@ def anchor_detail_get(request, anchor_id):
 
     products = dict()
     anchor_products = anchor.anchor_type.products.filter(status=Status.active.value).order_by('price')
+
     for anchor_product in anchor_products:
         product_type = anchor_product.product.product_type
         products.update({product_type.name: {}}) if product_type.name not in products else None
