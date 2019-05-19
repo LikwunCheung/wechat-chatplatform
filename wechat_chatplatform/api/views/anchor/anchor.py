@@ -90,11 +90,15 @@ def anchor_detail_get(request, anchor_id):
         return make_json_response(HttpResponseBadRequest, resp)
 
     products = dict()
-    anchor_product_types = anchor.anchor_type.products.values('product__product_type__name').filter(status=Status.active.value)
+    product_times = dict()
+    anchor_product_times = anchor.anchor_type.products.distinct().values('product__name', 'product__time').filter(status=Status.active.value).order_by('product__time')
+    anchor_product_types = anchor.anchor_type.products.distinct().values('product__product_type__name').filter(status=Status.active.value)
     anchor_products = anchor.anchor_type.products.values('product__product_type__name', 'product__name', 'product__time', 'price').filter(status=Status.active.value).order_by('product__time')
 
+    for anchor_product_time in anchor_product_times:
+        product_times.update({anchor_product_time['product__name']: ''})
     for anchor_product_type in anchor_product_types:
-        products.update({anchor_product_type['product__product_type__name']: {}})
+        products.update({anchor_product_type['product__product_type__name']: product_times})
 
     for anchor_product in anchor_products:
         products[anchor_product['product__product_type__name']].update({anchor_product['product__name']: anchor_product['price']})
