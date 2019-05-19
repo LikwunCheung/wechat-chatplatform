@@ -12,7 +12,7 @@ from wechat_chatplatform.user_info.models import UserInfo
 from wechat_chatplatform.order.models import Order
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_order_message, send_accept_order_message, \
-    send_random_order_message
+    send_random_order_message, send_ungrab_order_message
 from wechat_chatplatform.common.utils.currency import AUD_CNY
 from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.common.config import DOMAIN
@@ -214,6 +214,8 @@ def dingtalk_accept_order(request):
         else:
             order = Order.objects.get(order_id=order_id, status=OrderStatus.ungrab.value)
     except Exception as e:
+        if anchor_id:
+            send_ungrab_order_message(anchor_id)
         resp = init_http_bad_request('No Order ID')
         return make_json_response(HttpResponseBadRequest, resp)
 

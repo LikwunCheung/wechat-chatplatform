@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from time import sleep
+from random import shuffle
 
 from wechat_chatplatform.handler.dingtalk_robot_handler.dingtalk_robot_handler import dingtalk_robot_handler
 from wechat_chatplatform.common.choices import AdminUserStatus, Gender, Status, OrderRenew, AnchorStatus
@@ -71,7 +72,7 @@ def send_random_order_message(order, tags=None):
 
     title = '[新随机订单]'
     text = '**15秒后开始抢单，请及时查看个人机器人抢单**\n\n订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
-           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n1. 高级店员可抢低级单\n2. 要求标签非硬性\n3. 抢单成功后提供客户微信'
+           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n\n要求标签非硬性\n\n抢单成功后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
@@ -80,15 +81,26 @@ def send_random_order_message(order, tags=None):
 
     sleep(15)
     text = '已开始抢单, 订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
-           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n1. 高级店员可抢低级单\n2. 要求标签非硬性\n3. 抢单成功后提供客户微信'
+           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n\n要求标签非硬性\n\n抢单成功后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
+    shuffle(anchors)
+
     for anchor in anchors:
         btns = list()
         btns.append(dict(
-            title=u'前往抢单',
+            title=u'一键抢单',
             actionURL=DOMAIN + GRAB_ORDER.format(order.order_id, anchor.anchor_id)
         ))
         _text = '**Hi, {}:**\n'.format(anchor.nickname) + text
         resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=_text, btns=btns)
+
+
+def send_ungrab_order_message(anchor_id):
+    anchor = Anchor.objects.get(anchor_id=anchor_id)
+
+    title = '[抢单失败]'
+    text = '本次手速慢了，下次努力'
+
+    resp = dingtalk_robot_handler.send_markdown_card(token=anchor.dingtalk_robot, title=title, text=text)
