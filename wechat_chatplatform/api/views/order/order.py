@@ -203,17 +203,23 @@ def random_order_post(request):
 
 def dingtalk_accept_order(request):
     order_id = request.GET.get('id', None)
+    anchor_id = request.GET.get('anchor_id', None)
     if not order_id:
         resp = init_http_bad_request('No Order ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
     try:
-        order = Order.objects.get(order_id=order_id, status=OrderStatus.unacknowledge.value)
+        if not anchor_id:
+            order = Order.objects.get(order_id=order_id, status=OrderStatus.unacknowledge.value)
+        else:
+            order = Order.objects.get(order_id=order_id, status=OrderStatus.ungrab.value)
     except Exception as e:
         resp = init_http_bad_request('No Order ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
     order.status = OrderStatus.salary.value
+    if anchor_id:
+        order.anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value, anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
     order.complete_time = now()
     order.save()
 

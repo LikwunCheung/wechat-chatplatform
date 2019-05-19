@@ -71,7 +71,7 @@ def send_random_order_message(order, tags=None):
 
     title = '[新随机订单]'
     text = '**15秒后开始抢单，请及时查看个人机器人抢单**\n\n订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
-           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n要求标签非硬性\n抢单成功后提供客户微信'
+           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n1. 高级店员可抢低级单\n2. 要求标签非硬性\n3. 抢单成功后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
@@ -80,7 +80,7 @@ def send_random_order_message(order, tags=None):
 
     sleep(15)
     text = '已开始抢单, 订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
-           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n要求标签非硬性\n抢单成功后提供客户微信'
+           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n1. 高级店员可抢低级单\n2. 要求标签非硬性\n3. 抢单成功后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
@@ -90,5 +90,5 @@ def send_random_order_message(order, tags=None):
             title=u'前往抢单',
             actionURL=DOMAIN + GRAB_ORDER.format(order.order_id, anchor.anchor_id)
         ))
-        _text = '**Hi, {}:**'.format(anchor.nickname) + text
+        _text = '**Hi, {}:**\n'.format(anchor.nickname) + text
         resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=_text, btns=btns)

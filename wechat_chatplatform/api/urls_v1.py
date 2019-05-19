@@ -35,6 +35,7 @@ urlpatterns = [
     path('order/detail/', order_detail_router),
     path('order/cancel/', order_cancel_router),
     path('order/salary/', order_salary_router),
+    path('order/random/accept/', dingtalk_accept_order),
 
     path('wxoauth/recall/', oauth_router),
 
