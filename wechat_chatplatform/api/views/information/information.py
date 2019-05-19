@@ -39,8 +39,11 @@ def get_aud_rate(request, *args, **kwargs):
 @check_api_key
 @cache_page(15 * 60)
 def get_anchor_level(request, *args, **kwargs):
-    levels = AnchorType.objects.values('type_id', 'name').filter(status=Status.active.value)
-    results = [dict(id=level['type_id'], name=level['name']) for level in levels]
+    levels = AnchorType.objects.values('anchor_type_id', 'name').filter(status=Status.active.value)
+    results = [dict(
+        id=level['anchor_type_id'],
+        name=level['name']
+    ) for level in levels]
 
     resp = init_http_success()
     resp['data'] = results
