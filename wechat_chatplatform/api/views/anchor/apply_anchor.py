@@ -86,7 +86,7 @@ def anchor_apply_post(request):
 def anchor_apply_unaudit_get(request):
     anchor_apply_records = AnchorApplyRecord.objects.filter(status=AnchorAuditStatus.unaudit.value)
     results = [dict(
-        id=anchor_apply_record.record_id,
+        id=anchor_apply_record.anchor_apply_record_id,
         nickname=anchor_apply_record.nickname,
         city=anchor_apply_record.city,
         birthday=anchor_apply_record.birthday.strftime('%Y-%m-%d'),
