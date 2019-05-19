@@ -314,7 +314,7 @@ def anchor_order_list_get(request):
     results = list()
     my_results = list()
     for order in orders:
-        partition = order.product_anchor.product.partition if order.renew == OrderRenew.first else order.product_anchor.product.partition_extend
+        partition = order.product_anchor.product.partition if order.renew == OrderRenew.first.value else order.product_anchor.product.partition_extend
         results.append(dict(
             id=order.order_id,
             renew=dict(OrderRenew.OrderRenewChoices.value)[order.renew],
@@ -437,7 +437,7 @@ def anchor_order_detail_receive_get(request):
     try:
         anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
         order = anchor.orders.get(order_id=order_id, status__gte=OrderStatus.unpaid.value)
-        partition = order.product_anchor.product.partition if order.renew == OrderRenew.first else order.product_anchor.product.partition_extend
+        partition = order.product_anchor.product.partition if order.renew == OrderRenew.first.value else order.product_anchor.product.partition_extend
         results = dict(
             id=order.order_id,
             product_type=order.product_anchor.product.product_type.name,
