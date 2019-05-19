@@ -139,7 +139,7 @@ def random_order_post(request):
     user = UserInfo.objects.get(user_id=user_id)
 
     anchor_type = AnchorType.objects.get(anchor_type_id=param['level'])
-    product = anchor_type.products.get(product_id=int(param['product_id']))
+    product = anchor_type.products.get(product=int(param['product_id']))
     param.pop('level')
     tags = param.pop('tags', u'无')
     if isinstance(tags, list):
@@ -154,6 +154,7 @@ def random_order_post(request):
         number=1,
         anchor_type=anchor_type,
         gender=param['gender'],
+        # status=OrderStatus.unpaid.value,
         status=OrderStatus.ungrab.value,
         origin_amount=product.price,
         deduction=0,
