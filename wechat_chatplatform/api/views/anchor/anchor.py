@@ -91,11 +91,13 @@ def anchor_detail_get(request, anchor_id):
 
     products = dict()
     product_times = dict()
-    # anchor_product_times = anchor.anchor_type.products.distinct().values('product__name', 'product__time').filter(status=Status.active.value).order_by('product__time')
-    # anchor_product_types = anchor.anchor_type.products.distinct().values('product__product_type__name').filter(status=Status.active.value)
-    anchor_products = anchor.anchor_type.products.values('product__product_type__name', 'product__name', 'product__time', 'price').filter(status=Status.active.value).order_by('product__time')
+
+    anchor_products = anchor.anchor_type.products.values('product__product_type__name', 'product__name',
+                                                         'product__time', 'price').filter(
+        status=Status.active.value).order_by('product__time')
     anchor_product_times = list(set([anchor_product['product__name'] for anchor_product in anchor_products]))
-    anchor_product_types = list(set([anchor_product['product__product_type__name'] for anchor_product in anchor_products]))
+    anchor_product_types = list(
+        set([anchor_product['product__product_type__name'] for anchor_product in anchor_products]))
 
     for anchor_product_time in anchor_product_times:
         product_times.update({anchor_product_time: ''})
@@ -103,7 +105,8 @@ def anchor_detail_get(request, anchor_id):
         products.update({anchor_product_type: {}})
         products[anchor_product_type].update(product_times)
     for anchor_product in anchor_products:
-        products[anchor_product['product__product_type__name']].update({anchor_product['product__name']: anchor_product['price']})
+        products[anchor_product['product__product_type__name']].update(
+            {anchor_product['product__name']: anchor_product['price']})
 
     product_type = list()
     _products = list()

@@ -297,6 +297,7 @@ def user_order_detail_get(request):
     results = dict(
         id=order.order_id,
         anchor=order.anchor.nickname if order.anchor else None,
+        level=order.anchor_type.anchor_type_id,
         product_type=order.product_anchor.product.product_type.name,
         product=order.product_anchor.product.name,
         price=order.product_anchor.price,
