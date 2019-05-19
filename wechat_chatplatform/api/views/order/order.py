@@ -408,7 +408,6 @@ def anchor_order_detail_get(request):
             modify=False
         )
     except Exception as e:
-        print(e)
         try:
             user = UserInfo.objects.get(open_id=anchor.open_id)
             order = Order.objects.get(order_id=order_id, user=user, status__gte=OrderStatus.unpaid.value)
