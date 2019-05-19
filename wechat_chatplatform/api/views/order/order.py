@@ -95,7 +95,7 @@ def new_order_post(request):
     history_orders = Order.objects.filter(status__gte=OrderStatus.salary.value, anchor=anchor, user=user_id)
     renew_order = OrderRenew.renew.value if history_orders else OrderRenew.first.value
 
-    product = anchor.anchor_type.products.get(product=int(param['product_id']))
+    product = anchor.anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
     param.pop('id')
     param.update(dict(
         # user_id=None,
@@ -139,7 +139,7 @@ def random_order_post(request):
     user = UserInfo.objects.get(user_id=user_id)
 
     anchor_type = AnchorType.objects.get(anchor_type_id=param['level'])
-    product = anchor_type.products.get(product=int(param['product_id']))
+    product = anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
     param.pop('level')
     tags = param.pop('tags', u'无')
     if isinstance(tags, list):
