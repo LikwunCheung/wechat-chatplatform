@@ -220,7 +220,7 @@ def user_order_list_get(request):
             avatar=order.anchor.avatar if order.anchor_id else None,
             product=order.product_anchor.__str__(),
             number=order.number,
-            status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary else order.status)],
+            status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
             amount=order.rmb_amount,
             time=order.order_time
         ))
