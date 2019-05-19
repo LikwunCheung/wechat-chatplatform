@@ -21,7 +21,7 @@ def admin_user_login(request):
         try:
             admin_user = AdminUser.objects.get(status=AdminUserStatus.active.value, username=username, password=password)
             request.session['username'] = username
-            request.session['type'] = admin_user.type_id.tag
+            request.session['type'] = admin_user.admin_user_type.tag
             request.session['is_admin'] = True
             request.session['is_anchor'] = False
             request.session['is_user'] = False
