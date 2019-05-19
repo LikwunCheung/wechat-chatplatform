@@ -134,7 +134,7 @@ def anchor_apply_action_post(request, action):
         anchor_apply_record.audit_fail(None)
 
     results = dict(
-        id=anchor_apply_record.record_id,
+        id=anchor_apply_record.anchor_apply_record_id,
         name=anchor_apply_record.nickname,
         status=dict(AnchorAuditStatus.AnchorAuditStatusChoice.value)[anchor_apply_record.status]
     )
