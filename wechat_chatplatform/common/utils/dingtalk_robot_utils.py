@@ -86,7 +86,7 @@ def send_random_order_message(order, tags=None):
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
-    shuffle(anchors)
+    shuffle(list(anchors))
 
     for anchor in anchors:
         btns = list()
