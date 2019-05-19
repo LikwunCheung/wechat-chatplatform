@@ -52,7 +52,7 @@ def oauth_get_code(request):
         user = UserInfo(**params)
         user.save()
 
-    user_record = UserLoginInfo(user_id=user, time=now())
+    user_record = UserLoginInfo(user=user, time=now())
     user_record.save()
     user_login(request, user)
     return HttpResponseRedirect(DOMAIN + state)
