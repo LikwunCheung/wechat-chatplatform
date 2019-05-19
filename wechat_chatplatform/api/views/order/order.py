@@ -393,7 +393,7 @@ def anchor_order_detail_get(request):
             id=order.order_id,
             product_type=order.product_anchor.product.product_type.name,
             product=order.product_anchor.product.name,
-            price=round(order.product_anchor.price * partition, 2),
+            price=round(order.product_anchor.price, 2),
             number=order.number,
             amount=round(order.total_amount, 2),
             renew=dict(OrderRenew.OrderRenewChoices.value)[order.renew],
