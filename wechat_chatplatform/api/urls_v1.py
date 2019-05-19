@@ -33,6 +33,7 @@ urlpatterns = [
     path('order/accept/', dingtalk_accept_order),
     path('order/list/', order_list_router),
     path('order/detail/', order_detail_router),
+    path('order/detail/receive/', order_detail_receive_router),
     path('order/cancel/', order_cancel_router),
     path('order/salary/', order_salary_router),
     path('order/random/accept/', dingtalk_accept_order),

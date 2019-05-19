@@ -63,6 +63,20 @@ def order_detail_router(request, *args, **kwargs):
     return HttpResponseNotAllowed()
 
 
+@require_http_methods(['GET'])
+@check_api_key
+def order_detail_receive_router(request, *args, **kwargs):
+    # if not request.session.get('is_login', False) or not request.session.get('id', None):
+    #     return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
+
+    if request.method == 'GET':
+        # if request.session.get('is_user', False):
+        # return user_order_detail_get(request)
+        # if request.session.get('is_anchor', False):
+        return anchor_order_detail_receive_get(request)
+    return HttpResponseNotAllowed()
+
+
 @require_http_methods(['POST'])
 @check_api_key
 def order_cancel_router(request, *args, **kwargs):
@@ -384,7 +398,43 @@ def anchor_order_detail_get(request):
         resp = init_http_bad_request('Error ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    results = None
+    try:
+        anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
+        user = UserInfo.objects.get(open_id=anchor.open_id)
+        order = Order.objects.get(order_id=order_id, user=user, status__gte=OrderStatus.unpaid.value)
+        results = dict(
+            id=order.order_id,
+            anchor=order.anchor.nickname if order.anchor else None,
+            product_type=order.product_anchor.product.product_type.name,
+            product=order.product_anchor.product.name,
+            price=order.product_anchor.price,
+            number=order.number,
+            amount=round(order.total_amount, 2),
+            rmb_amount=round(order.rmb_amount, 2),
+            order_time=order.order_time,
+            wechat_id=order.wechat_id,
+            comment=order.comment,
+            status=dict(OrderStatus.OrderStatusChoices.value)[
+                (OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
+            modify=True if order.status == OrderStatus.unpaid.value else False
+        )
+    except Exception as e:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
+
+def anchor_order_detail_receive_get(request):
+    order_id = request.GET.get('id', None)
+    anchor_id = request.session.get('id', 2)
+
+    if not order_id or not anchor_id:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
     try:
         anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
         order = anchor.orders.get(order_id=order_id, status__gte=OrderStatus.unpaid.value)
@@ -408,27 +458,8 @@ def anchor_order_detail_get(request):
             modify=False
         )
     except Exception as e:
-        try:
-            user = UserInfo.objects.get(open_id=anchor.open_id)
-            order = Order.objects.get(order_id=order_id, user=user, status__gte=OrderStatus.unpaid.value)
-            results = dict(
-                id=order.order_id,
-                anchor=order.anchor.nickname if order.anchor else None,
-                product_type=order.product_anchor.product.product_type.name,
-                product=order.product_anchor.product.name,
-                price=order.product_anchor.price,
-                number=order.number,
-                amount=round(order.total_amount, 2),
-                rmb_amount=round(order.rmb_amount, 2),
-                order_time=order.order_time,
-                wechat_id=order.wechat_id,
-                comment=order.comment,
-                status=dict(OrderStatus.OrderStatusChoices.value)[
-                    (OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
-                modify=True if order.status == OrderStatus.unpaid.value else False
-            )
-        except Exception as e:
-            pass
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
 
     resp = init_http_success()
     resp['data'] = results
