@@ -143,9 +143,11 @@ def random_order_post(request):
     anchor_type = AnchorType.objects.get(anchor_type_id=param['level'])
     product_anchor = anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
     param.pop('level')
+    param.pop('product_id')
     tags = param.pop('tags', u'无')
     if isinstance(tags, list):
         tags = ','.join([tag.strip('#') for tag in tags])
+
     param.update(dict(
         # user_id=None,
         user=user,
