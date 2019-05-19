@@ -63,6 +63,17 @@ def order_detail_router(request, *args, **kwargs):
     return HttpResponseNotAllowed()
 
 
+@require_http_methods(['POST'])
+@check_api_key
+def order_cancel_router(request, *args, **kwargs):
+    # if not request.session.get('is_login', False) or not request.session.get('id', None):
+    #     return HttpResponseRedirect(wechat_handler.get_code_url(state='#/order'))
+
+    if request.method == 'POST':
+        return order_cancel_post(request)
+    return HttpResponseNotAllowed()
+
+
 @require_http_methods(['GET'])
 @check_api_key
 def order_salary_router(request, *args, **kwargs):
@@ -334,11 +345,8 @@ def user_order_detail_get(request):
     results = dict(
         id=order.order_id,
         anchor=order.anchor.nickname if order.anchor else None,
-        level=order.anchor_type.anchor_type_id,
         product_type=order.product_anchor.product.product_type.name,
-        product_type_id=order.product_anchor.product.product_type.product_type_id,
         product=order.product_anchor.product.name,
-        product_id=order.product_anchor.product.product_id,
         price=order.product_anchor.price,
         number=order.number,
         amount=order.total_amount,
@@ -376,13 +384,16 @@ def anchor_order_detail_get(request):
             price=order.product_anchor.price * partition,
             number=order.number,
             amount=order.total_amount,
+            renew=dict(OrderRenew.OrderRenewChoices.value)[order.renew],
+            type=dict(OrderType.OrderTypeChoices.value)[order.order_type],
             rmb_amount=order.rmb_amount,
             my_amount=order.rmb_amount * partition,
             order_time=order.order_time,
             salary_time=order.salary_time if order.salary_time else None,
             wechat_id=order.wechat_id if order.status >= OrderStatus.salary else '******',
             comment=order.comment,
-            status=dict(OrderStatus.OrderStatusChoices.value)[order.status]
+            status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
+            modify = False
         )
     except Exception as e:
         try:
@@ -391,11 +402,8 @@ def anchor_order_detail_get(request):
             results = dict(
                 id=order.order_id,
                 anchor=order.anchor.nickname if order.anchor else None,
-                level=order.anchor_type.anchor_type_id,
                 product_type=order.product_anchor.product.product_type.name,
-                product_type_id=order.product_anchor.product.product_type.product_type_id,
                 product=order.product_anchor.product.name,
-                product_id=order.product_anchor.product.product_id,
                 price=order.product_anchor.price,
                 number=order.number,
                 amount=order.total_amount,
@@ -404,14 +412,55 @@ def anchor_order_detail_get(request):
                 wechat_id=order.wechat_id,
                 comment=order.comment,
                 status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
-                modify=True if order.status == OrderStatus.unpaid.value else False,
+                modify=True if order.status == OrderStatus.unpaid.value else False
             )
         except Exception as e:
             pass
 
-
     resp = init_http_success()
     resp['data'] = results
+    return make_json_response(HttpResponse, resp)
+
+
+def order_cancel_post(request):
+
+    try:
+        param = ujson.loads(request.body)
+        order_id = param.get('id', None)
+        user_id = request.session.get('id', 1)
+        anchor_id = request.session.get('id', 2)
+        is_user = request.session.get('is_user', False)
+        is_anchor = request.session.get('is_anchor', False)
+    except Exception:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    if not order_id:
+        resp = init_http_bad_request('Error ID')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    if is_user:
+        try:
+            user = UserInfo.objects.get(user_id=user_id)
+            order = user.orders.get(order_id=order_id, status=OrderStatus.unpaid.value)
+            order.status = OrderStatus.delete.value
+            order.save()
+        except Exception:
+            resp = init_http_bad_request('Error ID')
+            return make_json_response(HttpResponseBadRequest, resp)
+
+    if is_anchor:
+        try:
+            anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
+            user = UserInfo.objects.get(open_id=anchor.open_id)
+            order = user.orders.get(order_id=order_id, status=OrderStatus.unpaid.value)
+            order.status = OrderStatus.delete.value
+            order.save()
+        except Exception:
+            resp = init_http_bad_request('Error ID')
+            return make_json_response(HttpResponseBadRequest, resp)
+
+    resp = init_http_success()
     return make_json_response(HttpResponse, resp)
 
 
