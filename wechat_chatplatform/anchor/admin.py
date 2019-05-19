@@ -11,28 +11,28 @@ admin.site.site_title = u'后台管理系统'
 
 
 class AnchorAdmin(admin.ModelAdmin):
-    list_display = ('anchor_id', 'nickname', 'gender', 'age', 'constellation', 'type_id', 'status')
-    list_filter = ('type_id', 'gender', 'status')
-    search_fields = ('name', 'nickname',)
+    list_display = ('anchor_id', 'anchor_type', 'nickname', 'gender', 'age', 'open_id', 'status')
+    list_filter = ('anchor_type', 'gender', 'status')
+    search_fields = ('nickname',)
     empty_value_display = 'N/A'
 
 
 class AnchorTypeAdmin(admin.ModelAdmin):
-    list_display = ('type_id', 'name', 'status',)
+    list_display = ('anchor_type_id', 'name', 'status',)
     list_filter = ('status',)
 
 
 class AnchorGroupAdmin(admin.ModelAdmin):
-    list_display = ('group_id', 'dingtalk_robot', 'gender', 'status',)
+    list_display = ('anchor_group_id', 'dingtalk_robot', 'gender', 'status',)
 
 
 class AnchorTagAdmin(admin.ModelAdmin):
-    list_display = ('tag_id', 'name', 'status',)
+    list_display = ('anchor_tag_id', 'name', 'status',)
     list_filter = ('status',)
 
 
 class AnchorApplyRecordAdmin(admin.ModelAdmin):
-    list_display = ('nickname', 'gender', 'city', 'birthday', 'status', 'apply_date')
+    list_display = ('anchor_apply_record_id', 'nickname', 'gender', 'city', 'birthday', 'status', 'apply_date')
     list_filter = ('status',)
 
 

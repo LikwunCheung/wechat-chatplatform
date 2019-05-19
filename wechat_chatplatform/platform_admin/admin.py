@@ -6,7 +6,7 @@ from .models import AdminUser, AdminUserType
 
 
 class AdminUserAdmin(admin.ModelAdmin):
-    list_display = ('admin_user_id', 'username', 'nickname', 'type_id', 'status')
+    list_display = ('admin_user_id', 'username', 'nickname', 'admin_user_type', 'status')
     empty_value_display = 'N/A'
 
 

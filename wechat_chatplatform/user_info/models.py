@@ -26,7 +26,7 @@ class UserInfo(models.Model):
 
 class UserLoginInfo(models.Model):
     user_login_id = models.AutoField(verbose_name=u'用户登入编号', primary_key=True)
-    user_id = models.ForeignKey('user_info.UserInfo', verbose_name=u'用户id', related_name='_user_id', on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey('user_info.UserInfo', verbose_name=u'用户', related_name='logins', on_delete=models.SET_NULL, blank=True, null=True)
     time = models.DateTimeField(verbose_name=u'时间')
 
     class Meta:
@@ -35,4 +35,4 @@ class UserLoginInfo(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.user_id.nickname
+        return self.user.nickname

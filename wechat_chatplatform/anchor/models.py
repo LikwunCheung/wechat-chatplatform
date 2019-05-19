@@ -11,27 +11,26 @@ from wechat_chatplatform.common.choices import AnchorStatus, AnchorAuditStatus, 
 
 class Anchor(models.Model):
     anchor_id = models.AutoField(verbose_name=u'店员编号', primary_key=True)
+    anchor_type = models.ForeignKey('anchor.AnchorType', verbose_name=u'等级', related_name='anchors', on_delete=models.SET_NULL, blank=True, null=True)
     nickname = models.CharField(verbose_name=u'昵称', max_length=30)
-    type_id = models.ForeignKey('anchor.AnchorType', verbose_name=u'等级', related_name='type', on_delete=models.SET_NULL,
-                                blank=True, null=True)
-    status = models.IntegerField(verbose_name=u'状态', choices=AnchorStatus.AnchorStatusChoice.value, default=1)
-    city = models.CharField(verbose_name=u'城市', max_length=20, blank=True, null=True)
-    birthday = models.DateField(verbose_name=u'生日')
-    gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value)
-    skill = models.CharField(verbose_name=u'特长', max_length=100, blank=True, null=True)
-    online = models.CharField(verbose_name=u'在线时间', max_length=100, blank=True, null=True)
-    occupation = models.CharField(verbose_name=u'职业', max_length=20, blank=True, null=True)
-    dingtalk_id = models.CharField(verbose_name=u'钉钉', max_length=30, blank=True, null=True)
-    dingtalk_robot = models.CharField(verbose_name=u'钉钉个人机器人', max_length=100, blank=True, null=True)
     wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
     open_id = models.CharField(verbose_name=u'微信openid', max_length=60, blank=True, null=True)
+    gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value)
+    city = models.CharField(verbose_name=u'城市', max_length=20, blank=True, null=True)
+    birthday = models.DateField(verbose_name=u'生日')
     audio = models.CharField(verbose_name=u'音频', max_length=100, blank=True, null=True)
     avatar = models.CharField(verbose_name=u'头像', max_length=100, blank=True, null=True)
     image = models.CharField(verbose_name=u'图片', max_length=300, blank=True, null=True)
-    join_date = models.DateField(verbose_name=u'入职日期', blank=True, null=True)
-    leave_date = models.DateField(verbose_name=u'离职日期', blank=True, null=True)
+    skill = models.CharField(verbose_name=u'特长', max_length=100, blank=True, null=True)
+    online = models.CharField(verbose_name=u'在线时间', max_length=100, blank=True, null=True)
+    occupation = models.CharField(verbose_name=u'职业', max_length=20, blank=True, null=True)
     slogan = models.CharField(verbose_name=u'标语', max_length=150, null=True)
     tags = models.CharField(verbose_name=u'标签', max_length=50, blank=True, null=True)
+    dingtalk_mobile = models.CharField(verbose_name=u'钉钉绑定手机号', max_length=30, blank=True, null=True)
+    dingtalk_robot = models.CharField(verbose_name=u'钉钉个人机器人', max_length=100, blank=True, null=True)
+    join_date = models.DateField(verbose_name=u'入职日期', blank=True, null=True)
+    leave_date = models.DateField(verbose_name=u'离职日期', blank=True, null=True)
+    status = models.IntegerField(verbose_name=u'状态', choices=AnchorStatus.AnchorStatusChoice.value, default=1)
 
     class Meta:
         db_table = 'anchor'
@@ -84,24 +83,9 @@ class Anchor(models.Model):
         self.leave_date = now().date()
         self.save()
 
-    def audit_pass(self):
-        if self.status == AnchorStatus.unaudit.value:
-            self.status = AnchorStatus.active.value
-            self.join_date = now().date()
-            self.save()
-            return True
-        return False
-
-    def audit_reject(self):
-        if self.status == AnchorStatus.unaudit.value:
-            self.status = AnchorStatus.audit_fail.value
-            self.save()
-            return True
-        return False
-
 
 class AnchorTag(models.Model):
-    tag_id = models.AutoField(verbose_name=u'标签编号', primary_key=True)
+    anchor_tag_id = models.AutoField(verbose_name=u'标签编号', primary_key=True)
     name = models.CharField(verbose_name=u'标签', max_length=15)
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
@@ -118,39 +102,9 @@ class AnchorTag(models.Model):
         self.save()
 
 
-#
-#
-# class AnchorCity(models.Model):
-#     STATUS_CHOICES = (
-#         (Status.inactive.value, u'停用'),
-#         (Status.active.value, u'激活'),
-#     )
-#
-#     city_id = models.AutoField(verbose_name=u'城市编号', primary_key=True)
-#     name = models.CharField(verbose_name=u'中文名', max_length=15)
-#     en_name = models.CharField(verbose_name=u'英文名', max_length=15, blank=True, null=True)
-#     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
-#
-#     class Meta:
-#         db_table = 'anchor_city'
-#         verbose_name = u'店员城市信息'
-#         verbose_name_plural = verbose_name
-#
-#     def __str__(self):
-#         return self.name
-#
-#     def delete(self, using=None, keep_parents=False):
-#         self.status = Status.inactive.value
-#         self.save()
-
-
 class AnchorType(models.Model):
-    STATUS_CHOICES = (
-        (Status.inactive.value, u'停用'),
-        (Status.active.value, u'激活'),
-    )
 
-    type_id = models.AutoField(verbose_name=u'店员类型编号', primary_key=True)
+    anchor_type_id = models.AutoField(verbose_name=u'店员类型编号', primary_key=True)
     name = models.CharField(verbose_name=u'店员类型', max_length=15)
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
@@ -168,19 +122,10 @@ class AnchorType(models.Model):
 
 
 class AnchorGroup(models.Model):
-    GENDER_CHOICES = (
-        (Gender.male.value, u'男'),
-        (Gender.female.value, u'女'),
-        (Gender.mix.value, u'混合'),
-    )
-    STATUS_CHOICES = (
-        (Status.inactive.value, u'停用'),
-        (Status.active.value, u'激活'),
-    )
 
-    group_id = models.AutoField(verbose_name=u'店员钉钉群编号', primary_key=True)
-    name = models.CharField(verbose_name=u'群名称', max_length=20)
-    dingtalk_robot = models.CharField(verbose_name=u'钉钉机器人', max_length=100, blank=True, null=True)
+    anchor_group_id = models.AutoField(verbose_name=u'店员钉钉群编号', primary_key=True)
+    name = models.CharField(verbose_name=u'店员群名称', max_length=20)
+    dingtalk_robot = models.CharField(verbose_name=u'群钉钉机器人', max_length=100, blank=True, null=True)
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value, default=Gender.mix.value)
     status = models.BooleanField(verbose_name=u'状态', choices=Status.StatusChoice.value, default=Status.active.value)
 
@@ -198,13 +143,14 @@ class AnchorGroup(models.Model):
 
 
 class AnchorApplyRecord(models.Model):
-    record_id = models.AutoField(verbose_name=u'申请编号', primary_key=True)
+
+    anchor_apply_record_id = models.AutoField(verbose_name=u'申请编号', primary_key=True)
     nickname = models.CharField(verbose_name=u'昵称', max_length=30)
+    wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
+    open_id = models.CharField(verbose_name=u'微信openid', max_length=60, blank=True, null=True)
     city = models.CharField(verbose_name=u'城市', max_length=20, blank=True, null=True)
     birthday = models.DateField(verbose_name=u'生日')
     gender = models.IntegerField(verbose_name=u'性别', choices=Gender.GenderChoices.value)
-    wechat_id = models.CharField(verbose_name=u'微信', max_length=30)
-    open_id = models.CharField(verbose_name=u'微信openid', max_length=60, blank=True, null=True)
     audio = models.CharField(verbose_name=u'音频', max_length=100, blank=True, null=True)
     avatar = models.CharField(verbose_name=u'头像', max_length=100, blank=True, null=True)
     image = models.CharField(verbose_name=u'图片', max_length=300, blank=True, null=True)
@@ -214,12 +160,10 @@ class AnchorApplyRecord(models.Model):
     experience = models.BooleanField(verbose_name=u'经验', default=False)
     occupation = models.CharField(verbose_name=u'职业', max_length=20, blank=True, null=True)
     online = models.CharField(verbose_name=u'在线时间', max_length=100, blank=True, null=True)
-    status = models.IntegerField(verbose_name=u'状态', choices=AnchorAuditStatus.AnchorAuditStatusChoice.value,
-                                 default=AnchorAuditStatus.unaudit.value)
+    status = models.IntegerField(verbose_name=u'申请状态', choices=AnchorAuditStatus.AnchorAuditStatusChoice.value, default=AnchorAuditStatus.unaudit.value)
     apply_date = models.DateField(verbose_name=u'申请时间', blank=True, null=True)
     audit_date = models.DateTimeField(verbose_name=u'审核时间', blank=True, null=True)
-    auditor = models.ForeignKey('platform_admin.AdminUser', verbose_name=u'审核人', related_name='auditor',
-                                on_delete=models.SET_NULL, blank=True, null=True)
+    auditor = models.ForeignKey('platform_admin.AdminUser', verbose_name=u'审核人', related_name='auditor', on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
         db_table = 'anchor_apply_record'
@@ -232,7 +176,7 @@ class AnchorApplyRecord(models.Model):
     def audit_pass(self, auditor, type):
         anchor = Anchor(nickname=self.nickname, city=self.city, birthday=self.birthday, gender=self.gender,
                         wechat_id=self.wechat_id, audio=self.audio, avatar=self.avatar, image=self.image,
-                        slogan=self.slogan, tags=self.tags, skill=self.skill, online=self.online, type_id=type,
+                        slogan=self.slogan, tags=self.tags, skill=self.skill, online=self.online, anchor_type=type,
                         occupation=self.occupation, status=AnchorStatus.active.value, join_date=now(),
                         open_id=self.open_id)
         anchor.save()

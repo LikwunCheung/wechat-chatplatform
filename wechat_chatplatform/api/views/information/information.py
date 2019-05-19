@@ -79,33 +79,31 @@ def get_product_type(request, *args, **kwargs):
     anchor_type_id = request.GET.get('level', None)
 
     if not anchor_id and not anchor_type_id:
-        resp = init_http_bad_request('No Anchor ID or Level')
+        resp = init_http_bad_request(u'无店员ID/店员等级/产品类型')
         return make_json_response(HttpResponseBadRequest, resp)
 
     if anchor_id:
         try:
             anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
-        except Exception as e:
-            resp = init_http_bad_request('Invalid Anchor ID')
+            anchor_type = anchor.anchor_type
+        except Exception:
+            resp = init_http_bad_request(u'无效店员ID')
             return make_json_response(HttpResponseBadRequest, resp)
-
-        products = anchor.type_id.products.filter(status=Status.active.value)
 
     if anchor_type_id:
         try:
-            anchor_type = AnchorType.objects.get(type_id=anchor_type_id, status=Status.active.value)
-        except Exception as e:
-            resp = init_http_bad_request('Invalid Level')
+            anchor_type = AnchorType.objects.get(anchor_type_id=anchor_type_id, status=Status.active.value)
+        except Exception:
+            resp = init_http_bad_request(u'无效店员等级')
             return make_json_response(HttpResponseBadRequest, resp)
 
-        products = anchor_type.products.filter(status=Status.active.value)
+    products = anchor_type.products.distinct().values(
+        'product__product_type__product_type_id', 'product__product_type__name').filter(status=Status.active.value)
 
-    results = list()
-    temp = list()
-    for product in products:
-        if product.product_id.product_type_id.product_type_id not in temp:
-            results.append(dict(id=product.product_id.product_type_id.product_type_id, name=product.product_id.product_type_id.name))
-            temp.append(product.product_id.product_type_id.product_type_id)
+    results = [dict(
+        id=product['product__product_type__product_type_id'],
+        name=product['product__product_type__name']
+    ) for product in products]
 
     resp = init_http_success()
     resp['data'] = results
@@ -121,31 +119,32 @@ def get_product(request, *args, **kwargs):
     product_type = request.GET.get('type', None)
 
     if (not anchor_id and not anchor_type_id) or not product_type:
-        resp = init_http_bad_request('No Anchor ID or Level or Product Type')
+        resp = init_http_bad_request(u'无店员ID/店员等级/产品类型')
         return make_json_response(HttpResponseBadRequest, resp)
 
     if anchor_id:
         try:
             anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
-        except Exception as e:
-            resp = init_http_bad_request('Invalid Anchor ID')
+            anchor_type = anchor.anchor_type
+        except Exception:
+            resp = init_http_bad_request(u'无效店员ID')
             return make_json_response(HttpResponseBadRequest, resp)
-
-        products = anchor.type_id.products.filter(status=Status.active.value)
 
     if anchor_type_id:
         try:
-            anchor_type = AnchorType.objects.get(type_id=anchor_type_id, status=Status.active.value)
-        except Exception as e:
-            resp = init_http_bad_request('Invalid Level')
+            anchor_type = AnchorType.objects.get(anchor_type_id=anchor_type_id, status=Status.active.value)
+        except Exception:
+            resp = init_http_bad_request(u'无效店员等级')
             return make_json_response(HttpResponseBadRequest, resp)
 
-        products = anchor_type.products.filter(status=Status.active.value)
+    products = anchor_type.products.values('product__product_id', 'product__name', 'price').filter(
+        status=Status.active.value, product__product_type__product_type_id=product_type)
 
-    results = list()
-    for product in products:
-        if product.product_id.product_type_id.product_type_id == int(product_type):
-            results.append(dict(id=product.product_id.product_id, name=product.product_id.name, price=product.price))
+    results = [dict(
+        id=product['product__product_id'],
+        name=product['product__name'],
+        price=product['price']
+    ) for product in products]
 
     resp = init_http_success()
     resp['data'] = results
@@ -159,15 +158,16 @@ def get_platform_info(request, *args, **kwargs):
     tag = request.GET.get('tag', None)
 
     if not tag:
-        resp = init_http_bad_request('No Tag')
+        resp = init_http_bad_request(u'无标签参数')
         return make_json_response(HttpResponseBadRequest, resp)
 
     try:
         platform_info = PlatformInfo.objects.values('content').get(tag=tag, status=Status.active.value)
     except Exception as e:
-        resp = init_http_bad_request('No Match Tag')
+        resp = init_http_bad_request(u'无匹配标签')
         return make_json_response(HttpResponseBadRequest, resp)
 
+    results = None
     if tag == 'order-user-ack':
         results = [result.strip('\r\n') for result in platform_info['content'].split(';')]
 

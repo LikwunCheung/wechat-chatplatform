@@ -7,7 +7,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect, HttpRespons
 from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
 
-from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorApplyRecord
+from wechat_chatplatform.anchor.models import AnchorType, AnchorApplyRecord
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.config import *
 from wechat_chatplatform.common.choices import *
@@ -129,8 +129,8 @@ def anchor_apply_action_post(request, action):
     if action == 'pass':
         level = param.get('level', 1)
 
-        type = AnchorType.objects.get(type_id=level)
-        anchor_apply_record.audit_pass(None, type)
+        anchor_type = AnchorType.objects.get(anchor_type_id=level)
+        anchor_apply_record.audit_pass(None, anchor_type)
     elif action == 'reject':
         anchor_apply_record.audit_fail(None)
 

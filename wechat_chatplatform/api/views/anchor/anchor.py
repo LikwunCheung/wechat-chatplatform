@@ -36,7 +36,6 @@ def anchor_detail_router(requset, *args, **kwargs):
 
 
 def anchor_list_get(request, index):
-    mode = request.GET.get('mode', 'default')
     gender = request.GET.get('gender', None)
     level = request.GET.get('level', None)
     city = request.GET.get('city', None)
@@ -49,12 +48,12 @@ def anchor_list_get(request, index):
     if gender:
         query_param.update(dict(gender=gender))
     if level:
-        query_param.update(dict(type_id=level))
+        query_param.update(dict(anchor_type=level))
     if city:
         query_param.update(dict(city=city))
 
     try:
-        anchors = Anchor.objects.filter(**query_param).order_by('type_id')[index * 8: (index + 1) * 8]
+        anchors = Anchor.objects.filter(**query_param).order_by('anchor_type')[index * 8: (index + 1) * 8]
     except Exception as e:
         print(e)
         resp = init_http_bad_request('No Match Record')
@@ -62,7 +61,7 @@ def anchor_list_get(request, index):
 
     results = list()
     for anchor in anchors:
-        anchor_products = anchor.type_id.products.all().order_by('price')
+        anchor_products = anchor.anchor_type.products.all().order_by('price')
 
         results.append(dict(
             id=anchor.anchor_id,
@@ -71,7 +70,7 @@ def anchor_list_get(request, index):
             constellation=anchor.constellation(),
             slogan=anchor.slogan,
             age=anchor.age(),
-            level=anchor.type_id.name,
+            level=anchor.anchor_type.name,
             audio=anchor.audio,
             avatar=anchor.avatar,
             price=anchor_products[0].price if anchor_products else 15,
@@ -91,11 +90,11 @@ def anchor_detail_get(request, anchor_id):
         return make_json_response(HttpResponseBadRequest, resp)
 
     products = dict()
-    anchor_products = anchor.type_id.products.filter(status=Status.active.value).order_by('price')
+    anchor_products = anchor.anchor_type.products.filter(status=Status.active.value).order_by('price')
     for anchor_product in anchor_products:
-        product_type = anchor_product.product_id.product_type_id
+        product_type = anchor_product.product.product_type
         products.update({product_type.name: {}}) if product_type.name not in products else None
-        products[product_type.name].update({anchor_product.product_id.name: anchor_product.price})
+        products[product_type.name].update({anchor_product.product.name: anchor_product.price})
 
     product_type = list()
     _products = list()
@@ -115,7 +114,7 @@ def anchor_detail_get(request, anchor_id):
         constellation=anchor.constellation(),
         slogan=anchor.slogan,
         age=anchor.age(),
-        level=anchor.type_id.name,
+        level=anchor.anchor_type.name,
         audio=anchor.audio,
         image=anchor.image.split(',') if anchor.image else None,
         avatar=anchor.avatar,
