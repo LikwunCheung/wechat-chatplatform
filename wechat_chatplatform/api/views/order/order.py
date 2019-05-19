@@ -123,7 +123,7 @@ def new_order_post(request):
     resp = init_http_success()
     resp['data'].update(dict(
         id=order.order_id,
-        product=product.__str__(),
+        product=product_anchor.__str__(),
         amount=order.rmb_amount
     ))
     return make_json_response(HttpResponse, resp)

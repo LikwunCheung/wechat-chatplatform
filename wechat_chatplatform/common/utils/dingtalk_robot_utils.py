@@ -30,7 +30,7 @@ def send_new_applier_message(anchor_apply_record):
 
 
 def send_new_order_message(order):
-    anchor = order.anchor_id
+    anchor = order.anchor
     if not anchor.dingtalk_robot:
         return
 
@@ -44,13 +44,13 @@ def send_new_order_message(order):
     text = '**Hi, {}:**\n\n你有一个新订单待接单，订单详情:\n- **订单类型:** {}\n- **类型:** {}\n- **时长:** {}\n' \
            '- **数量:** {}\n- **备注:** {}\n\n接单后提供客户微信'
     text = text.format(anchor.nickname, dict(OrderRenew.OrderRenewChoices.value)[order.renew_order],
-                       order.product_id.product_id.product_type_id.name, order.product_id.product_id.name, order.number,
+                       order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        order.comment)
     resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=text, btns=btns)
 
 
 def send_accept_order_message(order):
-    anchor = order.anchor_id
+    anchor = order.anchor
     if not anchor.dingtalk_robot:
         return
 
@@ -58,7 +58,7 @@ def send_accept_order_message(order):
     text = '**Hi, {}:**\n\n接单成功:\n- **订单类型:** {}\n- **服务类型:** {}\n- **时长:** {}\n- **数量:** {}\n' \
            '- **客户微信:** {}\n- **备注:** {}\n'
     text = text.format(anchor.nickname, dict(OrderRenew.OrderRenewChoices.value)[order.renew_order],
-                       order.product_id.product_id.product_type_id.name, order.product_id.product_id.name, order.number,
+                       order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        order.wechat_id, order.comment)
     resp = dingtalk_robot_handler.sned_markdown_card(token=anchor.dingtalk_robot, title=title, text=text)
 
