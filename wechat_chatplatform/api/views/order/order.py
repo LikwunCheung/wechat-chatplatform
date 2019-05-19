@@ -97,6 +97,8 @@ def new_order_post(request):
     renew_order = OrderRenew.renew.value if history_orders else OrderRenew.first.value
 
     product = anchor.anchor_type.products.get(product_anchor_type_id=int(param['product_id']))
+    print(product)
+    print(product.price)
     param.pop('id')
     param.update(dict(
         # user_id=None,
