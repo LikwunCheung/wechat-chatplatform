@@ -268,7 +268,8 @@ def anchor_order_list_get(request):
             status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
             amount=order.rmb_amount * (
                 order.product_anchor.product.partition if order.renew == OrderRenew.first.value else order.product_anchor.product.partition_extend),
-            time=order.order_time
+            time=order.order_time,
+            detail=True if order.status > 0 else False,
         ))
     resp = init_http_success()
     resp.update(
