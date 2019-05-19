@@ -58,8 +58,8 @@ def send_accept_order_message(order):
         return
 
     title = '[接单成功]'
-    text = '**Hi, {}:**\n\n接单成功:\n- **订单类型:** {}\n- **服务类型:** {}\n- **时长:** {}\n- **数量:** {}\n' \
-           '- **客户微信:** {}\n- **备注:** {}\n'
+    text = '**Hi, {}:**\n\n**接单成功，订单详情:**\n- **订单类型:** {}\n- **服务类型:** {}\n- **时长:** {}\n- **数量:** {}\n' \
+           '- **客户微信:** {}\n- **备注:** {}\n\n请尽快联系客户微信！'
     text = text.format(anchor.nickname, dict(OrderRenew.OrderRenewChoices.value)[order.renew],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        order.wechat_id, order.comment)
