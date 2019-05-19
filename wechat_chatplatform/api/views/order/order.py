@@ -288,7 +288,7 @@ def user_order_detail_get(request):
 
     try:
         user = UserInfo.objects.get(user_id=user_id)
-        order = Order.objects.get(order_id=order_id, user_id=user)
+        order = Order.objects.get(order_id=order_id, user=user, status__gte=OrderStatus.unpaid.value)
     except Exception as e:
         resp = init_http_bad_request('Error ID')
         return make_json_response(HttpResponseBadRequest, resp)
