@@ -98,10 +98,10 @@ def anchor_detail_get(request, anchor_id):
     anchor_product_types = list(set([anchor_product['product__product_type__name'] for anchor_product in anchor_products]))
 
     for anchor_product_time in anchor_product_times:
-        product_times.update({anchor_product_time['product__name']: ''})
+        product_times.update({anchor_product_time: ''})
     for anchor_product_type in anchor_product_types:
-        products.update({anchor_product_type['product__product_type__name']: {}})
-        products[anchor_product_type['product__product_type__name']].update(product_times)
+        products.update({anchor_product_type: {}})
+        products[anchor_product_type].update(product_times)
     for anchor_product in anchor_products:
         products[anchor_product['product__product_type__name']].update({anchor_product['product__name']: anchor_product['price']})
 
