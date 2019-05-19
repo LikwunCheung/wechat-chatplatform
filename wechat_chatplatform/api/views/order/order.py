@@ -387,7 +387,7 @@ def anchor_order_detail_get(request):
     results = None
     try:
         anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
-        order = Order.objects.get(order_id=order_id, anchor=anchor, status__gte=OrderStatus.unpaid.value)
+        order = anchor.orders.get(order_id=order_id, status__gte=OrderStatus.unpaid.value)
 
         partition = order.product_id.product_id.partition if order.renew_order == OrderRenew.first else order.product_id.product_id.partition_extend
         results = dict(
