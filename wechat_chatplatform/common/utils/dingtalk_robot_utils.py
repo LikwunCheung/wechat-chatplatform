@@ -71,8 +71,9 @@ def send_random_order_message(order, tags=None):
     anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value, anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
 
     title = '[新随机订单]'
-    text = '**15秒后开始抢单，请及时查看个人机器人抢单**\n\n订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
-           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n\n要求标签非硬性\n\n抢单成功后提供客户微信'
+    text = '**[新随机订单]**\n\n**15秒后开始抢单，请及时查看个人机器人抢单**\n\n订单详情:\n- **要求等级:** {}\n- **要求性别:** {}' \
+           '\n- **服务类型:** {}\n- **时长:** {}\n- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n\n' \
+           '要求标签非硬性\n\n抢单成功后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
@@ -93,7 +94,7 @@ def send_random_order_message(order, tags=None):
             title=u'一键抢单',
             actionURL=DOMAIN + GRAB_ORDER.format(order.order_id, anchor.anchor_id)
         ))
-        _text = '**Hi, {}:**\n'.format(anchor.nickname) + text
+        _text = '**Hi, {}:**\n\n'.format(anchor.nickname) + text
         resp = dingtalk_robot_handler.send_action_card(token=anchor.dingtalk_robot, title=title, text=_text, btns=btns)
 
 
@@ -101,6 +102,6 @@ def send_ungrab_order_message(anchor_id):
     anchor = Anchor.objects.get(anchor_id=anchor_id)
 
     title = '[抢单失败]'
-    text = '本次手速慢了，下次努力'
+    text = '**Hi, {}:**\n\n本次手速慢了，下次努力'.format(anchor.nickname)
 
     resp = dingtalk_robot_handler.send_markdown_card(token=anchor.dingtalk_robot, title=title, text=text)
