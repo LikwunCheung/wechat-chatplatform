@@ -110,10 +110,10 @@ def new_order_post(request):
         gender=None,
         # status=OrderStatus.unpaid.value,
         status=OrderStatus.unacknowledge.value,
-        origin_amount=product_anchor.price * param['number'],
+        origin_amount=product_anchor.price * int(param['number']),
         deduction=0,
-        total_amount=product_anchor.price * param['number'],
-        rmb_amount=round(product_anchor.price * param['number'] * AUD_CNY.get(), 2),
+        total_amount=product_anchor.price * int(param['number']),
+        rmb_amount=round(product_anchor.price * int(param['number']) * AUD_CNY.get(), 2),
         order_time=now(),
     ))
     order = Order(**param)
