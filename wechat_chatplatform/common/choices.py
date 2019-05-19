@@ -76,6 +76,7 @@ class Status(Enum):
 
 @unique
 class OrderStatus(Enum):
+    change = -2
     overtime = -1
     delete = 0
     unpaid = 1
@@ -83,17 +84,16 @@ class OrderStatus(Enum):
     ungrab = 3
     salary = 4
     close = 5
-    change = 6
 
     OrderStatusChoices = (
+        (change, u'已换人'),
         (overtime, u'付款超时失败'),
-        (delete, u'已删除'),
+        (delete, u'已取消'),
         (unpaid, u'待付款'),
         (unacknowledge, u'待接单'),
         (ungrab, u'待抢单'),
         (salary, u'待发放工资'),
         (close, u'已完成'),
-        (change, u'已换人'),
     )
 
 

@@ -448,8 +448,7 @@ def order_cancel_post(request):
         except Exception:
             resp = init_http_bad_request('Error ID')
             return make_json_response(HttpResponseBadRequest, resp)
-
-    if is_anchor:
+    elif is_anchor:
         try:
             anchor = Anchor.objects.get(anchor_id=anchor_id, status=AnchorStatus.active.value)
             user = UserInfo.objects.get(open_id=anchor.open_id)
@@ -459,6 +458,8 @@ def order_cancel_post(request):
         except Exception:
             resp = init_http_bad_request('Error ID')
             return make_json_response(HttpResponseBadRequest, resp)
+    else:
+        return make_json_response(HttpResponseBadRequest, None)
 
     resp = init_http_success()
     return make_json_response(HttpResponse, resp)
