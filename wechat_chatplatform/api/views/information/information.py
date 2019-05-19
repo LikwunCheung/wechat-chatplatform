@@ -140,11 +140,11 @@ def get_product(request, *args, **kwargs):
             resp = init_http_bad_request(u'无效店员等级')
             return make_json_response(HttpResponseBadRequest, resp)
 
-    products = anchor_type.products.values('product__product_id', 'product__name', 'price').filter(
+    products = anchor_type.products.values('product_anchor_type_id', 'product__name', 'price').filter(
         status=Status.active.value, product__product_type__product_type_id=product_type)
 
     results = [dict(
-        id=product['product__product_id'],
+        id=product['product_anchor_type_id'],
         name=product['product__name'],
         price=product['price']
     ) for product in products]

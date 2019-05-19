@@ -83,6 +83,7 @@ def new_order_post(request):
     is_user = request.session.get('is_user', False)
     if not (user_id and is_user):
         return HttpResponseRedirect(wechat_handler.get_code_url(state='#/detail?id={}'.format(param['id'])))
+
     user = UserInfo.objects.get(user_id=user_id)
 
     try:
