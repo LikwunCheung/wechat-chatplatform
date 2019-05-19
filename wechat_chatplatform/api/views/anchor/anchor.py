@@ -89,16 +89,19 @@ def anchor_detail_get(request, anchor_id):
         resp = init_http_bad_request('Wrong Anchor ID')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    products = dict()
-    product_times = dict()
-
     anchor_products = anchor.anchor_type.products.values('product__product_type__name', 'product__name',
                                                          'product__time', 'price').filter(
         status=Status.active.value).order_by('product__time')
+    print(anchor_products)
     anchor_product_types = list(
         set([anchor_product['product__product_type__name'] for anchor_product in anchor_products]))
+    # anchor_product_times = list()
+    # for anchor_product in anchor_products:
+    #     if anchor_product['product__name'] not in anchor_product_times:
+    #         anchor_product_times.append(anchor_product['product__name'])
     anchor_product_times = list(set([anchor_product['product__name'] for anchor_product in anchor_products]))
-    anchor_product_times = [[item, [''] * len(anchor_product_types)] for item in anchor_product_times]
+    print(anchor_product_times)
+    anchor_product_times = [[item, '' * len(anchor_product_types)] for item in anchor_product_times]
     # for anchor_product_time in anchor_product_times:
     #     product_times.update({anchor_product_time: ''})
     # for anchor_product_type in anchor_product_types:
@@ -112,7 +115,7 @@ def anchor_detail_get(request, anchor_id):
     for anchor_product in anchor_products:
         for anchor_product_time in anchor_product_times:
             if anchor_product_time[0] == anchor_product['product__name']:
-                index = anchor_product_types.index(anchor_product['product__product_type__name'])
+                index = anchor_product_types.index(anchor_product['product__product_type__name']) + 1
                 anchor_product_time[index] = anchor_product['price']
     #
     # product_type = list()
