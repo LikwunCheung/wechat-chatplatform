@@ -92,7 +92,7 @@ class OrderStatus(Enum):
         (unacknowledge, u'待接单'),
         (ungrab, u'待抢单'),
         (salary, u'待发放工资'),
-        (close, u'正常关闭'),
+        (close, u'已完成'),
         (change, u'已换人'),
     )
 
