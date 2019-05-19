@@ -71,7 +71,7 @@ def send_random_order_message(order, tags=None):
     anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value, anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
 
     title = '[新随机订单]'
-    text = '**[新随机订单]**\n\n**5秒后开始抢单，请及时查看个人机器人抢单**\n\n**订单详情:**\n- **要求等级:** {}\n- **要求性别:** {}' \
+    text = '**[新随机订单]**\n\n**10秒后开始抢单，请及时查看个人机器人抢单**\n\n**订单详情:**\n- **要求等级:** {}\n- **要求性别:** {}' \
            '\n- **服务类型:** {}\n- **时长:** {}\n- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n\n' \
            '要求标签非硬性\n\n抢单成功后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
@@ -80,7 +80,7 @@ def send_random_order_message(order, tags=None):
     for anchor_group in anchor_groups:
         resp = dingtalk_robot_handler.send_markdown_card(token=anchor_group.dingtalk_robot, title=title, text=text)
 
-    sleep(5)
+    sleep(10)
     text = '已开始抢单, 订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
            '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单\n\n要求标签非硬性\n\n抢单成功后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
