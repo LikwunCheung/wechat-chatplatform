@@ -17,7 +17,7 @@ from wechat_chatplatform.common.choices import *
 @check_api_key
 @cache_page(15 * 60)
 def get_gender(request, *args, **kwargs):
-    results = [dict(id=k, gender=v) for k, v in Gender.GenderChoices.value[0: -1]]
+    results = [dict(id=k, gender=v) for k, v in Gender.GenderChoices.value]
 
     resp = init_http_success()
     resp['data'] = results

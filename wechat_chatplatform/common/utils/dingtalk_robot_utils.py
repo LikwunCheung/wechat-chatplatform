@@ -73,8 +73,8 @@ def send_random_order_message(order, tags=None):
     ))
 
     title = '[新随机订单]'
-    text = '**[新随机订单]**\n\n订单详情:\n- **店员等级:** {}\n- **店员性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
-           '- **数量:** {}\n- **标签:** {}\n- **备注:** {}\n\n抢单后提供客户微信'
+    text = '**[新随机订单]**\n\n订单详情:\n- **要求等级:** {}\n- **要求性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
+           '- **数量:** {}\n- **要求标签:** {}\n- **备注:** {}\n\n高级店员可抢低级单，标签要求非硬性，抢单后提供客户微信'
     text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
                        order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
