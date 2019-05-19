@@ -232,7 +232,8 @@ def user_order_list_get(request):
             number=order.number,
             status=dict(OrderStatus.OrderStatusChoices.value)[(OrderStatus.close.value if order.status >= OrderStatus.salary.value else order.status)],
             amount=order.rmb_amount,
-            time=order.order_time
+            time=order.order_time,
+            detail=True if order.status > 0 else False,
         ))
     resp = init_http_success()
     resp.update(
@@ -304,7 +305,8 @@ def user_order_detail_get(request):
         order_time=order.order_time,
         wechat_id=order.wechat_id,
         comment=order.comment,
-        status=dict(OrderStatus.OrderStatusChoices.value)[order.status]
+        status=dict(OrderStatus.OrderStatusChoices.value)[order.status],
+        modify=True if order.status == OrderStatus.unpaid.value else False,
     )
 
     resp = init_http_success()

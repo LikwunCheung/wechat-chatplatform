@@ -91,7 +91,7 @@ def anchor_detail_get(request, anchor_id):
 
     products = dict()
     anchor_products = anchor.anchor_type.products.filter(status=Status.active.value).order_by('price')
-    anchor_products = anchor.anchor_type.products.values('product__product_type__name', 'product__name', 'p').filter(status=Status.active.value)
+    anchor_products = anchor.anchor_type.products.values('product__product_type__name', 'product__name', 'product__time').filter(status=Status.active.value).order_by('product__time')
 
 
 
