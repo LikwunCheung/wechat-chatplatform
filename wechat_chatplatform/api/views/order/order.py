@@ -43,9 +43,9 @@ def order_list_router(request, *args, **kwargs):
 
     if request.method == 'GET':
         # if request.session.get('is_user', False):
-        return user_order_list_get(request)
+        # return user_order_list_get(request)
         # if request.session.get('is_anchor', False):
-        #     return anchor_order_list_get(request)
+        return anchor_order_list_get(request)
     return HttpResponseNotAllowed()
 
 
@@ -57,9 +57,9 @@ def order_detail_router(request, *args, **kwargs):
 
     if request.method == 'GET':
         # if request.session.get('is_user', False):
-        return user_order_detail_get(request)
+        # return user_order_detail_get(request)
         # if request.session.get('is_anchor', False):
-        #     return anchor_order_detail_get(request)
+        return anchor_order_detail_get(request)
     return HttpResponseNotAllowed()
 
 
