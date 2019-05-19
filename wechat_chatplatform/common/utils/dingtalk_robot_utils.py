@@ -75,9 +75,8 @@ def send_random_order_message(order, tags=None):
     title = '[新随机订单]'
     text = '**[新随机订单]**\n\n订单详情:\n- **店员等级:** {}\n- **店员性别:** {}\n- **服务类型:** {}\n- **时长:** {}\n' \
            '- **数量:** {}\n- **标签:** {}\n- **备注:** {}\n\n抢单后提供客户微信'
-    text = text.format(order.anchor_type_id.name, dict(Gender.GenderChoices.value)[order.gender],
-                       order.product_id.product_id.product_type_id.name, order.product_id.product_id.name, order.number,
+    text = text.format(order.anchor_type.name, dict(Gender.GenderChoices.value)[order.gender],
+                       order.product_anchor.product.product_type.name, order.product_anchor.product.name, order.number,
                        tags, order.comment)
     for anchor_group in anchor_groups:
-        resp = dingtalk_robot_handler.send_action_card(token=anchor_group.dingtalk_robot, title=title, text=text,
-                                                       btns=btns)
+        resp = dingtalk_robot_handler.send_action_card(token=anchor_group.dingtalk_robot, title=title, text=text, btns=btns)
