@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import ujson
+import uuid
 
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse
@@ -31,8 +32,8 @@ def admin_user_login(request):
             resp = init_http_bad_request('Error Username Or Password')
             return make_json_response(HttpResponseBadRequest, resp)
 
-        redirect = param.get('redirect', None)
-        return HttpResponse()
+        # redirect = param.get('redirect', None)
+        return HttpResponse(ujson.dumps(dict(token=uuid.uuid1())), content_type='application/json')
 
     return HttpResponseBadRequest()
 
