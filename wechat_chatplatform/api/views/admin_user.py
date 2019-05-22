@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpRespon
 
 from wechat_chatplatform.platform_admin.models import AdminUser
 from wechat_chatplatform.common.choices import AdminUserStatus
-from wechat_chatplatform.common.utils.utils import init_http_bad_request, make_json_response
+from wechat_chatplatform.common.utils.utils import init_http_bad_request, make_json_response, init_http_success
 from wechat_chatplatform.common.config import DOMAIN, ADMIN_INDEX, LOGIN_REDIRECT
 
 
@@ -21,6 +21,7 @@ def admin_user_login(request):
 
         try:
             admin_user = AdminUser.objects.get(status=AdminUserStatus.active.value, username=username, password=password)
+
             request.session['username'] = username
             request.session['type'] = admin_user.admin_user_type.tag
             request.session['is_admin'] = True
@@ -40,3 +41,23 @@ def admin_user_login(request):
 
 def admin_user_logout(request):
     pass
+
+
+def get_user_info(request):
+    username = request.session.get('username', None)
+
+    if not username:
+        resp = init_http_bad_request()
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    admin_user = AdminUser.objects.get(status=AdminUserStatus.active.value, username=username)
+
+    resp = init_http_success()
+    resp['data'] = dict(
+        nickname=admin_user.nickname,
+        avatar=''
+    )
+
+    return make_json_response(HttpResponse, resp)
+
+
