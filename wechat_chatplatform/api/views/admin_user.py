@@ -33,7 +33,7 @@ def admin_user_login(request):
             return make_json_response(HttpResponseBadRequest, resp)
 
         # redirect = param.get('redirect', None)
-        return HttpResponse(ujson.dumps(dict(token=uuid.uuid1().__str__())), content_type='application/json')
+        return HttpResponse(ujson.dumps(dict(data=dict(token=uuid.uuid1().__str__()))), content_type='application/json')
 
     return HttpResponseBadRequest()
 
