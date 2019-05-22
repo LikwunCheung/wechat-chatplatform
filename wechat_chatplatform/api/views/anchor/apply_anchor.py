@@ -106,7 +106,7 @@ def anchor_apply_unaudit_get(request):
             audio=anchor_apply_record.audio,
             image=anchor_apply_record.image.split(',') if ',' in anchor_apply_record.image else anchor_apply_record.image,
             slogan=anchor_apply_record.slogan,
-            tags=anchor_apply_record.tags.split(',') if ',' in anchor_apply_record.tags else anchor_apply_record.tags if anchor_apply_record.tags else [],
+            tags=[] if not anchor_apply_record.tags else anchor_apply_record.tags.split(',') if ',' in anchor_apply_record.tags else anchor_apply_record.tags,
             experience=anchor_apply_record.experience,
             online=anchor_apply_record.online,
             occupation=anchor_apply_record.occupation,
