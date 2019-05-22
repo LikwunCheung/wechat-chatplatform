@@ -94,25 +94,23 @@ def anchor_apply_post(request):
 def anchor_apply_unaudit_get(request):
     anchor_apply_records = AnchorApplyRecord.objects.filter(status=AnchorAuditStatus.unaudit.value)
 
-    results = []
-    for anchor_apply_record in anchor_apply_records:
-        results.append(dict(
-            id=anchor_apply_record.anchor_apply_record_id,
-            nickname=anchor_apply_record.nickname,
-            city=anchor_apply_record.city,
-            birthday=anchor_apply_record.birthday.strftime('%Y-%m-%d'),
-            gender=dict(Gender.GenderChoices.value)[anchor_apply_record.gender],
-            wechat_id=anchor_apply_record.wechat_id,
-            audio=anchor_apply_record.audio,
-            image=anchor_apply_record.image.split(',') if ',' in anchor_apply_record.image else anchor_apply_record.image,
-            slogan=anchor_apply_record.slogan,
-            tags=anchor_apply_record.tags.split(',') if ',' in anchor_apply_record.tags else anchor_apply_record.tags,
-            experience=anchor_apply_record.experience,
-            online=anchor_apply_record.online,
-            occupation=anchor_apply_record.occupation,
-            skill=anchor_apply_record.skill,
-            apply_date=anchor_apply_record.apply_date.strftime('%Y-%m-%d %H:%m:%S')
-        ))
+    results = [dict(
+        id=anchor_apply_record.anchor_apply_record_id,
+        nickname=anchor_apply_record.nickname,
+        city=anchor_apply_record.city,
+        birthday=anchor_apply_record.birthday.strftime('%Y-%m-%d'),
+        gender=dict(Gender.GenderChoices.value)[anchor_apply_record.gender],
+        wechat_id=anchor_apply_record.wechat_id,
+        audio=anchor_apply_record.audio,
+        image=anchor_apply_record.image.split(',') if ',' in anchor_apply_record.image else anchor_apply_record.image,
+        slogan=anchor_apply_record.slogan,
+        tags=anchor_apply_record.tags.split(',') if ',' in anchor_apply_record.tags else anchor_apply_record.tags if anchor_apply_record.tags else [],
+        experience=anchor_apply_record.experience,
+        online=anchor_apply_record.online,
+        occupation=anchor_apply_record.occupation,
+        skill=anchor_apply_record.skill,
+        apply_date=anchor_apply_record.apply_date.strftime('%Y-%m-%d %H:%m:%S')
+    ) for anchor_apply_record in anchor_apply_records]
 
     resp = init_http_success()
     resp['data'] = results
