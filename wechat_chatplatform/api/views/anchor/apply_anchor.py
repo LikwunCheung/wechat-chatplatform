@@ -108,7 +108,7 @@ def anchor_apply_unaudit_get(request):
         online=anchor_apply_record.online,
         occupation=anchor_apply_record.occupation,
         skill=anchor_apply_record.skill,
-        apply_date=anchor_apply_record.apply_date.strftime('%Y-%m-%d %H:%m:%S'),
+        apply_date=anchor_apply_record.apply_date.strftime('%Y-%m-%d %H:%m:%S')
     ) for anchor_apply_record in anchor_apply_records]
 
     resp = init_http_success()
