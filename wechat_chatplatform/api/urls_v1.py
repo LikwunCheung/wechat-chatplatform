@@ -42,4 +42,5 @@ urlpatterns = [
 
     path('admin/login/', admin_user_login),
     path('admin/user/info/', get_user_info),
+    path('admin/user/logout/', get_user_info),
 ]

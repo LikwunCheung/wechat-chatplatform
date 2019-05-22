@@ -40,6 +40,13 @@ def admin_user_login(request):
 
 
 def admin_user_logout(request):
+    if request.method == 'POST':
+        if request.session.get('username', None):
+            request.session.clear()
+    return HttpResponse()
+
+
+def admin_user_logout(request):
     pass
 
 
