@@ -40,7 +40,8 @@ def send_audit_pass_message(anchor, anchor_apply_record):
            u'- **等级:** {}\n- **审核人:** {}\n- **审核时间:** {}\n'
     text = text.format(anchor.nickname, anchor.age(), anchor.constellation(),
                        dict(Gender.GenderChoices.value)[anchor.gender], anchor.city, anchor.anchor_type.name,
-                       anchor_apply_record.auditor.nickname, anchor_apply_record.audit_date)
+                       anchor_apply_record.auditor.nickname,
+                       anchor_apply_record.audit_date.strftime('%Y-%m-%d %H:%M:%S'))
 
     for admin_user in admin_users:
         if admin_user['dingtalk_robot']:
@@ -58,7 +59,8 @@ def send_audit_reject_message(anchor_apply_record):
     text = text.format(anchor_apply_record.anchor_apply_record_id, anchor_apply_record.nickname,
                        anchor_apply_record.birthday, dict(Gender.GenderChoices.value)[anchor_apply_record.gender],
                        anchor_apply_record.city, anchor_apply_record.wechat_id, anchor_apply_record.skill,
-                       anchor_apply_record.online, anchor_apply_record.auditor.nickname, anchor_apply_record.audit_date)
+                       anchor_apply_record.online, anchor_apply_record.auditor.nickname,
+                       anchor_apply_record.audit_date.strftime('%Y-%m-%d %H:%M:%S'))
 
     for admin_user in admin_users:
         if admin_user['dingtalk_robot']:
