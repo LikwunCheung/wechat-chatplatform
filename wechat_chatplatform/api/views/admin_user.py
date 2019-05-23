@@ -59,8 +59,7 @@ def get_user_info(request, *args, **kwargs):
     username = request.session.get('username', None)
 
     if not username:
-        resp = init_http_bad_request()
-        return make_json_response(HttpResponseBadRequest, resp)
+        return HttpResponse(status=700)
 
     admin_user = AdminUser.objects.get(status=AdminUserStatus.active.value, username=username)
 
