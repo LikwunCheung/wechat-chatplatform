@@ -26,7 +26,7 @@ class UserInfo(models.Model):
         return self.nickname
 
     def name(self):
-        nickname = str(base64.b64decode(self.nickname), 'utr8')
+        nickname = str(base64.b64decode(self.nickname), 'utf8')
         return nickname
 
     name.short_description = u'昵称'
