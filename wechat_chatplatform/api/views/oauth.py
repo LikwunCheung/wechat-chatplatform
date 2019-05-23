@@ -50,7 +50,7 @@ def oauth_get_code(request):
             last_login=now()
         )
         user = UserInfo(**params)
-        user.save_nickname(userinfo['nickname'])
+        # user.save_nickname(userinfo['nickname'])
         user.save()
 
     user_record = UserLoginInfo(user=user, time=now())
