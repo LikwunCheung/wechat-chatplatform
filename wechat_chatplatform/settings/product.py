@@ -4,7 +4,7 @@ from .base_setting import *
 
 # SECRET_KEY = 'w-l*xefx)8+p_1yu^8)mk6df(pushufs(hp6!hyx)a$u4o@*kz'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['47.74.66.156', 'www.suavechat.com']
 
