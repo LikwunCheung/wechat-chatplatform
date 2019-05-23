@@ -96,6 +96,12 @@ def anchor_apply_unaudit_get(request):
 
     results = []
     for anchor_apply_record in anchor_apply_records:
+        tags = []
+        if anchor_apply_record.tags:
+            if ',' in anchor_apply_record.tags:
+                tags = ['#' + tag for tag in anchor_apply_record.tags.spplit(',')]
+            else:
+                tags = anchor_apply_record.tags
         results.append(dict(
             id=anchor_apply_record.anchor_apply_record_id,
             nickname=anchor_apply_record.nickname,
@@ -106,7 +112,7 @@ def anchor_apply_unaudit_get(request):
             audio=anchor_apply_record.audio,
             image=anchor_apply_record.image.split(',') if ',' in anchor_apply_record.image else anchor_apply_record.image,
             slogan=anchor_apply_record.slogan,
-            tags=[] if not anchor_apply_record.tags else anchor_apply_record.tags.split(',') if ',' in anchor_apply_record.tags else [anchor_apply_record.tags],
+            tags=tags,
             experience=anchor_apply_record.experience,
             online=anchor_apply_record.online,
             occupation=anchor_apply_record.occupation,
