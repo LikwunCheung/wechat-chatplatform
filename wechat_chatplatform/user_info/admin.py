@@ -6,7 +6,7 @@ from .models import UserInfo, UserLoginInfo
 
 
 class UserInfoAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'open_id', 'nickname', 'last_login')
+    list_display = ('user_id', 'open_id', 'name', 'last_login')
     empty_value_display = 'N/A'
 
 
