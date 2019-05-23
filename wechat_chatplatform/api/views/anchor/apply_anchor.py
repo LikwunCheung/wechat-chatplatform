@@ -120,6 +120,7 @@ def anchor_apply_unaudit_get(request):
             skill=anchor_apply_record.skill,
             apply_date=anchor_apply_record.apply_date.strftime('%Y-%m-%d %H:%m:%S')
         ))
+        results[-1]['image'].append(anchor_apply_record.avatar)
 
     resp = init_http_success()
     resp['data'] = results
