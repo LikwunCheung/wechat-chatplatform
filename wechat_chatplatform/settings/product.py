@@ -11,19 +11,19 @@ ALLOWED_HOSTS = ['*']
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, '../../db.sqlite3'),
+    # },
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '../../db.sqlite3'),
-    },
-    # 'mysql': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'suave',
-    #     'USER': 'lihuan',
-    #     'PASSWORD': 'lihuan',
-    #     'HOST': '115.146.85.81',
-    #     'PORT': 8088,
-    #     'CHARSET': 'utf8mb4'
-    # }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'suave',
+        'USER': 'lihuan',
+        'PASSWORD': 'lihuan',
+        'HOST': '47.74.66.156',
+        'PORT': 8088,
+        'CHARSET': 'utf8mb4'
+    }
 }
 
 LOGGING = {
