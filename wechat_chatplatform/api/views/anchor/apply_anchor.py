@@ -8,6 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
 
 from wechat_chatplatform.anchor.models import AnchorType, AnchorApplyRecord
+from wechat_chatplatform.platform_admin.models import AdminUser
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.user_info.models import UserInfo
 from wechat_chatplatform.common.choices import *
@@ -126,6 +127,15 @@ def anchor_apply_unaudit_get(request):
 
 
 def anchor_apply_action_post(request, action):
+    username = request.session.get('username', None)
+    is_admin = request.session.get('is_admin', False)
+    is_login = request.session.get('is_login', False)
+
+    if not (username and is_admin and is_login):
+        return HttpResponse(status=700)
+
+    auditor = AdminUser.objects.get(username=username, status=AdminUserStatus.active.value)
+
     param = ujson.loads(request.body)
     anchor_apply_reocrd_id = param.get('id', None)
 
@@ -147,9 +157,9 @@ def anchor_apply_action_post(request, action):
         level = param.get('level', 1)
 
         anchor_type = AnchorType.objects.get(anchor_type_id=level)
-        anchor_apply_record.audit_pass(None, anchor_type)
+        anchor_apply_record.audit_pass(auditor, anchor_type)
     elif action == 'reject':
-        anchor_apply_record.audit_fail(None)
+        anchor_apply_record.audit_fail(auditor)
 
     results = dict(
         id=anchor_apply_record.anchor_apply_record_id,
