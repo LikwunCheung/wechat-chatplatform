@@ -7,7 +7,7 @@ from .views.anchor.apply_anchor import anchor_apply_router, anchor_apply_unaudit
 from .views.information.information import *
 from .views.order.order import *
 from .views.oauth import *
-from .views.admin_user import admin_user_login, get_user_info, admin_user_router, admin_user_remove, admin_user_update
+from .views.admin_user import *
 
 urlpatterns = [
     path('anchor/list/', anchor_list_router),
@@ -42,7 +42,7 @@ urlpatterns = [
 
     path('admin/login/', admin_user_login),
     path('admin/user/info/', get_user_info),
-    path('admin/user/logout/', get_user_info),
+    path('admin/user/logout/', admin_user_logout),
     path('admin/user/update/', admin_user_update),
     path('admin/user/remove/', admin_user_remove),
     path('admin/user/', admin_user_router),

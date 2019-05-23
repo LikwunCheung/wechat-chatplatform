@@ -53,7 +53,7 @@ def admin_user_logout(request):
     return HttpResponse()
 
 
-@require_http_methods(['POST'])
+@require_http_methods(['GET'])
 @check_api_key
 def get_user_info(request, *args, **kwargs):
     username = request.session.get('username', None)
