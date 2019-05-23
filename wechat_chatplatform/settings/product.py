@@ -4,9 +4,9 @@ from .base_setting import *
 
 # SECRET_KEY = 'w-l*xefx)8+p_1yu^8)mk6df(pushufs(hp6!hyx)a$u4o@*kz'
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['47.74.66.156', 'www.suavechat.com']
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
