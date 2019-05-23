@@ -7,10 +7,27 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 
 from wechat_chatplatform.anchor.models import Anchor, AnchorType, AnchorTag
+from wechat_chatplatform.platform_admin.models import AdminUserType
 from wechat_chatplatform.platform_info.models import PlatformInfo
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.common.utils.currency import AUD_CNY
 from wechat_chatplatform.common.choices import *
+
+
+@require_http_methods(['GET'])
+@check_api_key
+@cache_page(15 * 60)
+def get_admin_type(request, *args, **kwargs):
+    admin_user_types = AdminUserType.objects.filter(status=Status.active.value)
+
+    results = [dict(
+        id=admin_user_type.admin_user_type_id,
+        name=admin_user_type.name
+    ) for admin_user_type in admin_user_types]
+
+    resp = init_http_success()
+    resp['data'] = results
+    return make_json_response(HttpResponse, resp)
 
 
 @require_http_methods(['GET'])

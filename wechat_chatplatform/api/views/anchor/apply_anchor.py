@@ -101,7 +101,7 @@ def anchor_apply_unaudit_get(request):
             if ',' in anchor_apply_record.tags:
                 tags = ['#' + tag for tag in anchor_apply_record.tags.split(',')]
             else:
-                tags = anchor_apply_record.tags
+                tags = '#' + anchor_apply_record.tags
         results.append(dict(
             id=anchor_apply_record.anchor_apply_record_id,
             nickname=anchor_apply_record.nickname,
