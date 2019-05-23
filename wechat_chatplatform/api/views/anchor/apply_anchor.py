@@ -135,6 +135,8 @@ def anchor_apply_action_post(request, action):
     if not (username and is_admin and is_login):
         return HttpResponse(status=700)
 
+    request.session.set_expiry(15 * 60)
+
     auditor = AdminUser.objects.get(username=username, status=AdminUserStatus.active.value)
 
     param = ujson.loads(request.body)

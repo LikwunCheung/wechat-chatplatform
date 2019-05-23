@@ -84,6 +84,8 @@ def admin_user_router(request, *args, **kwargs):
     if not (username and user_type == 'super' and is_admin and is_login):
         return HttpResponse(status=700)
 
+    request.session.set_expiry(15 * 60)
+
     if request.method == 'GET':
         return admin_user_get(request)
     elif request.method == 'POST':
