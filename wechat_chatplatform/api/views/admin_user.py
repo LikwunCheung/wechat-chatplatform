@@ -133,6 +133,14 @@ def admin_user_post(request):
 @require_http_methods(['POST'])
 @check_api_key
 def admin_user_update(request):
+    username = request.session.get('username', None)
+    user_type = request.session.get('type', None)
+    is_admin = request.session.get('is_admin', False)
+    is_login = request.session.get('is_login', False)
+
+    if not (username and user_type == 'super' and is_admin and is_login):
+        return HttpResponse(status=700)
+
     keys = ['id', 'password', 'nickname', 'dingtalk_robot', 'mobile', 'wechat_id', 'level']
     params = ujson.loads(request.body)
     params = make_dict(keys, params)
@@ -152,6 +160,14 @@ def admin_user_update(request):
 @require_http_methods(['POST'])
 @check_api_key
 def admin_user_remove(request):
+    username = request.session.get('username', None)
+    user_type = request.session.get('type', None)
+    is_admin = request.session.get('is_admin', False)
+    is_login = request.session.get('is_login', False)
+
+    if not (username and user_type == 'super' and is_admin and is_login):
+        return HttpResponse(status=700)
+
     params = ujson.loads(request.body)
 
     try:
