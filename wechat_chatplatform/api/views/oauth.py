@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import ujson
+import base64
 from datetime import datetime
 
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
@@ -44,12 +45,12 @@ def oauth_get_code(request):
         params = dict(
             open_id=open_id,
             access_token=access_token,
-            nickname=userinfo['nickname'],
             avatar=userinfo['headimgurl'],
             gender=0 if userinfo['sex'] == 2 else 1,
             last_login=now()
         )
         user = UserInfo(**params)
+        user.save_nickname(userinfo['nickname'])
         user.save()
 
     user_record = UserLoginInfo(user=user, time=now())

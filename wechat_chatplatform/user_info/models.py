@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import base64
+
 from django.db import models
 
 from wechat_chatplatform.common.choices import Gender
@@ -22,6 +24,14 @@ class UserInfo(models.Model):
 
     def __str__(self):
         return self.nickname
+
+    def name(self):
+        return base64.b64decode(self.nickname)
+
+    name.short_description = u'昵称'
+
+    def save_nickname(self, nickname):
+        self.nickname = base64.b64encode(nickname)
 
 
 class UserLoginInfo(models.Model):

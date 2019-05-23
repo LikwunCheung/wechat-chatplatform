@@ -21,7 +21,8 @@ DATABASES = {
         'USER': 'lihuan',
         'PASSWORD': 'lihuan',
         'HOST': '47.74.66.156',
-        'PORT': 8088
+        'PORT': 8088,
+        'CHARSET': 'utf8mb4'
     }
 }
 
