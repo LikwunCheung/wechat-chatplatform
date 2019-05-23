@@ -16,9 +16,9 @@ def send_new_applier_message(anchor_apply_record):
     btns = list()
     btns.append(dict(
         title=u'查看详情',
-        actionURL='http://www.suavechat.com/admin/unaudit/'
+        actionURL='http://www.suavechat.com/admin/#/manage/anchor'
     ))
-    title = '[有新店员申请待审核]'
+    title = u'[有新店员申请待审核]'
     text = '有新店员申请待你审核，申请人详情:\n- **昵称:** {}\n- **生日:** {}\n- **性别:** {}\n- **城市:** {}\n- **微信:** {}\n' \
            '- **特长:** {}\n- **在线时间:** {}\n\n请联系申请人微信，核实情况后点击 [查看详情] 前往审核'
     text = text.format(anchor_apply_record.nickname, anchor_apply_record.birthday,
@@ -30,6 +30,41 @@ def send_new_applier_message(anchor_apply_record):
             _text = '**Hi, {}:**\n\n'.format(admin_user['nickname']) + text
             resp = dingtalk_robot_handler.send_action_card(token=admin_user['dingtalk_robot'], title=title, text=_text,
                                                            btns=btns)
+
+
+def send_audit_pass_message(anchor, anchor_apply_record):
+    admin_users = AdminUser.objects.values('nickname', 'dingtalk_robot').filter(status=AdminUserStatus.active.value)
+
+    title = u'[申请审核通过]'
+    text = u'**新店员已上架，详情:**\n\n- **昵称:** {}\n- **年龄:** {}\n- **星座:** {}\n- **性别:** {}\n- **城市:** {}\n' \
+           u'- **等级:** {}\n- **审核人:** {}\n- **审核时间:** {}\n'
+    text = text.format(anchor.nickname, anchor.age(), anchor.constellation(),
+                       dict(Gender.GenderChoices.value)[anchor.gender], anchor.city, anchor.anchor_type.name,
+                       anchor_apply_record.auditor.nickname, anchor_apply_record.audit_date)
+
+    for admin_user in admin_users:
+        if admin_user['dingtalk_robot']:
+            _text = '**Hi, {}:**\n\n'.format(admin_user['nickname']) + text
+            resp = dingtalk_robot_handler.send_markdown_card(token=admin_user['dingtalk_robot'], title=title,
+                                                             text=_text)
+
+
+def send_audit_reject_message(anchor_apply_record):
+    admin_users = AdminUser.objects.values('nickname', 'dingtalk_robot').filter(status=AdminUserStatus.active.value)
+
+    title = u'[申请审核拒绝]'
+    text = u'**店员申请已被拒绝，详情:**\n\n- **申请编号:** {}\n- **昵称:** {}\n- **生日:** {}\n- **性别:** {}\n' \
+           u'- **城市:** {}\n- **微信:** {}\n- **特长:** {}\n- **在线时间:** {}\n- **审核人:** {}\n- **审核时间:** {}\n'
+    text = text.format(anchor_apply_record.anchor_apply_record_id, anchor_apply_record.nickname,
+                       anchor_apply_record.birthday, dict(Gender.GenderChoices.value)[anchor_apply_record.gender],
+                       anchor_apply_record.city, anchor_apply_record.wechat_id, anchor_apply_record.skill,
+                       anchor_apply_record.online, anchor_apply_record.auditor.nickname, anchor_apply_record.audit_date)
+
+    for admin_user in admin_users:
+        if admin_user['dingtalk_robot']:
+            _text = '**Hi, {}:**\n\n'.format(admin_user['nickname']) + text
+            resp = dingtalk_robot_handler.send_markdown_card(token=admin_user['dingtalk_robot'], title=title,
+                                                             text=_text)
 
 
 def send_new_order_message(order):
@@ -68,7 +103,8 @@ def send_accept_order_message(order):
 
 def send_random_order_message(order, tags=None):
     anchor_groups = AnchorGroup.objects.filter(status=Status.active.value)
-    anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value, anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
+    anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value,
+                                    anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
 
     title = '[新随机订单]'
     text = '**[新随机订单]**\n\n**10秒后开始抢单，请及时查看工作通知抢单**\n\n**订单详情:**\n- **要求等级:** {}\n- **要求性别:** {}' \

@@ -13,7 +13,8 @@ from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.user_info.models import UserInfo
 from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.handler.anchor_apply_record_handler import anchor_apply_record_handler
-from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_applier_message
+from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_applier_message, send_audit_pass_message, \
+    send_audit_reject_message
 
 
 @require_http_methods(['POST', 'OPTIONS'])
@@ -58,7 +59,6 @@ def anchor_apply_dingtalk_action_router(requset, *args, **kwargs):
 
 
 def anchor_apply_post(request):
-
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
     is_anchor = request.session.get('is_anchor', False)
@@ -111,7 +111,8 @@ def anchor_apply_unaudit_get(request):
             gender=dict(Gender.GenderChoices.value)[anchor_apply_record.gender],
             wechat_id=anchor_apply_record.wechat_id,
             audio=anchor_apply_record.audio,
-            image=anchor_apply_record.image.split(',') if ',' in anchor_apply_record.image else anchor_apply_record.image,
+            image=anchor_apply_record.image.split(
+                ',') if ',' in anchor_apply_record.image else anchor_apply_record.image,
             slogan=anchor_apply_record.slogan,
             tags=tags,
             experience=anchor_apply_record.experience,
@@ -160,9 +161,11 @@ def anchor_apply_action_post(request, action):
         level = param.get('level', 1)
 
         anchor_type = AnchorType.objects.get(anchor_type_id=level)
-        anchor_apply_record.audit_pass(auditor, anchor_type)
+        anchor = anchor_apply_record.audit_pass(auditor, anchor_type)
+        send_audit_pass_message(anchor, anchor_apply_record)
     elif action == 'reject':
         anchor_apply_record.audit_fail(auditor)
+        send_audit_reject_message(anchor_apply_record)
 
     results = dict(
         id=anchor_apply_record.anchor_apply_record_id,

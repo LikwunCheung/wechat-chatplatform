@@ -184,6 +184,7 @@ class AnchorApplyRecord(models.Model):
         self.auditor = auditor
         self.status = AnchorAuditStatus.success.value
         self.save()
+        return anchor
 
     def audit_fail(self, auditor):
         self.audit_date = now()
