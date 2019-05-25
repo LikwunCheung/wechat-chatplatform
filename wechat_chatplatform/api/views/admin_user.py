@@ -162,7 +162,7 @@ def admin_user_update(request):
 
 @require_http_methods(['POST'])
 @check_api_key
-def admin_user_remove(request):
+def admin_user_remove(request, *args, **kwargs):
     username = request.session.get('username', None)
     user_type = request.session.get('type', None)
     is_admin = request.session.get('is_admin', False)
