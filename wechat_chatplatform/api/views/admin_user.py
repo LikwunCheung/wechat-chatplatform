@@ -116,7 +116,7 @@ def admin_user_post(request):
     # try:
     params.update(dict(
         admin_user_type=AdminUserType.objects.get(admin_user_type_id=params.pop('level'), status=Status.active.value),
-        dingtalk_mobile=params['mobile'] if 'mobile' in params else None
+        dingtalk_moblie=params['mobile'] if 'mobile' in params else None
     ))
 
     admin_user = AdminUser(**params)
