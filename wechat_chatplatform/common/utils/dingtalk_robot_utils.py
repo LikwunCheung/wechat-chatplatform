@@ -104,9 +104,21 @@ def send_accept_order_message(order):
 
 
 def send_random_order_message(order, tags=None):
-    anchor_groups = AnchorGroup.objects.filter(status=Status.active.value)
-    anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value,
-                                    anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
+    gender = order.gender
+    if gender == Gender.mix.value:
+        anchor_groups = AnchorGroup.objects.filter(status=Status.active.value)
+        anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value,
+                                        anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id)
+    elif gender == Gender.male.value:
+        anchor_groups = AnchorGroup.objects.filter(status=Status.active.value, gender=Gender.male.value)
+        anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value,
+                                        anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id,
+                                        gender=Gender.male.value)
+    else:
+        anchor_groups = AnchorGroup.objects.filter(status=Status.active.value, gender=Gender.female.value)
+        anchors = Anchor.objects.filter(dingtalk_robot__isnull=False, status=AnchorStatus.active.value,
+                                        anchor_type__anchor_type_id__lte=order.anchor_type.anchor_type_id,
+                                        gender=Gender.female.value)
 
     title = '[新随机订单]'
     text = '**[新随机订单]**\n\n**10秒后开始抢单，请及时查看工作通知抢单**\n\n**订单详情:**\n- **要求等级:** {}\n- **要求性别:** {}' \
