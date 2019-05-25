@@ -39,10 +39,15 @@ def check_user_login(func):
 
 def check_admin_user(func):
     def wrapper(request, *args, **kwargs):
-        username = request.session.get('username', '')
-        if not username:
-            return HttpResponseRedirect(DOMAIN + LOGIN_REDIRECT)
+        username = request.session.get('username', None)
+        is_admin = request.session.get('is_admin', False)
+        is_login = request.session.get('is_login', False)
+
+        if not (username and is_admin and is_login):
+            resp = init_http_response(ErrorCode.admin_user_unlogin.value, ErrorMsg.admin_user_unlogin.value)
+            return make_json_response(HttpResponse, resp)
         else:
+            request.session.set_expiry(15 * 60)
             return func(request, args, kwargs)
     return wrapper
 

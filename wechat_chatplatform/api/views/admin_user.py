@@ -10,7 +10,8 @@ from django.views.decorators.http import require_http_methods
 from wechat_chatplatform.platform_admin.models import AdminUser, AdminUserType
 from wechat_chatplatform.common.choices import AdminUserStatus, Status
 from wechat_chatplatform.common.utils.utils import init_http_bad_request, make_json_response, init_http_success, \
-    check_api_key, make_dict
+    check_api_key, make_dict, check_admin_user, init_http_response
+from wechat_chatplatform.common.config import ErrorMsg, ErrorCode
 from wechat_chatplatform.common.config import DOMAIN, ADMIN_INDEX, LOGIN_REDIRECT
 
 
@@ -49,17 +50,15 @@ def admin_user_logout(request):
         if request.session.get('username', None):
             request.session.clear()
         else:
-            HttpResponse(status=700)
+            HttpResponse(status=470)
     return HttpResponse()
 
 
 @require_http_methods(['GET'])
 @check_api_key
+@check_admin_user
 def get_user_info(request, *args, **kwargs):
     username = request.session.get('username', None)
-
-    if not username:
-        return HttpResponse(status=700)
 
     admin_user = AdminUser.objects.get(status=AdminUserStatus.active.value, username=username)
 
@@ -75,16 +74,13 @@ def get_user_info(request, *args, **kwargs):
 
 @require_http_methods(['GET', 'POST', 'PUT', 'DELETE'])
 @check_api_key
+@check_admin_user
 def admin_user_router(request, *args, **kwargs):
-    username = request.session.get('username', None)
     user_type = request.session.get('type', None)
-    is_admin = request.session.get('is_admin', False)
-    is_login = request.session.get('is_login', False)
 
-    if not (username and user_type == 'super' and is_admin and is_login):
-        return HttpResponse(status=700)
-
-    request.session.set_expiry(15 * 60)
+    if not user_type == 'super':
+        resp = init_http_response(ErrorCode.not_super_admin.value, ErrorMsg.not_super_admin.value)
+        return make_json_response(HttpResponse, resp)
 
     if request.method == 'GET':
         return admin_user_get(request)
@@ -117,17 +113,17 @@ def admin_user_post(request):
     params = ujson.loads(request.body)
     params = make_dict(keys, params)
 
-    try:
-        params.update(dict(
-            admin_user_type=AdminUserType.objects.get(admin_user_type_id=params.pop('level'), status=Status.active.value),
-            dingtalk_mobile=params['mobile'] if 'mobile' in params else None
-        ))
+    # try:
+    params.update(dict(
+        admin_user_type=AdminUserType.objects.get(admin_user_type_id=params.pop('level'), status=Status.active.value),
+        dingtalk_mobile=params['mobile'] if 'mobile' in params else None
+    ))
 
-        admin_user = AdminUser(**params)
-        admin_user.save()
-    except Exception as e:
-        print(e)
-        return HttpResponseBadRequest()
+    admin_user = AdminUser(**params)
+    admin_user.save()
+    # except Exception as e:
+    #     print(e)
+    #     return HttpResponseBadRequest()
 
     resp = init_http_success()
     return make_json_response(HttpResponse, resp)
@@ -135,14 +131,13 @@ def admin_user_post(request):
 
 @require_http_methods(['POST'])
 @check_api_key
+@check_admin_user
 def admin_user_update(request):
-    username = request.session.get('username', None)
     user_type = request.session.get('type', None)
-    is_admin = request.session.get('is_admin', False)
-    is_login = request.session.get('is_login', False)
 
-    if not (username and user_type == 'super' and is_admin and is_login):
-        return HttpResponse(status=700)
+    if not user_type == 'super':
+        resp = init_http_response(ErrorCode.not_super_admin.value, ErrorMsg.not_super_admin.value)
+        return make_json_response(HttpResponse, resp)
 
     keys = ['id', 'password', 'nickname', 'dingtalk_robot', 'mobile', 'wechat_id', 'level']
     params = ujson.loads(request.body)
@@ -162,14 +157,13 @@ def admin_user_update(request):
 
 @require_http_methods(['POST'])
 @check_api_key
+@check_admin_user
 def admin_user_remove(request, *args, **kwargs):
-    username = request.session.get('username', None)
     user_type = request.session.get('type', None)
-    is_admin = request.session.get('is_admin', False)
-    is_login = request.session.get('is_login', False)
 
-    if not (username and user_type == 'super' and is_admin and is_login):
-        return HttpResponse(status=700)
+    if not user_type == 'super':
+        resp = init_http_response(ErrorCode.not_super_admin.value, ErrorMsg.not_super_admin.value)
+        return make_json_response(HttpResponse, resp)
 
     params = ujson.loads(request.body)
 

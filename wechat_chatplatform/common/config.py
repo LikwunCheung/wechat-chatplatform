@@ -8,6 +8,8 @@ class ErrorCode(Enum):
     not_found = 1
     unauthorized = 2
     bad_request = 3
+    not_super_admin = 6
+    admin_user_unlogin = 7
 
 
 class ErrorMsg(Enum):
@@ -15,6 +17,8 @@ class ErrorMsg(Enum):
     not_found = 'resource not found'
     unauthorized = 'unauthorized access'
     bad_request = 'bad request'
+    not_super_admin = 'not super admin user'
+    admin_user_unlogin = 'admin user unlogin'
 
 
 HTTP_X_API_KEY = 'HTTP_X_API_KEY'
