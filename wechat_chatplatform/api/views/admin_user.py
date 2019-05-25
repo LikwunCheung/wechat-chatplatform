@@ -145,13 +145,13 @@ def admin_user_update(request):
     params = ujson.loads(request.body)
     params = make_dict(keys, params)
 
-    try:
-        admin_user = AdminUser.objects.get(admin_user_id=params.pop('id'), status=Status.active.value)
-        admin_user.update(**params)
-        admin_user.save()
-    except Exception as e:
-        print(e)
-        return HttpResponseBadRequest()
+    # try:
+    admin_user = AdminUser.objects.get(admin_user_id=params.pop('id'), status=Status.active.value)
+    admin_user.update(**params)
+    admin_user.save()
+    # except Exception as e:
+    #     print(e)
+    #     return HttpResponseBadRequest()
 
     resp = init_http_success()
     return make_json_response(HttpResponse, resp)
