@@ -144,6 +144,10 @@ def admin_user_update(request):
     keys = ['id', 'password', 'nickname', 'dingtalk_robot', 'mobile', 'wechat_id', 'level']
     params = ujson.loads(request.body)
     params = make_dict(keys, params)
+    if 'level' in params:
+        params.update(dict(
+            admin_user_type=AdminUserType.objects.get(admin_user_type_id=params.pop('level'))
+        ))
 
     # try:
     admin_user = AdminUser.objects.get(admin_user_id=params.pop('id'), status=Status.active.value)
