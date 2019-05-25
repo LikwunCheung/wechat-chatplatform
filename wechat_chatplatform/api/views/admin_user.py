@@ -96,6 +96,8 @@ def admin_user_get(request):
     admin_users = AdminUser.objects.filter(status=AdminUserStatus.active.value)
 
     results = [dict(
+        id=admin_user.admin_user_id,
+        nickname=admin_user.nickname,
         username=admin_user.username,
         password=admin_user.password,
         type=admin_user.admin_user_type,
