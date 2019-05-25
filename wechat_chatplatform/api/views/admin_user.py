@@ -114,18 +114,18 @@ def admin_user_post(request):
     params = ujson.loads(request.body)
     params = make_dict(keys, params)
 
-    # try:
-    params.update(dict(
-        admin_user_type=AdminUserType.objects.get(admin_user_type_id=params.pop('level'), status=Status.active.value),
-        dingtalk_moblie=params['mobile'] if 'mobile' in params else None,
-        join_date=now()
-    ))
+    try:
+        params.update(dict(
+            admin_user_type=AdminUserType.objects.get(admin_user_type_id=params.pop('level'), status=Status.active.value),
+            dingtalk_moblie=params['mobile'] if 'mobile' in params else None,
+            join_date=now()
+        ))
 
-    admin_user = AdminUser(**params)
-    admin_user.save()
-    # except Exception as e:
-    #     print(e)
-    #     return HttpResponseBadRequest()
+        admin_user = AdminUser(**params)
+        admin_user.save()
+    except Exception as e:
+        print(e)
+        return HttpResponseBadRequest()
 
     resp = init_http_success()
     return make_json_response(HttpResponse, resp)
