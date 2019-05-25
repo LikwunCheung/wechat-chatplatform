@@ -6,6 +6,7 @@ import uuid
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
+from django.utils.timezone import now
 
 from wechat_chatplatform.platform_admin.models import AdminUser, AdminUserType
 from wechat_chatplatform.common.choices import AdminUserStatus, Status
@@ -116,7 +117,8 @@ def admin_user_post(request):
     # try:
     params.update(dict(
         admin_user_type=AdminUserType.objects.get(admin_user_type_id=params.pop('level'), status=Status.active.value),
-        dingtalk_moblie=params['mobile'] if 'mobile' in params else None
+        dingtalk_moblie=params['mobile'] if 'mobile' in params else None,
+        join_date=now()
     ))
 
     admin_user = AdminUser(**params)
