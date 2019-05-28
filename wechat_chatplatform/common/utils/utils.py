@@ -47,7 +47,7 @@ def check_admin_user(func):
             resp = init_http_response(ErrorCode.admin_user_unlogin.value, ErrorMsg.admin_user_unlogin.value)
             return make_json_response(HttpResponse, resp)
         else:
-            request.session.set_expiry(1 * 60)
+            request.session.set_expiry(ADMIN_USER_SEESION)
             return func(request, args, kwargs)
     return wrapper
 

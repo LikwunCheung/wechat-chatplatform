@@ -112,7 +112,7 @@ def anchor_apply_unaudit_get(request):
             wechat_id=anchor_apply_record.wechat_id,
             audio=anchor_apply_record.audio,
             image=anchor_apply_record.image.split(
-                ',') if ',' in anchor_apply_record.image else anchor_apply_record.image,
+                ',') if ',' in anchor_apply_record.image else [anchor_apply_record.image],
             slogan=anchor_apply_record.slogan,
             tags=tags,
             experience=anchor_apply_record.experience,

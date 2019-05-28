@@ -34,3 +34,5 @@ MYSQL_COMMAND = 'sudo docker run --name mysql --restart always  --privileged=tru
                 '-e MYSQL_PASSWORD="lihuan" -e MYSQL_ROOT_PASSWORD="lihuan" -v=/mnt/mysql/log/:/var/log/mysql/ ' \
                 '-v=/mnt/mysql/data:/var/lib/mysql -p 8088:3306 -d mysql --character-set-server=utf8mb4 ' \
                 '--collation-server=utf8mb4_general_ci --default-authentication-plugin=mysql_native_password'
+
+ADMIN_USER_SEESION = 1 * 60

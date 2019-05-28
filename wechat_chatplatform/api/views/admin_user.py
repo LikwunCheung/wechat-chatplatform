@@ -12,8 +12,7 @@ from wechat_chatplatform.platform_admin.models import AdminUser, AdminUserType
 from wechat_chatplatform.common.choices import AdminUserStatus, Status
 from wechat_chatplatform.common.utils.utils import init_http_bad_request, make_json_response, init_http_success, \
     check_api_key, make_dict, check_admin_user, init_http_response
-from wechat_chatplatform.common.config import ErrorMsg, ErrorCode
-from wechat_chatplatform.common.config import DOMAIN, ADMIN_INDEX, LOGIN_REDIRECT
+from wechat_chatplatform.common.config import ErrorMsg, ErrorCode, ADMIN_USER_SEESION
 
 
 @require_http_methods(['POST'])
@@ -33,7 +32,7 @@ def admin_user_login(request):
             request.session['is_anchor'] = False
             request.session['is_user'] = False
             request.session['is_login'] = True
-            request.session.set_expiry(1 * 60)
+            request.session.set_expiry(ADMIN_USER_SEESION)
         except Exception as e:
             resp = init_http_bad_request('Error Username Or Password')
             return make_json_response(HttpResponseBadRequest, resp)
