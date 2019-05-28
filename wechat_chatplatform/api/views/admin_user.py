@@ -134,7 +134,7 @@ def admin_user_post(request):
 @require_http_methods(['POST'])
 @check_api_key
 @check_admin_user
-def admin_user_update(request):
+def admin_user_update(request, *args, **kwargs):
     user_type = request.session.get('type', None)
 
     if not user_type == 'super':
