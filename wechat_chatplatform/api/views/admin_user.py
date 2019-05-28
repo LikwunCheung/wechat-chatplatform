@@ -151,7 +151,7 @@ def admin_user_update(request, *args, **kwargs):
 
     # try:
     admin_user = AdminUser.objects.get(admin_user_id=params.pop('id'), status=Status.active.value)
-    admin_user.update(**params)
+    admin_user.__dict__.update(**params)
     admin_user.save()
     # except Exception as e:
     #     print(e)
