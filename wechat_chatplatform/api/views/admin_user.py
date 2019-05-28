@@ -33,7 +33,7 @@ def admin_user_login(request):
             request.session['is_anchor'] = False
             request.session['is_user'] = False
             request.session['is_login'] = True
-            request.session.set_expiry(15 * 60)
+            request.session.set_expiry(1 * 60)
         except Exception as e:
             resp = init_http_bad_request('Error Username Or Password')
             return make_json_response(HttpResponseBadRequest, resp)
