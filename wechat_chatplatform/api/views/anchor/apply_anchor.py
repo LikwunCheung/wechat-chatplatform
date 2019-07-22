@@ -7,6 +7,7 @@ import logging
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.views.decorators.http import require_http_methods
 from django.utils.timezone import now
+from django.contrib.sessions.models import Session
 
 from wechat_chatplatform.anchor.models import AnchorType, AnchorApplyRecord
 from wechat_chatplatform.platform_admin.models import AdminUser
@@ -65,6 +66,7 @@ def anchor_apply_post(request):
     session_key = request.COOKIES.get('sessionkey', None)
     if session_key:
         logger.warning(session_key)
+        request.session = Session.objects.get(session_key)
 
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
