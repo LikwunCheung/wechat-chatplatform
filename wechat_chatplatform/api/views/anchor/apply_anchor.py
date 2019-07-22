@@ -63,9 +63,8 @@ def anchor_apply_dingtalk_action_router(requset, *args, **kwargs):
 
 
 def anchor_apply_post(request):
-    session_key = request.COOKIES.get('sessionkey', None)
+    session_key = request.GET.get('key', None)
     if session_key:
-        logger.warning(session_key)
         request.session = Session.objects.get(session_key)
 
     user_id = request.session.get('id', None)

@@ -60,8 +60,7 @@ def oauth_get_code(request):
     user_record = UserLoginInfo(user=user, time=now())
     user_record.save()
     user_login(request, user)
-    res = HttpResponseRedirect(DOMAIN + state)
-    res.set_cookie('sessionkey', request.session.session_key)
+    res = HttpResponseRedirect(DOMAIN + state + '?key=%s' % request.session.session_key)
     return res
 
 
