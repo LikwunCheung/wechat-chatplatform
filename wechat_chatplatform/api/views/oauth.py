@@ -43,6 +43,7 @@ def oauth_get_code(request):
     try:
         user = UserInfo.objects.get(open_id=open_id)
         user.last_login = now()
+        user.save()
     except Exception as e:
         userinfo = wechat_handler.get_user_info(open_id, access_token)
         params = dict(
