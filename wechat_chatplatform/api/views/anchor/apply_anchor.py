@@ -71,6 +71,7 @@ def anchor_apply_post(request):
     #         'skill', 'experience', 'occupation', 'online']
 
     param = ujson.loads(request.body)
+    print(param)
 
     try:
         param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])
