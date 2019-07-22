@@ -2,6 +2,7 @@
 
 import ujson
 from datetime import datetime
+import logging
 
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.views.decorators.http import require_http_methods
@@ -15,6 +16,8 @@ from wechat_chatplatform.common.choices import *
 from wechat_chatplatform.handler.anchor_apply_record_handler import anchor_apply_record_handler
 from wechat_chatplatform.common.utils.dingtalk_robot_utils import send_new_applier_message, send_audit_pass_message, \
     send_audit_reject_message
+
+logger = logging.getLogger('django.debug')
 
 
 @require_http_methods(['POST', 'OPTIONS'])
@@ -71,7 +74,7 @@ def anchor_apply_post(request):
     #         'skill', 'experience', 'occupation', 'online']
 
     param = ujson.loads(request.body)
-    print(param)
+    logger.debug(param)
 
     try:
         param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])
@@ -79,9 +82,10 @@ def anchor_apply_post(request):
         param['image'] = ','.join(param['image'])
         param['open_id'] = user.open_id
     except Exception as e:
-        print(e)
+        logger.error('Apply Anchor Error: %s' % e)
         resp = init_http_bad_request('AttributeError')
         return make_json_response(HttpResponseBadRequest, resp)
+    logger.debug('Apply2')
 
     anchor = anchor_apply_record_handler.apply_anchor(param)
     if not anchor:
