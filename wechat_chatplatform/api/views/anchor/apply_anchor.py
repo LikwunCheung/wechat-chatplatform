@@ -65,6 +65,7 @@ def anchor_apply_post(request):
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
     is_anchor = request.session.get('is_anchor', False)
+    logger.warning('Apply1')
     if not (user_id and is_user) or is_anchor:
         return HttpResponseBadRequest()
 
