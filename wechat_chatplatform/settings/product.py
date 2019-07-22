@@ -45,31 +45,39 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
         },
-        'debug.console': {
+        'default': {
             'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/root/logs/default.log',
+            'maxBytes': 1024*1024*5,
+            'backupCount': 5,
+            'formatter': 'debug',
+        },
+        'debug.console': {
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'debug',
         },
-        # 'default': {
-        #     'level': 'DEBUG',
-        #     'class': 'logging.handlers.RotatingFileHandler',
-        #     'filename': '/home/ubuntu/log/all.log',
-        #     'maxBytes': 1024*1024*5,
-        #     'backupCount': 5,
-        #     'formatter': 'debug',
+        # 'email': {
+        #
         # },
-        # 'error': {
-        #     'level': 'ERROR',
-        #     'class': 'logging.handlers.RotatingFileHandler',
-        #     'filename': '/home/ubuntu/log/error.log',
-        #     'maxBytes': 1024 * 1024 * 5,
-        #     'backupCount': 5,
-        #     'formatter': 'debug',
-        # },
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/root/logs/error.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
     },
     'loggers': {
+        '': {
+            'handlers': ['default', 'error'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
         'django.debug': {
-            'handlers': ['debug.console'],
+            'handlers': ['debug.console', 'default', 'error'],
             'propagate': True,
             'level': 'DEBUG',
         },

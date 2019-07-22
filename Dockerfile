@@ -1,6 +1,8 @@
 FROM python:3.7.3
 
 RUN mkdir /code
+RUN mkdir /root/logs
+VOLUME /logs /root/logs
 WORKDIR /code
 ADD . /code
 
