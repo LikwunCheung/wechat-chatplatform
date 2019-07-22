@@ -62,20 +62,18 @@ def anchor_apply_dingtalk_action_router(requset, *args, **kwargs):
 
 
 def anchor_apply_post(request):
+    session_key = request.COOKIES.get('sessionkey', None)
+    if session_key:
+        logger.warn(session_key)
+
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
     is_anchor = request.session.get('is_anchor', True)
-    logger.warning(user_id)
     if not (user_id and is_user) or is_anchor:
         return HttpResponseBadRequest()
 
     user = UserInfo.objects.get(user_id=user_id)
-
-    # keys = ['nickname', 'city', 'birthday', 'gender', 'wechat_id', 'audio', 'avatar', 'image', 'slogan', 'tags',
-    #         'skill', 'experience', 'occupation', 'online']
-
     param = ujson.loads(request.body)
-    logger.warning(param)
 
     try:
         param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])
@@ -86,7 +84,6 @@ def anchor_apply_post(request):
         logger.error('Apply Anchor Error: %s' % e)
         resp = init_http_bad_request('AttributeError')
         return make_json_response(HttpResponseBadRequest, resp)
-    logger.warning('Apply2')
 
     anchor = anchor_apply_record_handler.apply_anchor(param)
     if not anchor:
