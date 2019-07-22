@@ -46,4 +46,4 @@ class UserLoginInfo(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.user.nickname
+        return str(base64.b64decode(self.user.nickname), 'utf8')

@@ -2,6 +2,7 @@
 
 import ujson
 import base64
+import logging
 from datetime import datetime
 
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
@@ -12,6 +13,8 @@ from wechat_chatplatform.user_info.models import UserInfo, UserLoginInfo
 from wechat_chatplatform.anchor.models import Anchor
 from wechat_chatplatform.common.utils.utils import *
 from wechat_chatplatform.handler.wechat_handler.wechat_handler import wechat_handler
+
+logger = logging.getLogger('django')
 
 
 @require_http_methods(['GET', 'OPTIONS'])
@@ -67,6 +70,7 @@ def anchor_login(request, anchor):
     request.session['is_user'] = False
     request.session['is_login'] = True
     request.session.set_expiry(60 * 60)
+    logger.info('Anchor Login: %s' % anchor.anchor_id)
 
 
 def user_login(request, user):
@@ -76,3 +80,4 @@ def user_login(request, user):
     request.session['is_user'] = True
     request.session['is_login'] = True
     request.session.set_expiry(60 * 60)
+    logger.info('User Login: %s' % user.user_id)
