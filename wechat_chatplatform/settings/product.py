@@ -72,7 +72,7 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': '/root/logs/collect.log',
-            'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
+            'maxBytes': 1024 * 1024 * 50,
             'backupCount': 1,
             'formatter': 'collect',
             'encoding': "utf-8"
@@ -88,6 +88,6 @@ LOGGING = {
             'handlers': ['console', 'collect'],
             'level': 'INFO',
         },
-    },
+    }
 }
 

@@ -74,7 +74,7 @@ def anchor_apply_post(request):
     #         'skill', 'experience', 'occupation', 'online']
 
     param = ujson.loads(request.body)
-    logger.warn(param)
+    logger.warning(param)
 
     try:
         param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])
@@ -85,7 +85,7 @@ def anchor_apply_post(request):
         logger.error('Apply Anchor Error: %s' % e)
         resp = init_http_bad_request('AttributeError')
         return make_json_response(HttpResponseBadRequest, resp)
-    logger.warn('Apply2')
+    logger.warning('Apply2')
 
     anchor = anchor_apply_record_handler.apply_anchor(param)
     if not anchor:
