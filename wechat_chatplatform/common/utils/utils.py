@@ -7,7 +7,7 @@ from django.http.response import HttpResponseForbidden, HttpResponseBadRequest, 
 
 from wechat_chatplatform.common.config import *
 
-logger = logging.getLogger('django.debug')
+logger = logging.getLogger('django')
 
 
 def make_dict(keys, kwargs):

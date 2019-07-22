@@ -31,60 +31,63 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'standard': {
-            'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(module)s:%(funcName)s] [%(levelname)s]- %(message)s'
+            'format': '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d][%(levelname)s][%(message)s]'
         },
-        'debug': {
-            'format': '%(asctime)s [%(module)s:%(funcName)s][%(levelname)s] %(message)s'
+        'simple': {
+            'format': '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s'
         },
+        'collect': {
+            'format': '%(message)s'
+        }
     },
     'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
     },
     'handlers': {
         'console': {
             'level': 'DEBUG',
+            'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
-            'formatter': 'standard',
+            'formatter': 'simple'
         },
         'default': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': '/root/logs/default.log',
-            'maxBytes': 1024*1024*5,
-            'backupCount': 5,
-            'formatter': 'debug',
+            'maxBytes': 1024 * 1024 * 50,
+            'formatter': 'simple',
+            'encoding': 'utf-8',
         },
-        'debug.console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'debug',
-        },
-        # 'email': {
-        #
-        # },
         'error': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': '/root/logs/error.log',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
+            'maxBytes': 1024 * 1024 * 50,
             'formatter': 'standard',
+            'encoding': 'utf-8',
+        },
+        'collect': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/root/logs/collect.log',
+            'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
+            'backupCount': 1,
+            'formatter': 'collect',
+            'encoding': "utf-8"
         },
     },
     'loggers': {
-        '': {
-            'handlers': ['default', 'error'],
-            'propagate': True,
+        'django': {
+            'handlers': ['default', 'console', 'error'],
             'level': 'DEBUG',
-        },
-        'django.debug': {
-            'handlers': ['debug.console', 'default', 'error'],
             'propagate': True,
-            'level': 'DEBUG',
         },
-        # 'server.debug': {
-        #     'handlers': ['default', 'debug.console'],
-        #     'propagate': True,
-        #     'level': 'DEBUG',
-        # },
-    }
+        'collect': {
+            'handlers': ['console', 'collect'],
+            'level': 'INFO',
+        },
+    },
 }
+
