@@ -63,14 +63,11 @@ def anchor_apply_dingtalk_action_router(requset, *args, **kwargs):
 
 
 def anchor_apply_post(request):
-    session_key = request.GET.get('key', None)
-    if session_key:
-        request.session = Session.objects.get(session_key)
-
     user_id = request.session.get('id', None)
     is_user = request.session.get('is_user', False)
     is_anchor = request.session.get('is_anchor', True)
     if not (user_id and is_user) or is_anchor:
+        logger.debug('No Session User ID: %s' % request.path)
         return HttpResponseBadRequest()
 
     user = UserInfo.objects.get(user_id=user_id)
