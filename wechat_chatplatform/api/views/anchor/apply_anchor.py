@@ -67,7 +67,7 @@ def anchor_apply_post(request):
     is_user = request.session.get('is_user', False)
     is_anchor = request.session.get('is_anchor', True)
     if not (user_id and is_user) or is_anchor:
-        logger.warning('No Session User ID: %s' % request.path)
+        logger.warning('No Session User ID: %s' % request.get_full_path())
         return HttpResponseBadRequest()
 
     user = UserInfo.objects.get(user_id=user_id)
