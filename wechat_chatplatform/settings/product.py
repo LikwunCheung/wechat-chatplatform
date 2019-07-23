@@ -9,6 +9,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['47.74.66.156', 'www.suavechat.com']
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_COOKIE_NAME = "sessionid"
 
 DATABASES = {
     # 'default': {

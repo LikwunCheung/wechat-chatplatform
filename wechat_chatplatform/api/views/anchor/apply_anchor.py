@@ -72,7 +72,6 @@ def anchor_apply_post(request):
 
     user = UserInfo.objects.get(user_id=user_id)
     param = ujson.loads(request.body)
-    logger.warning(param)
 
     try:
         param['tags'] = ','.join([str(tag).strip('#') for tag in param['tags']])

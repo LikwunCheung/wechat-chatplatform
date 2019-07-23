@@ -169,7 +169,7 @@ def random_order_post(request):
     is_user = request.session.get('is_user', False)
     is_anchor = request.session.get('is_anchor', False)
     if not (user_id and (is_user or is_anchor)):
-        logger.warning('No Session ID[%s]: %s/%s' % (user_id, request.META['HTTP_HOST'], request.path))
+        logger.warning('No Session ID[%s]: %s%s' % (user_id, request.META['HTTP_HOST'], request.path))
         return HttpResponseRedirect(wechat_handler.get_code_url())
 
     if is_user:

@@ -171,8 +171,17 @@ def get_product(request, *args, **kwargs):
     return make_json_response(HttpResponse, resp)
 
 
-@require_http_methods(['GET'])
+@require_http_methods(['GET', 'POST'])
 @check_api_key
+def platform_info_router(request, *args, **kwargs):
+    if request.method == 'GET':
+        return get_platform_info(request, args, kwargs)
+    elif request.method == 'POST':
+        return post_platform_info(request, args, kwargs)
+    else:
+        return HttpResponseBadRequest()
+
+
 @cache_page(15 * 60)
 def get_platform_info(request, *args, **kwargs):
     tag = request.GET.get('tag', None)
@@ -187,10 +196,40 @@ def get_platform_info(request, *args, **kwargs):
         resp = init_http_bad_request(u'无匹配标签')
         return make_json_response(HttpResponseBadRequest, resp)
 
-    results = None
-    if tag == 'order-user-ack':
-        results = [result.strip('\r\n') for result in platform_info['content'].split(';')]
+    results = [result.strip('\r\n') for result in platform_info['content'].split(';')]
 
     resp = init_http_success()
     resp['data'] = results
     return make_json_response(HttpResponse, resp)
+
+
+def post_platform_info(request, *args, **kwargs):
+    param = ujson.loads(request.body)
+    tag = param.get('tag', None)
+    tag_cn = param.get('tag_cn', None)
+    data = param.get('data', None)
+
+    if not (tag and data):
+        resp = init_http_bad_request(u'无标签')
+        return make_json_response(HttpResponseBadRequest, resp)
+
+    if not isinstance(data, list):
+        data = [data]
+
+    content = ';'.join(data)
+    platform_info = PlatformInfo.objects.get(tag=tag)
+    if platform_info and platform_info.status != Status.active.value:
+        resp = init_http_bad_request(u'已停用')
+        return make_json_response(HttpResponseBadRequest, resp)
+    elif not platform_info:
+        platform_info = PlatformInfo(tag=tag, tag_cn=tag_cn, content=content, status=Status.active.value)
+        platform_info.save()
+    else:
+        platform_info.content = content
+        platform_info.save()
+
+    resp = init_http_success()
+    return make_json_response(HttpResponse, resp)
+
+
+
